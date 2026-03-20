@@ -154,7 +154,7 @@ const Badge = ({ children, color = "slate", className = "" }) => {
   return <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${colors[color]} ${className}`}>{children}</span>;
 };
 
-// --- Login Screen ---
+// --- Login Screen (full viewport, edge to edge) ---
 const SLIDES = [
   {
     tag: "Context switching",
@@ -230,66 +230,61 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
     setLocalLoading(true);
     setLocalError("");
     try {
-      if (authMode === "magic") {
-        await onMagicLink(email);
-        setStep("sent");
-      } else {
-        await onEmailAuth(email, password);
-      }
-    } catch (err) {
-      setLocalError(err.message || "Something went wrong. Please try again.");
-    }
+      if (authMode === "magic") { await onMagicLink(email); setStep("sent"); }
+      else await onEmailAuth(email, password);
+    } catch (err) { setLocalError(err.message || "Something went wrong. Please try again."); }
     setLocalLoading(false);
   };
 
   const currentSlide = SLIDES[slide];
 
   return (
-    <div className="min-h-screen w-full bg-[#F2F4F6] flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl bg-white rounded-[28px] overflow-hidden shadow-2xl shadow-slate-200/60 flex flex-col md:flex-row" style={{ minHeight: 560 }}>
+    <div className="flex h-screen w-full overflow-hidden">
+      {/* Left panel — indigo, hidden on mobile */}
+      <div className="hidden md:flex flex-col flex-1 bg-indigo-600 p-12 justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white/15 rounded-2xl flex items-center justify-center">
+            <InfinityIcon className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-white font-extrabold text-xl tracking-tight">Continuum</span>
+        </div>
 
-        {/* Left — carousel — hidden on mobile */}
-        <div className="hidden md:flex flex-col flex-1 bg-indigo-600 p-10 justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-white/15 rounded-xl flex items-center justify-center">
-              <InfinityIcon className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-white font-extrabold text-lg tracking-tight">Continuum</span>
-          </div>
-          <div className="flex-1 flex flex-col justify-center py-8">
-            <div key={slide} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
-              <h2 className="text-2xl font-bold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
-              <p className="text-sm text-indigo-200 leading-relaxed max-w-xs">{currentSlide.desc}</p>
-              {currentSlide.preview}
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {SLIDES.map((_, i) => (
-              <button key={i} onClick={() => setSlide(i)}
-                className={`h-1.5 rounded-full transition-all duration-300 ease-apple ${i === slide ? "bg-white w-6" : "bg-white/30 w-1.5"}`} />
-            ))}
+        <div className="flex-1 flex flex-col justify-center py-12">
+          <div key={slide} className="animate-in fade-in slide-in-from-bottom-2 duration-500 max-w-md">
+            <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-4">{currentSlide.tag}</p>
+            <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-4">{currentSlide.title}</h2>
+            <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
+            {currentSlide.preview}
           </div>
         </div>
 
-        {/* Right — auth panel */}
-        <div className="flex flex-col justify-center flex-1 p-6 md:p-10">
-          {/* Mobile logo */}
-          <div className="flex items-center gap-3 mb-8 md:hidden">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
-              <InfinityIcon className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-slate-900 font-extrabold text-lg tracking-tight">Continuum</span>
-          </div>
+        <div className="flex gap-2">
+          {SLIDES.map((_, i) => (
+            <button key={i} onClick={() => setSlide(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ease-apple ${i === slide ? "bg-white w-8" : "bg-white/30 w-1.5"}`} />
+          ))}
+        </div>
+      </div>
 
+      {/* Right panel — white, full screen on mobile */}
+      <div className="flex flex-col justify-center flex-1 bg-white px-8 md:px-16 py-12 overflow-y-auto">
+        {/* Mobile logo */}
+        <div className="flex items-center gap-3 mb-10 md:hidden">
+          <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
+            <InfinityIcon className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-slate-900 font-extrabold text-lg tracking-tight">Continuum</span>
+        </div>
+
+        <div className="max-w-sm w-full mx-auto md:mx-0">
           {step === "main" ? (
             <>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
-              <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">Get started</h1>
-              <p className="text-sm text-slate-500 leading-relaxed mb-6">New here? We'll create your account automatically.</p>
+              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
+              <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
 
               {(error || localError) && (
-                <div className="bg-red-50 text-red-600 p-3 rounded-2xl text-xs flex items-center gap-2 mb-4">
+                <div className="bg-red-50 text-red-600 p-3 rounded-2xl text-xs flex items-center gap-2 mb-5">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <p>{error || localError}</p>
                 </div>
@@ -311,11 +306,11 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               </div>
 
               {authMode === "magic" ? (
-                <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-4 leading-relaxed">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
                   We'll send a sign-in link to your email. Click it and you're in — no password ever.
                 </div>
               ) : (
-                <div className="mb-4">
+                <div className="mb-5">
                   <Input type="password" placeholder="Password" value={password}
                     onChange={e => setPassword(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
@@ -324,7 +319,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 </div>
               )}
 
-              <Button variant="primary" className="w-full py-3 mb-4" onClick={handleEmailSubmit} disabled={localLoading || loading}>
+              <Button variant="primary" className="w-full py-3.5 mb-4" onClick={handleEmailSubmit} disabled={localLoading || loading}>
                 {localLoading
                   ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
                   : authMode === "magic"
@@ -338,7 +333,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 <div className="flex-1 h-px bg-slate-100" />
               </div>
 
-              <Button variant="google" className="w-full py-3 mb-3" onClick={onGoogleLogin} disabled={loading}>
+              <Button variant="google" className="w-full py-3.5 mb-3" onClick={onGoogleLogin} disabled={loading}>
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Connecting...</> : (
                   <>
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -353,7 +348,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               </Button>
 
               <button onClick={onDemo}
-                className="w-full py-3 rounded-full border border-indigo-100 bg-indigo-50 text-indigo-700 text-sm font-bold hover:bg-indigo-100 transition-all ease-apple active:scale-95 flex items-center justify-center gap-2">
+                className="w-full py-3.5 rounded-full border border-indigo-100 bg-indigo-50 text-indigo-700 text-sm font-bold hover:bg-indigo-100 transition-all ease-apple active:scale-95 flex items-center justify-center gap-2">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 Explore with demo data
               </button>
@@ -361,13 +356,13 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
             </>
           ) : (
             <>
-              <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-8 min-h-[44px]">
+              <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
                 <ArrowLeft className="w-3.5 h-3.5" /> Back
               </button>
-              <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
-                <Mail className="w-6 h-6 text-indigo-600" />
+              <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
+                <Mail className="w-7 h-7 text-indigo-600" />
               </div>
-              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight mb-3">Check your inbox</h2>
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">Check your inbox</h2>
               <p className="text-sm text-slate-500 leading-relaxed mb-6">
                 We sent a sign-in link to <strong className="text-slate-800">{email}</strong>. Click it and you're in — no password needed.
               </p>
@@ -567,8 +562,8 @@ const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
   }, [local]);
 
   return (
-    <Card className="p-5 shadow-md shadow-slate-200/50">
-      <div className="flex items-center gap-2 mb-3">
+    <Card className="p-6 shadow-md shadow-slate-200/50">
+      <div className="flex items-center gap-2 mb-4">
         <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block" />
         <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Where I am</span>
       </div>
@@ -641,8 +636,8 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
   };
 
   return (
-    <Card className="p-5 shadow-md shadow-slate-200/50">
-      <div className="flex items-center gap-2 mb-3">
+    <Card className="p-6 shadow-md shadow-slate-200/50">
+      <div className="flex items-center gap-2 mb-4">
         <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
         <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">Don't forget</span>
         {!isDemo && (
@@ -735,26 +730,24 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
 
   return (
     <div className="space-y-4">
-      {/* Briefing cards — stack on mobile, side by side on md+ */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <WhereIAmCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
         <DontForgetCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
       </div>
 
-      {/* Questions */}
-      <Card className="p-5 shadow-md shadow-slate-200/50">
-        <div className="flex items-center gap-2 mb-5">
+      <Card className="p-6 shadow-md shadow-slate-200/50">
+        <div className="flex items-center gap-2 mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block" />
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Questions</span>
         </div>
 
         {!isDemo && (
-          <div className="flex gap-2 mb-5">
+          <div className="flex gap-3 mb-6">
             <Input id="new-question" placeholder="What do you need to ask?" className="focus:ring-amber-200 focus:border-amber-300"
               onKeyDown={e => { if (e.key === "Enter") { addQuestion(e.target.value); e.target.value = ""; } }} />
-            <Button variant="amber" className="shrink-0 px-4 min-h-[44px]"
+            <Button variant="amber" className="shrink-0 px-5 min-h-[44px]"
               onClick={() => { const el = document.getElementById("new-question"); addQuestion(el.value); el.value = ""; }}>
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4" /> Add
             </Button>
           </div>
         )}
@@ -767,7 +760,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
         ) : (
           <div className="space-y-3">
             {activeQuestions.map(note => (
-              <div key={note.id} className="group flex items-start gap-3 p-4 bg-amber-50/60 border border-amber-100 rounded-2xl hover:border-amber-200 transition-all ease-apple">
+              <div key={note.id} className="group flex items-start gap-4 p-4 bg-amber-50/60 border border-amber-100 rounded-2xl hover:border-amber-200 transition-all ease-apple">
                 <button onClick={() => toggleNoteRes(note.id)}
                   className="mt-0.5 w-8 h-8 rounded-full border-2 border-amber-200 text-amber-500 bg-white flex items-center justify-center hover:bg-amber-100 transition-all ease-apple shrink-0 min-w-[32px]">
                   <Circle className="w-4 h-4" />
@@ -811,7 +804,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
           </div>
         )}
 
-        <div className="mt-6 pt-5 border-t border-slate-100">
+        <div className="mt-8 pt-6 border-t border-slate-100">
           <button onClick={() => setShowHistory(!showHistory)}
             className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-indigo-600 transition-colors mb-4 min-h-[44px]">
             {showHistory ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -846,7 +839,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const [isSidebarOpen, setSidebarOpen] = useState(false); // default closed on mobile
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isCompletedExpanded, setIsCompletedExpanded] = useState(false);
   const [resourceFilter, setResourceFilter] = useState(null);
   const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
@@ -863,7 +856,7 @@ export default function App() {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // Magic link handler
+  // Magic link
   useEffect(() => {
     if (isSignInWithEmailLink(auth, window.location.href)) {
       const email = window.localStorage.getItem("emailForSignIn");
@@ -981,7 +974,6 @@ export default function App() {
   const filteredResources = selectedProject ? selectedProject.resources.filter(r => !resourceFilter || (r.tags && r.tags.includes(resourceFilter))) : [];
   const handleScroll = e => setIsScrolled(e.target.scrollTop > 60);
 
-  // Close sidebar on mobile when project selected
   const selectProject = (id) => {
     setSelectedId(id);
     if (window.innerWidth < 768) setSidebarOpen(false);
@@ -1025,28 +1017,26 @@ export default function App() {
 
           {/* Mobile backdrop */}
           {isSidebarOpen && (
-            <div
-              className="fixed inset-0 bg-slate-900/40 z-10 md:hidden"
-              onClick={() => setSidebarOpen(false)}
-            />
+            <div className="fixed inset-0 bg-slate-900/40 z-10 md:hidden" onClick={() => setSidebarOpen(false)} />
           )}
 
-          {/* Sidebar — overlay on mobile, inline on desktop */}
+          {/* Sidebar */}
           <div className={`
             fixed md:relative top-0 left-0 h-full z-20
             ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-            ${isSidebarOpen ? "md:w-72" : "md:w-0"}
-            w-72 bg-white flex-shrink-0 transition-all duration-500 ease-apple flex flex-col shadow-2xl overflow-hidden
+            ${isSidebarOpen ? "md:w-80" : "md:w-0"}
+            w-80 bg-white flex-shrink-0 transition-all duration-500 ease-apple flex flex-col shadow-2xl overflow-hidden
           `}>
-            <div className="p-5 pb-4">
-              <div className="flex items-center justify-between mb-6">
+            <div className="p-6 pb-4 min-w-[320px]">
+              <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3 text-slate-800 font-extrabold text-xl tracking-tight">
                   <div className="p-2.5 bg-indigo-600 rounded-2xl text-white shadow-lg shadow-indigo-200/50">
                     <InfinityIcon className="w-5 h-5" />
                   </div>
                   <span>Continuum</span>
                 </div>
-                <button onClick={() => setSidebarOpen(false)} className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors active:scale-95 min-w-[40px] min-h-[40px] flex items-center justify-center">
+                <button onClick={() => setSidebarOpen(false)}
+                  className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors active:scale-95 min-w-[40px] min-h-[40px] flex items-center justify-center">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -1058,25 +1048,25 @@ export default function App() {
               )}
             </div>
 
-            <div className="flex-1 overflow-y-auto px-2">
-              <div className="mb-6">
-                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-4">Active</h3>
+            <div className="flex-1 overflow-y-auto min-w-[320px] px-2">
+              <div className="mb-8">
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">Active</h3>
                 {activeProjects.map(p => <SidebarItem key={p.id} project={p} />)}
               </div>
-              <div className="mb-6">
-                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-4">On Hold</h3>
+              <div className="mb-8">
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">On Hold</h3>
                 {pausedProjects.map(p => <SidebarItem key={p.id} project={p} />)}
               </div>
-              <div className="mb-6">
+              <div className="mb-8">
                 <button onClick={() => setIsCompletedExpanded(!isCompletedExpanded)}
-                  className="flex items-center justify-between w-full text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-4 hover:text-indigo-600 transition-colors min-h-[40px]">
+                  className="flex items-center justify-between w-full text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4 hover:text-indigo-600 transition-colors min-h-[40px]">
                   Completed {isCompletedExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
                 {isCompletedExpanded && completedProjects.map(p => <SidebarItem key={p.id} project={p} />)}
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-100">
+            <div className="p-4 border-t border-slate-100 min-w-[320px]">
               <button onClick={handleLogout}
                 className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all ease-apple active:scale-95 min-h-[48px]">
                 <LogOut className="w-4 h-4" /> {isDemo ? "Exit demo" : "Sign Out"}
@@ -1087,52 +1077,53 @@ export default function App() {
           {/* Main content */}
           <div className="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
 
-            {/* Sticky scroll header */}
-            <div className={`absolute top-0 left-0 right-0 bg-white/90 backdrop-blur-xl z-10 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0"}`}>
-              <div className="px-4 md:px-8 py-3 flex items-center gap-3">
-                <button onClick={() => setSidebarOpen(true)} className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center">
+            {/* Sticky scroll header — z-30 so it sits above everything including tabs */}
+            <div className={`absolute top-0 left-0 right-0 bg-white/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
+              <div className="max-w-5xl mx-auto px-6 md:px-12 py-3 flex items-center gap-3">
+                <button onClick={() => setSidebarOpen(true)}
+                  className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center shrink-0">
                   <Menu className="w-5 h-5" />
                 </button>
                 <h2 className="text-base font-bold text-slate-900 truncate flex-1 tracking-tight">{selectedProject?.title}</h2>
-                <div className="flex items-center gap-2 shrink-0">
-                  {!isDemo && selectedProject?.status !== "completed" ? (
-                    <>
-                      <Button onClick={() => toggleStatus(selectedProject.id)} variant="secondary" className="h-9 px-3 text-xs font-semibold hidden sm:flex">
-                        {selectedProject?.status === "active" ? <><PauseCircle className="w-3.5 h-3.5" /> Pause</> : <><PlayCircle className="w-3.5 h-3.5" /> Resume</>}
+                {!isDemo && selectedProject && (
+                  <div className="flex items-center gap-2 shrink-0">
+                    {selectedProject.status !== "completed" ? (
+                      <>
+                        <Button onClick={() => toggleStatus(selectedProject.id)} variant="secondary" className="h-9 px-3 text-xs font-semibold hidden sm:flex">
+                          {selectedProject.status === "active" ? <><PauseCircle className="w-3.5 h-3.5" /> Pause</> : <><PlayCircle className="w-3.5 h-3.5" /> Resume</>}
+                        </Button>
+                        <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-9 px-3 text-xs font-semibold hidden sm:flex">
+                          <CheckSquare className="w-3.5 h-3.5" /> Done
+                        </Button>
+                      </>
+                    ) : (
+                      <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-9 px-3 text-xs font-semibold hidden sm:flex">
+                        <RotateCcw className="w-3.5 h-3.5" /> Reopen
                       </Button>
-                      <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-9 px-3 text-xs font-semibold hidden sm:flex">
-                        <CheckSquare className="w-3.5 h-3.5" /> Done
-                      </Button>
-                    </>
-                  ) : !isDemo && (
-                    <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-9 px-3 text-xs font-semibold hidden sm:flex">
-                      <RotateCcw className="w-3.5 h-3.5" /> Reopen
-                    </Button>
-                  )}
-                  {!isDemo && (
+                    )}
                     <Button variant="icon" onClick={() => { setEditingProject(selectedProject); setIsProjectModalOpen(true); }} className="h-9 w-9">
                       <Settings className="w-4 h-4" />
                     </Button>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
 
             {selectedProject ? (
               <div className="flex-1 overflow-y-auto pb-12 scroll-smooth" onScroll={handleScroll}>
-                {/* Mobile menu button — always visible at top */}
-                <div className="flex items-center gap-3 px-4 pt-5 md:hidden">
+                {/* Mobile menu bar — always visible at top on mobile */}
+                <div className="flex items-center gap-3 px-4 pt-5 pb-2 md:hidden">
                   <button onClick={() => setSidebarOpen(true)}
-                    className="p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center shadow-sm border border-slate-200 bg-white">
+                    className="p-2.5 bg-white text-slate-500 hover:text-indigo-600 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center shadow-sm border border-slate-200">
                     <Menu className="w-5 h-5" />
                   </button>
                   <p className="text-sm font-semibold text-slate-500 truncate">{selectedProject.title}</p>
                 </div>
 
                 {/* Hero header */}
-                <header className="px-4 md:px-10 pt-6 md:pt-12 pb-6">
-                  <div className="max-w-4xl mx-auto">
-                    <div className="flex items-start justify-between gap-4 mb-6">
+                <header className="px-6 md:px-12 pt-8 md:pt-16 pb-8">
+                  <div className="max-w-5xl mx-auto">
+                    <div className="flex items-start justify-between gap-4 mb-8">
                       <Badge color={selectedProject.status === "active" ? "green" : selectedProject.status === "completed" ? "blue" : "amber"}>
                         {selectedProject.status === "active" ? "Active" : selectedProject.status === "completed" ? "Completed" : "Paused"}
                       </Badge>
@@ -1140,55 +1131,58 @@ export default function App() {
                         <div className="flex items-center gap-2 shrink-0">
                           {selectedProject.status !== "completed" ? (
                             <>
-                              <Button onClick={() => toggleStatus(selectedProject.id)} variant="secondary" className="h-9 px-3 text-xs">
-                                {selectedProject.status === "active" ? <><PauseCircle className="w-3.5 h-3.5" /><span className="hidden sm:inline ml-1">Pause</span></> : <><PlayCircle className="w-3.5 h-3.5" /><span className="hidden sm:inline ml-1">Resume</span></>}
+                              <Button onClick={() => toggleStatus(selectedProject.id)} variant="secondary" className="h-10 px-4 text-sm">
+                                {selectedProject.status === "active"
+                                  ? <><PauseCircle className="w-4 h-4" /><span className="hidden sm:inline ml-1">Pause</span></>
+                                  : <><PlayCircle className="w-4 h-4" /><span className="hidden sm:inline ml-1">Resume</span></>}
                               </Button>
-                              <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-9 px-3 text-xs">
-                                <CheckSquare className="w-3.5 h-3.5" /><span className="hidden sm:inline ml-1">Done</span>
+                              <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-10 px-4 text-sm">
+                                <CheckSquare className="w-4 h-4" /><span className="hidden sm:inline ml-1">Done</span>
                               </Button>
                             </>
                           ) : (
-                            <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-9 px-3 text-xs">
-                              <RotateCcw className="w-3.5 h-3.5" /><span className="hidden sm:inline ml-1">Reopen</span>
+                            <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-10 px-4 text-sm">
+                              <RotateCcw className="w-4 h-4" /><span className="hidden sm:inline ml-1">Reopen</span>
                             </Button>
                           )}
-                          <Button variant="icon" onClick={() => { setEditingProject(selectedProject); setIsProjectModalOpen(true); }} className="h-9 w-9">
-                            <Settings className="w-4 h-4" />
+                          <Button variant="icon" onClick={() => { setEditingProject(selectedProject); setIsProjectModalOpen(true); }} className="h-10 w-10">
+                            <Settings className="w-5 h-5" />
                           </Button>
                         </div>
                       )}
                     </div>
 
-                    <h1 className="text-2xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 mb-6 break-words leading-tight">
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 mb-8 break-words leading-[1.1]">
                       {selectedProject.title}
                     </h1>
 
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 border-t border-slate-200/60 pt-5">
-                      <div className="md:col-span-3 space-y-2">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-5 border-t border-slate-200/60 pt-8">
+                      <div className="md:col-span-3 space-y-3">
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Start Date</p>
-                        <div className="flex items-center gap-2 text-slate-700 font-medium text-sm">
+                        <div className="flex items-center gap-2 text-slate-700 font-medium text-base">
                           <Calendar className="w-4 h-4 text-slate-400" />
                           {selectedProject.startDate ? new Date(selectedProject.startDate).toLocaleDateString() : "N/A"}
                         </div>
                       </div>
-                      <div className="md:col-span-9 space-y-2">
+                      <div className="md:col-span-9 space-y-3">
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</p>
-                        <p className="text-sm text-slate-600 leading-relaxed">{selectedProject.description || "No description provided."}</p>
+                        <p className="text-base text-slate-600 leading-relaxed">{selectedProject.description || "No description provided."}</p>
                       </div>
                     </div>
                   </div>
                 </header>
 
-                <div className="px-4 md:px-10 max-w-4xl mx-auto">
-                  {/* Tabs */}
-                  <div className="relative flex items-center bg-white p-1 rounded-full w-full max-w-xs shadow-sm border border-slate-200 mb-6">
+                {/* Tabs + content — max-w-5xl restored */}
+                <div className="px-6 md:px-12 max-w-5xl mx-auto">
+                  {/* Tab switcher — z-0 so sticky header (z-30) sits above it */}
+                  <div className="relative flex items-center bg-white p-1 rounded-full w-full max-w-xs shadow-sm border border-slate-200 mb-8 z-0">
                     <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${activeTab === "overview" ? "left-1" : "left-[50%]"}`} />
                     <button onClick={() => setActiveTab("overview")}
-                      className={`relative z-10 flex-1 h-10 px-4 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "overview" ? "text-indigo-900" : "text-slate-500"}`}>
+                      className={`relative z-10 flex-1 h-10 px-4 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "overview" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
                       Overview
                     </button>
                     <button onClick={() => setActiveTab("resources")}
-                      className={`relative z-10 flex-1 h-10 px-4 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "resources" ? "text-indigo-900" : "text-slate-500"}`}>
+                      className={`relative z-10 flex-1 h-10 px-4 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "resources" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
                       Resources
                     </button>
                   </div>
@@ -1199,80 +1193,86 @@ export default function App() {
                         <OverviewTab project={selectedProject} onUpdate={handleBriefingUpdate} onUpdateCtx={updateCtx} isDemo={isDemo} />
                       ) : (
                         <div>
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
                             <div className="flex flex-wrap items-center gap-2">
+                              <p className="text-slate-500 text-sm font-semibold mr-2">Filter by:</p>
                               <button onClick={() => setResourceFilter(null)}
-                                className={`px-3 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 min-h-[36px] ${resourceFilter === null ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
+                                className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === null ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200" : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
                                 All
                               </button>
                               {uniqueTags.map(tag => (
                                 <button key={tag} onClick={() => setResourceFilter(tag === resourceFilter ? null : tag)}
-                                  className={`px-3 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 min-h-[36px] ${resourceFilter === tag ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
+                                  className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === tag ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200" : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
                                   {tag}
                                 </button>
                               ))}
                             </div>
                             {!isDemo && (
-                              <Button variant="primary" onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }} className="w-full sm:w-auto min-h-[44px]">
-                                <Plus className="w-4 h-4" /> Add Resource
+                              <Button variant="primary" onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }} className="pl-6 pr-8 w-full sm:w-auto min-h-[44px]">
+                                <Plus className="w-5 h-5" /> Add Resource
                               </Button>
                             )}
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {filteredResources.map(resource => (
-                              <div key={resource.id} className="group bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ease-apple flex flex-col border border-slate-100">
+                              <div key={resource.id} className="group bg-white rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col border border-slate-100">
                                 {resource.type === "image" && (
-                                  <div className="h-36 bg-slate-100 w-full relative cursor-pointer overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
+                                  <div className="h-40 bg-slate-100 w-full relative cursor-pointer overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
                                     <img src={resource.url} alt={resource.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                       onError={e => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/f1f5f9/94a3b8?text=No+Preview"; }} />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
+                                      <div className="bg-white/90 p-3 rounded-full backdrop-blur-md shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                        <ExternalLink className="w-6 h-6 text-slate-900" />
+                                      </div>
+                                    </div>
                                   </div>
                                 )}
                                 {resource.type === "document" && (
-                                  <div className="h-36 bg-indigo-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-indigo-100" onClick={() => window.open(resource.url, "_blank")}>
-                                    <div className="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
-                                      <FileIcon className="w-8 h-8 text-indigo-500" />
+                                  <div className="h-40 bg-indigo-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-indigo-100" onClick={() => window.open(resource.url, "_blank")}>
+                                    <div className="w-20 h-20 bg-white rounded-3xl shadow-lg shadow-indigo-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                      <FileIcon className="w-10 h-10 text-indigo-500" />
                                     </div>
                                     <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Document</span>
                                   </div>
                                 )}
                                 {resource.type === "link" && (
-                                  <div className="h-36 bg-blue-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-blue-100" onClick={() => window.open(resource.url, "_blank")}>
-                                    <div className="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
-                                      <LinkIcon className="w-8 h-8 text-blue-500" />
+                                  <div className="h-40 bg-blue-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-blue-100" onClick={() => window.open(resource.url, "_blank")}>
+                                    <div className="w-20 h-20 bg-white rounded-3xl shadow-lg shadow-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                      <LinkIcon className="w-10 h-10 text-blue-500" />
                                     </div>
                                     <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Web Link</span>
                                   </div>
                                 )}
-                                <div className="p-5 flex-1 flex flex-col">
-                                  <div className="flex items-start justify-between mb-3">
-                                    <div className={`p-2 rounded-xl ${resource.type === "link" ? "bg-blue-50 text-blue-600" : resource.type === "image" ? "bg-purple-50 text-purple-600" : "bg-indigo-50 text-indigo-600"}`}>
-                                      {resource.type === "link" && <LinkIcon className="w-4 h-4" />}
-                                      {resource.type === "image" && <ImageIcon className="w-4 h-4" />}
-                                      {resource.type === "document" && <FileIcon className="w-4 h-4" />}
+                                <div className="p-8 flex-1 flex flex-col">
+                                  <div className="flex items-start justify-between mb-4">
+                                    <div className={`p-2.5 rounded-xl ${resource.type === "link" ? "bg-blue-50 text-blue-600" : resource.type === "image" ? "bg-purple-50 text-purple-600" : "bg-indigo-50 text-indigo-600"}`}>
+                                      {resource.type === "link" && <LinkIcon className="w-5 h-5" />}
+                                      {resource.type === "image" && <ImageIcon className="w-5 h-5" />}
+                                      {resource.type === "document" && <FileIcon className="w-5 h-5" />}
                                     </div>
                                     {!isDemo && (
-                                      <div className="flex gap-1 -mr-1">
-                                        <Button variant="icon" onClick={() => { setEditingResource(resource); setIsResourceModalOpen(true); }} className="opacity-0 group-hover:opacity-100 hover:bg-slate-50 hover:text-indigo-600 w-9 h-9">
+                                      <div className="flex gap-1 -mr-2">
+                                        <Button variant="icon" onClick={() => { setEditingResource(resource); setIsResourceModalOpen(true); }} className="opacity-0 group-hover:opacity-100 hover:bg-slate-50 hover:text-indigo-600">
                                           <Edit2 className="w-4 h-4" />
                                         </Button>
-                                        <Button variant="icon" onClick={() => deleteRes(resource.id)} className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 w-9 h-9">
+                                        <Button variant="icon" onClick={() => deleteRes(resource.id)} className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500">
                                           <Trash2 className="w-4 h-4" />
                                         </Button>
                                       </div>
                                     )}
                                   </div>
-                                  <h3 className="font-bold text-base text-slate-900 truncate mb-2 tracking-tight">{resource.title}</h3>
-                                  {resource.description && <p className="text-xs text-slate-500 mb-4 line-clamp-2 leading-relaxed flex-1">{resource.description}</p>}
-                                  <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                                    <div className="flex flex-wrap gap-1.5">
+                                  <h3 className="font-bold text-xl text-slate-900 truncate mb-3 tracking-tight">{resource.title}</h3>
+                                  {resource.description && <p className="text-sm text-slate-500 mb-8 line-clamp-2 leading-relaxed flex-1 font-medium">{resource.description}</p>}
+                                  <div className="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
+                                    <div className="flex flex-wrap gap-2">
                                       {resource.tags?.slice(0, 2).map((tag, i) => (
-                                        <span key={i} className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-50 text-slate-500 border border-slate-100">{tag}</span>
+                                        <span key={i} className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500 border border-slate-100">{tag}</span>
                                       ))}
-                                      {resource.tags?.length > 2 && <span className="text-[10px] text-slate-400 self-center font-bold">+{resource.tags.length - 2}</span>}
+                                      {resource.tags?.length > 2 && <span className="text-[10px] text-slate-400 self-center pl-1 font-bold">+{resource.tags.length - 2}</span>}
                                     </div>
-                                    <a href={resource.url} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-indigo-50 text-slate-300 hover:text-indigo-600 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center">
-                                      <ExternalLink className="w-4 h-4" />
+                                    <a href={resource.url} target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-full hover:bg-indigo-50 text-slate-300 hover:text-indigo-600 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center">
+                                      <ExternalLink className="w-5 h-5" />
                                     </a>
                                   </div>
                                 </div>
@@ -1280,11 +1280,11 @@ export default function App() {
                             ))}
                             {!isDemo && (
                               <button onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }}
-                                className="rounded-[24px] border-2 border-dashed border-slate-300/80 flex flex-col items-center justify-center min-h-[220px] text-slate-400 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all duration-300 p-6 group ease-apple">
-                                <div className="w-14 h-14 rounded-2xl bg-slate-100 group-hover:bg-indigo-100 transition-colors mb-4 flex items-center justify-center duration-300">
-                                  <Plus className="w-7 h-7 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                                className="rounded-[28px] border-2 border-dashed border-slate-300/80 flex flex-col items-center justify-center min-h-[260px] text-slate-400 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all duration-300 p-8 group ease-apple">
+                                <div className="w-20 h-20 rounded-[2rem] bg-slate-100 group-hover:bg-indigo-100 transition-colors mb-6 flex items-center justify-center duration-300">
+                                  <Plus className="w-10 h-10 text-slate-300 group-hover:text-indigo-500 transition-colors" />
                                 </div>
-                                <span className="font-bold text-base tracking-tight">Add Resource</span>
+                                <span className="font-bold text-xl tracking-tight">Add Resource</span>
                               </button>
                             )}
                           </div>
@@ -1296,17 +1296,17 @@ export default function App() {
               </div>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-6 animate-in fade-in duration-500">
-                <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                  <Folder className="w-12 h-12 text-slate-300" />
+                <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center mb-8 shadow-inner">
+                  <Folder className="w-16 h-16 text-slate-300" />
                 </div>
-                <p className="text-lg font-bold text-slate-900 mb-2 text-center">Ready to work?</p>
-                <p className="text-slate-500 mb-6 text-center text-sm">Select a project from the sidebar to begin</p>
+                <p className="text-xl font-bold text-slate-900 mb-2">Ready to work?</p>
+                <p className="text-slate-500 mb-8 text-center">Select a project from the sidebar to begin</p>
                 <button onClick={() => setSidebarOpen(true)}
                   className="mb-4 flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors min-h-[44px]">
                   <Menu className="w-4 h-4" /> Open projects
                 </button>
                 {!isDemo && (
-                  <Button onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }} className="min-h-[48px]">
+                  <Button onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }} className="min-h-[48px] pl-6 pr-8">
                     <Plus className="w-5 h-5" /> Create First Project
                   </Button>
                 )}
