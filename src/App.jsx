@@ -3,7 +3,7 @@ import {
   Folder, PauseCircle, PlayCircle, Plus, MoreVertical,
   Link as LinkIcon, Image as ImageIcon, ExternalLink, Trash2,
   X, CheckCircle2, Circle, ChevronDown, ChevronUp, Edit2,
-  File as FileIcon, Calendar, Settings, PanelLeft,
+  File as FileIcon, Calendar, Settings, PanelLeft, PanelRight,
   Infinity as InfinityIcon, LogOut, Loader2, AlertCircle,
   CheckSquare, RotateCcw, List, MessageCircle, Mail, ArrowLeft,
   Send, Menu,
@@ -112,18 +112,18 @@ const DEMO_PROJECTS = [
 // --- UI Components ---
 const Button = ({ variant = "primary", className = "", children, ...props }) => {
   const styles = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm hover:shadow-md border border-transparent",
-    secondary: "bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 shadow-sm",
+    primary: "bg-indigo-600 text-slate-50 hover:bg-indigo-700 shadow-sm hover:shadow-md border border-transparent",
+    secondary: "bg-slate-50 text-slate-700 border border-slate-300 hover:bg-slate-100 shadow-sm",
     tertiary: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 bg-transparent border border-transparent",
     soft: "bg-indigo-50 text-indigo-900 hover:bg-indigo-100 border border-transparent",
     amber: "bg-amber-50 text-amber-900 hover:bg-amber-100 border border-transparent",
     destructive: "text-red-600 hover:bg-red-50 hover:text-red-700 bg-transparent border border-transparent",
     icon: "p-2.5 text-slate-400 hover:text-indigo-900 hover:bg-indigo-50 rounded-full border border-transparent",
-    google: "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm",
+    google: "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 hover:border-slate-300 shadow-sm",
   };
   const base = variant === "icon"
     ? styles.icon
-    : "inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ease-apple active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100";
+    : "inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ease-apple active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100";
   return (
     <button className={`${base} ${variant !== "icon" ? styles[variant] : ""} ${className}`} {...props}>
       {children}
@@ -132,15 +132,15 @@ const Button = ({ variant = "primary", className = "", children, ...props }) => 
 };
 
 const Card = ({ children, className = "" }) => (
-  <div className={`bg-white rounded-[24px] shadow-sm border border-slate-200 ${className}`}>{children}</div>
+  <div className={`bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 ${className}`}>{children}</div>
 );
 
 const Input = ({ className = "", ...props }) => (
-  <input className={`w-full bg-slate-50 hover:bg-slate-100 focus:bg-white rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 border border-slate-300 transition-all duration-200 ease-apple placeholder:text-slate-400 ${className}`} {...props} />
+  <input className={`w-full bg-slate-100 hover:bg-slate-200/60 focus:bg-slate-50 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 border border-slate-200 transition-all duration-200 ease-apple placeholder:text-slate-400 ${className}`} {...props} />
 );
 
 const TextArea = ({ className = "", ...props }) => (
-  <textarea className={`w-full bg-slate-50 hover:bg-slate-100 focus:bg-white rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 border border-slate-300 transition-all duration-200 ease-apple placeholder:text-slate-400 resize-none ${className}`} {...props} />
+  <textarea className={`w-full bg-slate-100 hover:bg-slate-200/60 focus:bg-slate-50 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 border border-slate-200 transition-all duration-200 ease-apple placeholder:text-slate-400 resize-none ${className}`} {...props} />
 );
 
 const Badge = ({ children, color = "slate", className = "" }) => {
@@ -154,27 +154,27 @@ const Badge = ({ children, color = "slate", className = "" }) => {
   return <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${colors[color]} ${className}`}>{children}</span>;
 };
 
-// --- Login Screen (full viewport, edge to edge) ---
+// --- Login Screen ---
 const SLIDES = [
   {
     tag: "Context switching",
     title: "Pick up exactly where you left off",
     desc: "Stop wasting time figuring out where you were. Continuum keeps your project context front and centre every time you return.",
     preview: (
-      <div className="flex gap-3 mt-5">
-        <div className="flex-1 bg-white/10 rounded-2xl p-3">
+      <div className="flex gap-3 mt-6">
+        <div className="flex-1 bg-slate-50/10 rounded-2xl p-4 border border-slate-50/10">
           <div className="flex items-center gap-2 mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-300 inline-block" />
             <span className="text-[9px] font-bold text-indigo-200 uppercase tracking-widest">Where I am</span>
           </div>
-          <p className="text-xs text-white/70 leading-relaxed">Sitemap v2 approved. Moving into content audit.</p>
+          <p className="text-xs text-slate-200/70 leading-relaxed">Sitemap v2 approved. Moving into content audit.</p>
         </div>
-        <div className="flex-1 bg-white/10 rounded-2xl p-3">
+        <div className="flex-1 bg-slate-50/10 rounded-2xl p-4 border border-slate-50/10">
           <div className="flex items-center gap-2 mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-300 inline-block" />
             <span className="text-[9px] font-bold text-amber-200 uppercase tracking-widest">Don't forget</span>
           </div>
-          <p className="text-xs text-white/70 leading-relaxed">Max 6 nav items. Blog retired.</p>
+          <p className="text-xs text-slate-200/70 leading-relaxed">Max 6 nav items. Blog retired.</p>
         </div>
       </div>
     ),
@@ -184,11 +184,11 @@ const SLIDES = [
     title: "Never lose track of a blocker",
     desc: "Log questions the moment they come up. Resolve them when you get answers. Full history always there.",
     preview: (
-      <div className="flex flex-col gap-2 mt-5">
+      <div className="flex flex-col gap-2 mt-6">
         {["Has the client confirmed the new sitemap?", "Are we handling the CMS migration?"].map((q, i) => (
-          <div key={i} className="flex items-center gap-3 bg-white/10 rounded-2xl px-3 py-2.5">
-            <div className="w-3.5 h-3.5 rounded-full border-2 border-amber-300 shrink-0" />
-            <p className="text-xs text-white/75">{q}</p>
+          <div key={i} className="flex items-center gap-3 bg-slate-50/10 rounded-2xl px-4 py-3 border border-slate-50/10">
+            <div className="w-4 h-4 rounded-full border-2 border-amber-300 shrink-0" />
+            <p className="text-xs text-slate-200/75">{q}</p>
           </div>
         ))}
       </div>
@@ -197,13 +197,13 @@ const SLIDES = [
   {
     tag: "Resources",
     title: "Stop hunting through folders",
-    desc: "Links, docs, and images — tagged and filterable, all in one place per project.",
+    desc: "Links, docs, and images — tagged and filterable, all in one place per project. Find anything in seconds.",
     preview: (
-      <div className="grid grid-cols-2 gap-2 mt-5">
+      <div className="grid grid-cols-2 gap-2 mt-6">
         {[["Sitemap v2", "Project Doc"], ["Content Audit", "UX"], ["Moodboard", "UI Inspiration"], ["Client Brief", "Project Doc"]].map(([title, tag], i) => (
-          <div key={i} className="bg-white/10 rounded-xl p-2.5">
-            <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-1">{tag}</p>
-            <p className="text-xs font-semibold text-white/80">{title}</p>
+          <div key={i} className="bg-slate-50/10 rounded-xl p-3 border border-slate-50/10">
+            <p className="text-[9px] font-bold text-slate-300/50 uppercase tracking-widest mb-1">{tag}</p>
+            <p className="text-xs font-semibold text-slate-200/80">{title}</p>
           </div>
         ))}
       </div>
@@ -240,38 +240,35 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
-      {/* Left panel — indigo, hidden on mobile */}
-      <div className="hidden md:flex flex-col flex-1 bg-indigo-600 p-12 justify-between">
+      {/* Left — indigo, hidden on mobile */}
+      <div className="hidden md:flex flex-col flex-1 bg-indigo-600 px-12 py-12 justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/15 rounded-2xl flex items-center justify-center">
-            <InfinityIcon className="w-6 h-6 text-white" />
+          <div className="w-10 h-10 bg-slate-50/15 rounded-2xl flex items-center justify-center">
+            <InfinityIcon className="w-6 h-6 text-slate-50" />
           </div>
-          <span className="text-white font-extrabold text-xl tracking-tight">Continuum</span>
+          <span className="text-slate-50 font-extrabold text-xl tracking-tight">Continuum</span>
         </div>
-
         <div className="flex-1 flex flex-col justify-center py-12">
           <div key={slide} className="animate-in fade-in slide-in-from-bottom-2 duration-500 max-w-md">
             <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-4">{currentSlide.tag}</p>
-            <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-4">{currentSlide.title}</h2>
+            <h2 className="text-3xl font-bold text-slate-50 leading-tight tracking-tight mb-4">{currentSlide.title}</h2>
             <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
             {currentSlide.preview}
           </div>
         </div>
-
         <div className="flex gap-2">
           {SLIDES.map((_, i) => (
             <button key={i} onClick={() => setSlide(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ease-apple ${i === slide ? "bg-white w-8" : "bg-white/30 w-1.5"}`} />
+              className={`h-1.5 rounded-full transition-all duration-300 ease-apple ${i === slide ? "bg-slate-50 w-8" : "bg-slate-50/30 w-1.5"}`} />
           ))}
         </div>
       </div>
 
-      {/* Right panel — white, full screen on mobile */}
-      <div className="flex flex-col justify-center flex-1 bg-white px-8 md:px-16 py-12 overflow-y-auto">
-        {/* Mobile logo */}
+      {/* Right — auth panel */}
+      <div className="flex flex-col justify-center flex-1 bg-[#F2F4F6] px-8 md:px-16 py-12 overflow-y-auto">
         <div className="flex items-center gap-3 mb-10 md:hidden">
           <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
-            <InfinityIcon className="w-5 h-5 text-white" />
+            <InfinityIcon className="w-5 h-5 text-slate-50" />
           </div>
           <span className="text-slate-900 font-extrabold text-lg tracking-tight">Continuum</span>
         </div>
@@ -293,12 +290,12 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               <Input type="email" placeholder="Your email address" value={email}
                 onChange={e => setEmail(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
-                className="mb-3" />
+                className="mb-3 bg-slate-100" />
 
-              <div className="flex gap-2 p-1 bg-slate-100 rounded-full border border-slate-200 mb-3">
+              <div className="flex gap-2 p-1 bg-slate-200/60 rounded-full border border-slate-200 mb-3">
                 {[["magic", "Magic link", "No password"], ["password", "Password", "Traditional"]].map(([mode, label, sub]) => (
                   <button key={mode} onClick={() => setAuthMode(mode)}
-                    className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all duration-200 ease-apple ${authMode === mode ? "bg-white shadow-sm text-indigo-900 ring-1 ring-black/5" : "text-slate-500 hover:text-slate-700"}`}>
+                    className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all duration-200 ease-apple ${authMode === mode ? "bg-slate-50 shadow-sm text-indigo-900 ring-1 ring-slate-900/5" : "text-slate-500 hover:text-slate-700"}`}>
                     {label}
                     <span className="block text-[10px] font-medium mt-0.5 opacity-60">{sub}</span>
                   </button>
@@ -306,7 +303,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               </div>
 
               {authMode === "magic" ? (
-                <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
+                <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
                   We'll send a sign-in link to your email. Click it and you're in — no password ever.
                 </div>
               ) : (
@@ -314,7 +311,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                   <Input type="password" placeholder="Password" value={password}
                     onChange={e => setPassword(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
-                    className="mb-2" />
+                    className="mb-2 bg-slate-100" />
                   <p className="text-xs text-slate-400 text-right cursor-pointer hover:text-indigo-600 transition-colors">Forgot password?</p>
                 </div>
               )}
@@ -328,9 +325,9 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               </Button>
 
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex-1 h-px bg-slate-100" />
-                <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">or</span>
-                <div className="flex-1 h-px bg-slate-100" />
+                <div className="flex-1 h-px bg-slate-200" />
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">or</span>
+                <div className="flex-1 h-px bg-slate-200" />
               </div>
 
               <Button variant="google" className="w-full py-3.5 mb-3" onClick={onGoogleLogin} disabled={loading}>
@@ -348,7 +345,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               </Button>
 
               <button onClick={onDemo}
-                className="w-full py-3.5 rounded-full border border-indigo-100 bg-indigo-50 text-indigo-700 text-sm font-bold hover:bg-indigo-100 transition-all ease-apple active:scale-95 flex items-center justify-center gap-2">
+                className="w-full py-3.5 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-bold hover:bg-indigo-100 transition-all ease-apple active:scale-95 flex items-center justify-center gap-2">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 Explore with demo data
               </button>
@@ -366,7 +363,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               <p className="text-sm text-slate-500 leading-relaxed mb-6">
                 We sent a sign-in link to <strong className="text-slate-800">{email}</strong>. Click it and you're in — no password needed.
               </p>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
+              <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
                 Didn't get it? Check your spam, or{" "}
                 <button onClick={handleEmailSubmit} className="text-indigo-600 font-semibold hover:underline">resend the link.</button>
               </div>
@@ -380,11 +377,11 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
 
 // --- Demo Banner ---
 const DemoBanner = ({ onSignIn }) => (
-  <div className="bg-indigo-600 text-white px-4 py-2.5 flex items-center justify-between shrink-0 z-30 gap-3">
+  <div className="bg-indigo-600 text-slate-50 px-6 py-2.5 flex items-center justify-between shrink-0 z-30 gap-3">
     <p className="text-xs font-semibold">Exploring demo data — nothing is saved.</p>
     <button onClick={onSignIn}
-      className="text-xs font-bold bg-white text-indigo-700 px-3 py-1.5 rounded-full hover:bg-indigo-50 transition-colors active:scale-95 ease-apple shrink-0">
-      Sign in
+      className="text-xs font-bold bg-slate-50 text-indigo-700 px-4 py-1.5 rounded-full hover:bg-indigo-50 transition-colors active:scale-95 ease-apple shrink-0">
+      Sign in to save your work
     </button>
   </div>
 );
@@ -422,20 +419,20 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
 
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in" onClick={onClose}>
-      <div className="bg-white w-full sm:max-w-lg sm:rounded-[28px] rounded-t-[28px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300 ease-apple flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-        <div className="p-5 border-b border-slate-100 flex justify-between items-center shrink-0">
-          <h3 className="font-bold text-lg text-slate-900">{resource ? "Edit Resource" : "Add New Resource"}</h3>
+      <div className="bg-slate-50 w-full sm:max-w-lg sm:rounded-[28px] rounded-t-[28px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300 ease-apple flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b border-slate-200 flex justify-between items-center shrink-0">
+          <h3 className="font-bold text-xl text-slate-900">{resource ? "Edit Resource" : "Add New Resource"}</h3>
           <Button variant="icon" onClick={onClose}><X className="w-5 h-5" /></Button>
         </div>
-        <div className="p-5 overflow-y-auto">
+        <div className="p-8 overflow-y-auto">
           <form onSubmit={handleSubmit}>
-            <div className="space-y-5">
+            <div className="space-y-6">
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-slate-500 ml-1">Resource Type</label>
-                <div className="flex gap-2 p-1 bg-slate-100 rounded-full border border-slate-200">
+                <div className="flex gap-2 p-1 bg-slate-200/60 rounded-full border border-slate-200">
                   {["link", "image", "document"].map(type => (
                     <button key={type} type="button" onClick={() => setResourceType(type)}
-                      className={`flex-1 py-2 rounded-full text-sm font-medium capitalize transition-all duration-200 ease-apple ${resourceType === type ? "bg-white shadow-sm text-indigo-900 ring-1 ring-black/5" : "text-slate-500"}`}>
+                      className={`flex-1 py-2 rounded-full text-sm font-medium capitalize transition-all duration-200 ease-apple ${resourceType === type ? "bg-slate-50 shadow-sm text-indigo-900 ring-1 ring-slate-900/5" : "text-slate-500 hover:text-slate-700"}`}>
                       {type}
                     </button>
                   ))}
@@ -463,21 +460,21 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
                 <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1">
                   {selectedTags.map(tag => (
                     <button key={tag} type="button" onClick={() => toggleTag(tag)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-indigo-50 border-indigo-200 text-indigo-700 active:scale-95">
+                      className="px-4 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-indigo-50 border-indigo-200 text-indigo-700 active:scale-95">
                       {tag} <X className="w-3 h-3 inline ml-1" />
                     </button>
                   ))}
                   {DEFAULT_TAGS.filter(t => !selectedTags.includes(t)).map(tag => (
                     <button key={tag} type="button" onClick={() => toggleTag(tag)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-white border-slate-200 text-slate-500 active:scale-95">
+                      className="px-4 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200 active:scale-95">
                       {tag}
                     </button>
                   ))}
                 </div>
               </div>
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex justify-end gap-3 mt-8 pt-4">
                 <Button type="button" variant="tertiary" onClick={onClose}>Cancel</Button>
-                <Button type="submit" variant="primary" className="px-6">{resource ? "Save Changes" : "Add Resource"}</Button>
+                <Button type="submit" variant="primary" className="px-8">{resource ? "Save Changes" : "Add Resource"}</Button>
               </div>
             </div>
           </form>
@@ -493,24 +490,24 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
   const isEditing = !!project;
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in" onClick={onClose}>
-      <div className="bg-white w-full sm:max-w-lg sm:rounded-[28px] rounded-t-[28px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300 ease-apple max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-        <div className="p-5 border-b border-slate-100 flex justify-between items-center">
-          <h3 className="font-bold text-lg text-slate-900">{isEditing ? "Edit Project" : "Create New Project"}</h3>
+      <div className="bg-slate-50 w-full sm:max-w-lg sm:rounded-[28px] rounded-t-[28px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300 ease-apple max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b border-slate-200 flex justify-between items-center">
+          <h3 className="font-bold text-xl text-slate-900">{isEditing ? "Edit Project" : "Create New Project"}</h3>
           <Button variant="icon" onClick={onClose}><X className="w-5 h-5" /></Button>
         </div>
-        <div className="p-5">
+        <div className="p-8">
           <form onSubmit={e => {
             e.preventDefault();
             const fd = new FormData(e.target);
             onSubmit({ title: fd.get("title"), client: fd.get("client"), startDate: fd.get("startDate"), description: fd.get("description") });
             onClose();
           }}>
-            <div className="space-y-5">
+            <div className="space-y-6">
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-slate-500 ml-1">Project Name</label>
                 <Input name="title" defaultValue={project?.title || ""} autoFocus placeholder="e.g., Nebula Brand Identity" required />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="block text-xs font-medium text-slate-500 ml-1">Client Name</label>
                   <Input name="client" defaultValue={project?.client || ""} placeholder="e.g., Nebula Tech" required />
@@ -522,15 +519,15 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
               </div>
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-slate-500 ml-1">Description</label>
-                <TextArea name="description" defaultValue={project?.description || ""} rows="3" placeholder="Brief summary of the project goals..." />
+                <TextArea name="description" defaultValue={project?.description || ""} rows="4" placeholder="Brief summary of the project goals..." />
               </div>
-              <div className="flex justify-between items-center pt-2">
+              <div className="flex justify-between items-center mt-8 pt-4">
                 {isEditing ? (
-                  <Button type="button" variant="destructive" onClick={() => { if (confirm("Delete this project?")) { onDelete(project.id); onClose(); } }}>Delete</Button>
+                  <Button type="button" variant="destructive" onClick={() => { if (confirm("Delete this project?")) { onDelete(project.id); onClose(); } }}>Delete Project</Button>
                 ) : <div />}
                 <div className="flex gap-3">
                   <Button type="button" variant="tertiary" onClick={onClose}>Cancel</Button>
-                  <Button type="submit" variant="primary" className="px-6">{isEditing ? "Save" : "Create"}</Button>
+                  <Button type="submit" variant="primary" className="px-8">{isEditing ? "Save Changes" : "Create Project"}</Button>
                 </div>
               </div>
             </div>
@@ -562,7 +559,7 @@ const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
   }, [local]);
 
   return (
-    <Card className="p-6 shadow-md shadow-slate-200/50">
+    <div className="bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
       <div className="flex items-center gap-2 mb-4">
         <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block" />
         <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Where I am</span>
@@ -575,7 +572,7 @@ const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
         onChange={e => setLocal(e.target.value)}
         readOnly={isDemo}
       />
-    </Card>
+    </div>
   );
 };
 
@@ -636,13 +633,13 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
   };
 
   return (
-    <Card className="p-6 shadow-md shadow-slate-200/50">
+    <div className="bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
       <div className="flex items-center gap-2 mb-4">
         <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
         <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">Don't forget</span>
         {!isDemo && (
           <button onClick={switchMode}
-            className="ml-auto flex items-center gap-1.5 text-[10px] font-bold text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 px-2.5 py-1 rounded-full transition-all ease-apple active:scale-95 min-h-[32px]">
+            className="ml-auto flex items-center gap-1.5 text-[10px] font-bold text-slate-400 hover:text-indigo-600 bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 px-2.5 py-1 rounded-full transition-all ease-apple active:scale-95">
             {mode === "text" ? <><CheckSquare className="w-3 h-3" /> Checklist</> : <><List className="w-3 h-3" /> Text</>}
           </button>
         )}
@@ -667,17 +664,17 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
               </button>
               <span className={`text-sm flex-1 leading-relaxed ${item.checked ? "line-through text-slate-300" : "text-slate-700"}`}>{item.text}</span>
               {!isDemo && (
-                <button onClick={() => deleteItem(item.id)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-red-400 transition-all ease-apple min-w-[28px] min-h-[28px] flex items-center justify-center">
+                <button onClick={() => deleteItem(item.id)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-red-400 transition-all ease-apple">
                   <X className="w-3 h-3" />
                 </button>
               )}
             </div>
           ))}
           {!isDemo && (
-            <div className="flex items-center gap-3 mt-3 pt-2 border-t border-slate-100">
-              <div className="w-5 h-5 rounded-md border-2 border-dashed border-slate-200 shrink-0" />
+            <div className="flex items-center gap-3 mt-3 pt-2 border-t border-slate-200">
+              <div className="w-5 h-5 rounded-md border-2 border-dashed border-slate-300 shrink-0" />
               <input
-                className="text-sm text-slate-500 bg-transparent focus:outline-none placeholder:text-slate-300 flex-1 min-h-[36px]"
+                className="text-sm text-slate-500 bg-transparent focus:outline-none placeholder:text-slate-300 flex-1"
                 placeholder="Add item..."
                 value={newItem}
                 onChange={e => setNewItem(e.target.value)}
@@ -688,7 +685,7 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
           )}
         </div>
       )}
-    </Card>
+    </div>
   );
 };
 
@@ -729,13 +726,15 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
   const resolvedQuestions = (project.notes || []).filter(n => n.isResolved && n.type === "question");
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-6">
+      {/* Briefing cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <WhereIAmCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
         <DontForgetCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
       </div>
 
-      <Card className="p-6 shadow-md shadow-slate-200/50">
+      {/* Questions card */}
+      <div className="bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
         <div className="flex items-center gap-2 mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block" />
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Questions</span>
@@ -743,9 +742,13 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
 
         {!isDemo && (
           <div className="flex gap-3 mb-6">
-            <Input id="new-question" placeholder="What do you need to ask?" className="focus:ring-amber-200 focus:border-amber-300"
-              onKeyDown={e => { if (e.key === "Enter") { addQuestion(e.target.value); e.target.value = ""; } }} />
-            <Button variant="amber" className="shrink-0 px-5 min-h-[44px]"
+            <Input
+              id="new-question"
+              placeholder="What do you need to ask?"
+              className="focus:ring-amber-200 focus:border-amber-300"
+              onKeyDown={e => { if (e.key === "Enter") { addQuestion(e.target.value); e.target.value = ""; } }}
+            />
+            <Button variant="amber" className="shrink-0 px-5"
               onClick={() => { const el = document.getElementById("new-question"); addQuestion(el.value); el.value = ""; }}>
               <Plus className="w-4 h-4" /> Add
             </Button>
@@ -753,78 +756,86 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
         )}
 
         {activeQuestions.length === 0 ? (
-          <div className="text-center py-10 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-            <MessageCircle className="w-7 h-7 text-slate-300 mx-auto mb-2" />
-            <p className="text-slate-400 font-medium text-sm">No open questions.</p>
+          <div className="text-center py-16 bg-slate-100/60 rounded-[32px] border-2 border-dashed border-slate-200">
+            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageCircle className="w-8 h-8 text-slate-300" />
+            </div>
+            <p className="text-slate-400 font-medium">No open questions.</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {activeQuestions.map(note => (
-              <div key={note.id} className="group flex items-start gap-4 p-4 bg-amber-50/60 border border-amber-100 rounded-2xl hover:border-amber-200 transition-all ease-apple">
-                <button onClick={() => toggleNoteRes(note.id)}
-                  className="mt-0.5 w-8 h-8 rounded-full border-2 border-amber-200 text-amber-500 bg-white flex items-center justify-center hover:bg-amber-100 transition-all ease-apple shrink-0 min-w-[32px]">
-                  <Circle className="w-4 h-4" />
-                </button>
-                <div className="flex-1 min-w-0">
-                  {editingId === note.id ? (
-                    <div className="space-y-3">
-                      <TextArea className="bg-white text-sm" value={editContent} onChange={e => setEditContent(e.target.value)} rows={2} autoFocus />
-                      <div className="flex gap-2 justify-end">
-                        <Button variant="tertiary" onClick={() => setEditingId(null)} className="px-3 py-1.5 text-xs">Cancel</Button>
-                        <Button variant="primary" onClick={saveEdit} className="px-3 py-1.5 text-xs">Save</Button>
-                      </div>
+              <div key={note.id} className="group bg-slate-50 rounded-[24px] border border-slate-200 p-6 hover:shadow-md transition-all duration-300 ease-apple">
+                <div className="flex items-start gap-5">
+                  <div className="mt-1 shrink-0">
+                    <button onClick={() => toggleNoteRes(note.id)}
+                      className="w-10 h-10 rounded-full border-2 border-amber-100 text-amber-600 bg-amber-50 flex items-center justify-center hover:bg-amber-100 hover:scale-110 transition-all ease-apple">
+                      <Circle className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-3">
+                      <Badge color="amber">question</Badge>
+                      <span className="text-xs font-semibold text-slate-400">{note.timestamp}</span>
                     </div>
-                  ) : (
-                    <>
-                      <p className="text-slate-800 text-sm leading-relaxed break-words">{note.content}</p>
-                      <p className="text-[10px] text-slate-400 font-semibold mt-1">{note.timestamp}</p>
-                    </>
-                  )}
-                </div>
-                {!isDemo && (
-                  <div className="relative shrink-0">
-                    <Button variant="icon" className="opacity-0 group-hover:opacity-100 w-9 h-9"
-                      onClick={e => { e.stopPropagation(); setActiveMenuId(activeMenuId === note.id ? null : note.id); }}>
-                      <MoreVertical className="w-4 h-4" />
-                    </Button>
-                    {activeMenuId === note.id && (
-                      <div className="absolute right-0 top-10 w-40 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-10 animate-in fade-in zoom-in-95 duration-200">
-                        <button onClick={e => startEditing(note, e)} className="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-3 font-medium">
-                          <Edit2 className="w-3.5 h-3.5" /> Edit
-                        </button>
-                        <button onClick={e => { e.stopPropagation(); deleteNote(note.id); }} className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 font-medium">
-                          <Trash2 className="w-3.5 h-3.5" /> Delete
-                        </button>
+                    {editingId === note.id ? (
+                      <div className="mt-2 bg-slate-100 p-4 rounded-2xl">
+                        <TextArea className="bg-slate-50" value={editContent} onChange={e => setEditContent(e.target.value)} rows={3} autoFocus />
+                        <div className="flex gap-3 mt-4 justify-end">
+                          <Button variant="tertiary" onClick={() => setEditingId(null)} className="px-4 py-2 text-xs">Cancel</Button>
+                          <Button variant="primary" onClick={saveEdit} className="px-4 py-2 text-xs">Save</Button>
+                        </div>
                       </div>
+                    ) : (
+                      <p className="text-slate-800 text-base leading-relaxed whitespace-pre-wrap font-normal break-words">{note.content}</p>
                     )}
                   </div>
-                )}
+                  {!isDemo && (
+                    <div className="relative shrink-0">
+                      <Button variant="icon" className="opacity-0 group-hover:opacity-100"
+                        onClick={e => { e.stopPropagation(); setActiveMenuId(activeMenuId === note.id ? null : note.id); }}>
+                        <MoreVertical className="w-5 h-5" />
+                      </Button>
+                      {activeMenuId === note.id && (
+                        <div className="absolute right-0 top-10 w-48 bg-slate-50 rounded-2xl shadow-xl border border-slate-200 py-2 z-10 animate-in fade-in zoom-in-95 duration-200">
+                          <button onClick={e => startEditing(note, e)} className="w-full text-left px-5 py-3 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-3 font-medium transition-colors">
+                            <Edit2 className="w-4 h-4" /> Edit
+                          </button>
+                          <button onClick={e => { e.stopPropagation(); deleteNote(note.id); }} className="w-full text-left px-5 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 font-medium transition-colors">
+                            <Trash2 className="w-4 h-4" /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         )}
 
-        <div className="mt-8 pt-6 border-t border-slate-100">
+        {/* History */}
+        <div className="pt-10 mt-10 border-t border-slate-200/60">
           <button onClick={() => setShowHistory(!showHistory)}
-            className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-indigo-600 transition-colors mb-4 min-h-[44px]">
-            {showHistory ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            History {resolvedQuestions.length > 0 && `(${resolvedQuestions.length})`}
+            className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-indigo-600 transition-colors mb-6">
+            {showHistory ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            Resolved Questions History {resolvedQuestions.length > 0 && `(${resolvedQuestions.length})`}
           </button>
           {showHistory && (
-            <div className="space-y-3 pl-4 border-l-2 border-slate-100">
+            <div className="space-y-4 pl-6 border-l-2 border-slate-200">
               {resolvedQuestions.length === 0 ? (
                 <p className="text-sm text-slate-400 italic">No resolved questions yet.</p>
               ) : resolvedQuestions.map(note => (
-                <div key={note.id} className="opacity-60 hover:opacity-100 transition-opacity flex items-center gap-3 bg-slate-50 p-4 rounded-2xl">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <p className="text-sm text-slate-600 line-through decoration-slate-300 flex-1 break-words">{note.content}</p>
-                  {!isDemo && <Button variant="tertiary" onClick={() => toggleNoteRes(note.id)} className="text-xs px-2 py-1 shrink-0 min-h-[36px]">Undo</Button>}
+                <div key={note.id} className="opacity-60 hover:opacity-100 transition-opacity flex items-center gap-3 bg-slate-100 p-5 rounded-2xl">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                  <p className="text-sm text-slate-600 line-through decoration-slate-300 flex-1">{note.content}</p>
+                  {!isDemo && <Button variant="tertiary" onClick={() => toggleNoteRes(note.id)} className="text-xs px-2 py-1 shrink-0">Undo</Button>}
                 </div>
               ))}
             </div>
           )}
         </div>
-      </Card>
+      </div>
     </div>
   );
 };
@@ -839,22 +850,14 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  // Desktop: true = full sidebar, false = icon strip. Mobile: true = drawer open
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isCompletedExpanded, setIsCompletedExpanded] = useState(false);
   const [resourceFilter, setResourceFilter] = useState(null);
   const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [editingResource, setEditingResource] = useState(null);
-
-  // Open sidebar by default on desktop
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    setSidebarOpen(mq.matches);
-    const handler = (e) => setSidebarOpen(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
 
   // Magic link
   useEffect(() => {
@@ -890,8 +893,7 @@ export default function App() {
   }, [user, isDemo]);
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
-    setAuthError(null);
+    setLoading(true); setAuthError(null);
     try { await signInWithPopup(auth, new GoogleAuthProvider()); }
     catch (err) {
       if (err.code === "auth/unauthorized-domain") setAuthError("Domain not authorized in Firebase.");
@@ -920,12 +922,7 @@ export default function App() {
     window.localStorage.setItem("emailForSignIn", email);
   };
 
-  const handleDemo = () => {
-    setIsDemo(true);
-    setProjects(DEMO_PROJECTS);
-    setSelectedId(DEMO_PROJECTS[0].id);
-  };
-
+  const handleDemo = () => { setIsDemo(true); setProjects(DEMO_PROJECTS); setSelectedId(DEMO_PROJECTS[0].id); };
   const handleLogout = () => { signOut(auth); setIsDemo(false); setProjects([]); setSelectedId(null); };
 
   const updateProject = async (projectId, data) => {
@@ -976,6 +973,7 @@ export default function App() {
 
   const selectProject = (id) => {
     setSelectedId(id);
+    // Close drawer on mobile after selecting
     if (window.innerWidth < 768) setSidebarOpen(false);
   };
 
@@ -996,13 +994,26 @@ export default function App() {
     />
   );
 
-  const SidebarItem = ({ project }) => (
+  // Sidebar item — full version
+  const SidebarItemFull = ({ project }) => (
     <div onClick={() => selectProject(project.id)}
-      className={`group flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 ease-apple mb-1 mr-4 min-h-[48px] ${selectedId === project.id ? "bg-indigo-50 text-indigo-900 font-semibold" : "hover:bg-slate-100 text-slate-600 hover:text-slate-900"}`}>
-      <div className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform group-hover:scale-110 ${selectedId === project.id ? "bg-indigo-500" : project.status === "active" ? "bg-slate-300" : project.status === "completed" ? "bg-emerald-300" : "bg-amber-200"}`} />
-      <p className="text-sm font-medium truncate">{project.title}</p>
+      className={`group flex items-center justify-between px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ease-apple mb-1 mr-4 min-h-[44px] ${selectedId === project.id ? "bg-indigo-50 text-indigo-900 font-semibold" : "hover:bg-slate-100 text-slate-600 hover:text-slate-900"}`}>
+      <div className="flex items-center gap-3 overflow-hidden">
+        <div className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform duration-300 ease-apple group-hover:scale-110 ${selectedId === project.id ? "bg-indigo-500" : project.status === "active" ? "bg-slate-300" : project.status === "completed" ? "bg-emerald-300" : "bg-amber-200"}`} />
+        <p className="text-sm font-medium truncate">{project.title}</p>
+      </div>
     </div>
   );
+
+  // Sidebar item — icon strip version (just the colored dot)
+  const SidebarItemIcon = ({ project }) => (
+    <div onClick={() => selectProject(project.id)} title={project.title}
+      className={`flex items-center justify-center w-10 h-10 rounded-xl cursor-pointer transition-all duration-200 ease-apple mb-1 mx-auto ${selectedId === project.id ? "bg-indigo-50" : "hover:bg-slate-100"}`}>
+      <div className={`w-3 h-3 rounded-full transition-transform duration-300 ease-apple hover:scale-125 ${selectedId === project.id ? "bg-indigo-500" : project.status === "active" ? "bg-slate-400" : project.status === "completed" ? "bg-emerald-400" : "bg-amber-300"}`} />
+    </div>
+  );
+
+  const allProjects = [...activeProjects, ...pausedProjects, ...completedProjects];
 
   return (
     <>
@@ -1020,84 +1031,166 @@ export default function App() {
             <div className="fixed inset-0 bg-slate-900/40 z-10 md:hidden" onClick={() => setSidebarOpen(false)} />
           )}
 
-          {/* Sidebar */}
+          {/* ── SIDEBAR ── */}
+          {/* Desktop: inline, collapses to icon strip */}
           <div className={`
-            fixed md:relative top-0 left-0 h-full z-20
-            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-            ${isSidebarOpen ? "md:w-80" : "md:w-0"}
-            w-80 bg-white flex-shrink-0 transition-all duration-500 ease-apple flex flex-col shadow-2xl overflow-hidden
+            hidden md:flex flex-col flex-shrink-0
+            bg-slate-50 border-r border-slate-200/80 shadow-sm
+            transition-all duration-500 ease-apple overflow-hidden
+            ${isSidebarOpen ? "w-80" : "w-16"}
           `}>
-            <div className="p-6 pb-4 min-w-[320px]">
+            {isSidebarOpen ? (
+              /* Full sidebar */
+              <>
+                <div className="p-6 pb-4">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3 text-slate-800 font-extrabold text-xl tracking-tight">
+                      <div className="p-2.5 bg-indigo-600 rounded-2xl text-slate-50 shadow-lg shadow-indigo-200/50 shrink-0">
+                        <InfinityIcon className="w-5 h-5" />
+                      </div>
+                      <span>Continuum</span>
+                    </div>
+                    <button onClick={() => setSidebarOpen(false)}
+                      className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors ease-apple active:scale-95">
+                      <PanelLeft className="w-5 h-5" />
+                    </button>
+                  </div>
+                  {!isDemo && (
+                    <button onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
+                      className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-100 py-3.5 rounded-2xl flex items-center justify-center gap-2 font-bold transition-all duration-200 ease-apple active:scale-95">
+                      <Plus className="w-5 h-5" /> New Project
+                    </button>
+                  )}
+                </div>
+                <div className="flex-1 overflow-y-auto px-2">
+                  <div className="mb-8">
+                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">Active</h3>
+                    {activeProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
+                  </div>
+                  <div className="mb-8">
+                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">On Hold</h3>
+                    {pausedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
+                  </div>
+                  <div className="mb-8">
+                    <button onClick={() => setIsCompletedExpanded(!isCompletedExpanded)}
+                      className="flex items-center justify-between w-full text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4 hover:text-indigo-600 transition-colors">
+                      Completed {isCompletedExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+                    {isCompletedExpanded && completedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
+                  </div>
+                </div>
+                <div className="p-4 border-t border-slate-200">
+                  <button onClick={handleLogout}
+                    className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all ease-apple active:scale-95">
+                    <LogOut className="w-4 h-4" /> {isDemo ? "Exit demo" : "Sign Out"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              /* Icon strip */
+              <div className="flex flex-col items-center py-5 h-full">
+                <button onClick={() => setSidebarOpen(true)}
+                  className="p-2.5 mb-6 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors ease-apple active:scale-95" title="Expand sidebar">
+                  <PanelRight className="w-5 h-5" />
+                </button>
+                <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center mb-6 shrink-0">
+                  <InfinityIcon className="w-5 h-5 text-slate-50" />
+                </div>
+                {!isDemo && (
+                  <button onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
+                    className="w-10 h-10 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-6 transition-all ease-apple active:scale-95" title="New Project">
+                    <Plus className="w-5 h-5" />
+                  </button>
+                )}
+                <div className="flex-1 overflow-y-auto w-full px-1">
+                  {allProjects.map(p => <SidebarItemIcon key={p.id} project={p} />)}
+                </div>
+                <div className="pb-4">
+                  <button onClick={handleLogout}
+                    className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all ease-apple active:scale-95" title={isDemo ? "Exit demo" : "Sign Out"}>
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile drawer sidebar */}
+          <div className={`
+            fixed md:hidden top-0 left-0 h-full z-20 w-80
+            bg-slate-50 flex flex-col shadow-2xl
+            transition-transform duration-500 ease-apple
+            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          `}>
+            <div className="p-6 pb-4">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3 text-slate-800 font-extrabold text-xl tracking-tight">
-                  <div className="p-2.5 bg-indigo-600 rounded-2xl text-white shadow-lg shadow-indigo-200/50">
+                  <div className="p-2.5 bg-indigo-600 rounded-2xl text-slate-50 shadow-lg shadow-indigo-200/50">
                     <InfinityIcon className="w-5 h-5" />
                   </div>
                   <span>Continuum</span>
                 </div>
-                <button onClick={() => setSidebarOpen(false)}
-                  className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors active:scale-95 min-w-[40px] min-h-[40px] flex items-center justify-center">
+                <button onClick={() => setSidebarOpen(false)} className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors active:scale-95">
                   <X className="w-5 h-5" />
                 </button>
               </div>
               {!isDemo && (
-                <button onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
-                  className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-100 py-3.5 rounded-2xl flex items-center justify-center gap-2 font-bold transition-all duration-200 ease-apple active:scale-95 min-h-[48px]">
+                <button onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); setSidebarOpen(false); }}
+                  className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-100 py-3.5 rounded-2xl flex items-center justify-center gap-2 font-bold transition-all duration-200 ease-apple active:scale-95">
                   <Plus className="w-5 h-5" /> New Project
                 </button>
               )}
             </div>
-
-            <div className="flex-1 overflow-y-auto min-w-[320px] px-2">
+            <div className="flex-1 overflow-y-auto px-2">
               <div className="mb-8">
                 <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">Active</h3>
-                {activeProjects.map(p => <SidebarItem key={p.id} project={p} />)}
+                {activeProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
               </div>
               <div className="mb-8">
                 <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">On Hold</h3>
-                {pausedProjects.map(p => <SidebarItem key={p.id} project={p} />)}
+                {pausedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
               </div>
               <div className="mb-8">
                 <button onClick={() => setIsCompletedExpanded(!isCompletedExpanded)}
-                  className="flex items-center justify-between w-full text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4 hover:text-indigo-600 transition-colors min-h-[40px]">
+                  className="flex items-center justify-between w-full text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4 hover:text-indigo-600 transition-colors">
                   Completed {isCompletedExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                {isCompletedExpanded && completedProjects.map(p => <SidebarItem key={p.id} project={p} />)}
+                {isCompletedExpanded && completedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
               </div>
             </div>
-
-            <div className="p-4 border-t border-slate-100 min-w-[320px]">
+            <div className="p-4 border-t border-slate-200">
               <button onClick={handleLogout}
-                className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all ease-apple active:scale-95 min-h-[48px]">
+                className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all ease-apple active:scale-95">
                 <LogOut className="w-4 h-4" /> {isDemo ? "Exit demo" : "Sign Out"}
               </button>
             </div>
           </div>
 
-          {/* Main content */}
+          {/* ── MAIN CONTENT ── */}
           <div className="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
 
-            {/* Sticky scroll header — z-30 so it sits above everything including tabs */}
-            <div className={`absolute top-0 left-0 right-0 bg-white/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
+            {/* Sticky scroll header — z-30 sits above tabs */}
+            <div className={`absolute top-0 left-0 right-0 bg-[#F2F4F6]/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
               <div className="max-w-5xl mx-auto px-6 md:px-12 py-3 flex items-center gap-3">
+                {/* Mobile: hamburger. Desktop: no button needed since icon strip is always visible */}
                 <button onClick={() => setSidebarOpen(true)}
-                  className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center shrink-0">
+                  className="md:hidden p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center shrink-0">
                   <Menu className="w-5 h-5" />
                 </button>
-                <h2 className="text-base font-bold text-slate-900 truncate flex-1 tracking-tight">{selectedProject?.title}</h2>
+                <h2 className="text-lg font-bold text-slate-900 truncate flex-1 tracking-tight">{selectedProject?.title}</h2>
                 {!isDemo && selectedProject && (
                   <div className="flex items-center gap-2 shrink-0">
                     {selectedProject.status !== "completed" ? (
                       <>
-                        <Button onClick={() => toggleStatus(selectedProject.id)} variant="secondary" className="h-9 px-3 text-xs font-semibold hidden sm:flex">
+                        <Button onClick={() => toggleStatus(selectedProject.id)} variant="secondary" className="h-9 px-4 text-xs font-semibold">
                           {selectedProject.status === "active" ? <><PauseCircle className="w-3.5 h-3.5" /> Pause</> : <><PlayCircle className="w-3.5 h-3.5" /> Resume</>}
                         </Button>
-                        <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-9 px-3 text-xs font-semibold hidden sm:flex">
+                        <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-9 px-4 text-xs font-semibold">
                           <CheckSquare className="w-3.5 h-3.5" /> Done
                         </Button>
                       </>
                     ) : (
-                      <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-9 px-3 text-xs font-semibold hidden sm:flex">
+                      <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-9 px-4 text-xs font-semibold">
                         <RotateCcw className="w-3.5 h-3.5" /> Reopen
                       </Button>
                     )}
@@ -1111,10 +1204,10 @@ export default function App() {
 
             {selectedProject ? (
               <div className="flex-1 overflow-y-auto pb-12 scroll-smooth" onScroll={handleScroll}>
-                {/* Mobile menu bar — always visible at top on mobile */}
+                {/* Mobile top bar */}
                 <div className="flex items-center gap-3 px-4 pt-5 pb-2 md:hidden">
                   <button onClick={() => setSidebarOpen(true)}
-                    className="p-2.5 bg-white text-slate-500 hover:text-indigo-600 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center shadow-sm border border-slate-200">
+                    className="p-2.5 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center shadow-sm border border-slate-200">
                     <Menu className="w-5 h-5" />
                   </button>
                   <p className="text-sm font-semibold text-slate-500 truncate">{selectedProject.title}</p>
@@ -1123,26 +1216,26 @@ export default function App() {
                 {/* Hero header */}
                 <header className="px-6 md:px-12 pt-8 md:pt-16 pb-8">
                   <div className="max-w-5xl mx-auto">
-                    <div className="flex items-start justify-between gap-4 mb-8">
-                      <Badge color={selectedProject.status === "active" ? "green" : selectedProject.status === "completed" ? "blue" : "amber"}>
-                        {selectedProject.status === "active" ? "Active" : selectedProject.status === "completed" ? "Completed" : "Paused"}
-                      </Badge>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                      <div className="flex items-center gap-4">
+                        <Badge color={selectedProject.status === "active" ? "green" : selectedProject.status === "completed" ? "blue" : "amber"}>
+                          {selectedProject.status === "active" ? "Active" : selectedProject.status === "completed" ? "Completed" : "Paused"}
+                        </Badge>
+                      </div>
                       {!isDemo && (
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-2">
                           {selectedProject.status !== "completed" ? (
                             <>
-                              <Button onClick={() => toggleStatus(selectedProject.id)} variant="secondary" className="h-10 px-4 text-sm">
-                                {selectedProject.status === "active"
-                                  ? <><PauseCircle className="w-4 h-4" /><span className="hidden sm:inline ml-1">Pause</span></>
-                                  : <><PlayCircle className="w-4 h-4" /><span className="hidden sm:inline ml-1">Resume</span></>}
+                              <Button onClick={() => toggleStatus(selectedProject.id)} variant={selectedProject.status === "active" ? "secondary" : "primary"} className="h-10 px-5 text-sm">
+                                {selectedProject.status === "active" ? <><PauseCircle className="w-4 h-4" /> Pause</> : <><PlayCircle className="w-4 h-4" /> Resume</>}
                               </Button>
-                              <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-10 px-4 text-sm">
-                                <CheckSquare className="w-4 h-4" /><span className="hidden sm:inline ml-1">Done</span>
+                              <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-10 px-5 text-sm">
+                                <CheckSquare className="w-4 h-4" /> Done
                               </Button>
                             </>
                           ) : (
-                            <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-10 px-4 text-sm">
-                              <RotateCcw className="w-4 h-4" /><span className="hidden sm:inline ml-1">Reopen</span>
+                            <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-10 px-5 text-sm">
+                              <RotateCcw className="w-4 h-4" /> Reopen
                             </Button>
                           )}
                           <Button variant="icon" onClick={() => { setEditingProject(selectedProject); setIsProjectModalOpen(true); }} className="h-10 w-10">
@@ -1172,17 +1265,16 @@ export default function App() {
                   </div>
                 </header>
 
-                {/* Tabs + content — max-w-5xl restored */}
                 <div className="px-6 md:px-12 max-w-5xl mx-auto">
-                  {/* Tab switcher — z-0 so sticky header (z-30) sits above it */}
-                  <div className="relative flex items-center bg-white p-1 rounded-full w-full max-w-xs shadow-sm border border-slate-200 mb-8 z-0">
-                    <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${activeTab === "overview" ? "left-1" : "left-[50%]"}`} />
+                  {/* Tab switcher — z-0 so sticky header (z-30) slides over it */}
+                  <div className="relative flex items-center bg-slate-50 p-1 rounded-full w-full max-w-md mx-auto md:mx-0 shadow-sm border border-slate-200 mb-10 z-0">
+                    <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${activeTab === "overview" ? "left-1 translate-x-0" : "translate-x-full left-0"}`} />
                     <button onClick={() => setActiveTab("overview")}
-                      className={`relative z-10 flex-1 h-10 px-4 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "overview" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
+                      className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "overview" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
                       Overview
                     </button>
                     <button onClick={() => setActiveTab("resources")}
-                      className={`relative z-10 flex-1 h-10 px-4 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "resources" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
+                      className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "resources" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
                       Resources
                     </button>
                   </div>
@@ -1193,22 +1285,22 @@ export default function App() {
                         <OverviewTab project={selectedProject} onUpdate={handleBriefingUpdate} onUpdateCtx={updateCtx} isDemo={isDemo} />
                       ) : (
                         <div>
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+                          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="text-slate-500 text-sm font-semibold mr-2">Filter by:</p>
                               <button onClick={() => setResourceFilter(null)}
-                                className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === null ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200" : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
+                                className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === null ? "bg-indigo-600 text-slate-50 border-indigo-600 shadow-md shadow-indigo-200" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
                                 All
                               </button>
                               {uniqueTags.map(tag => (
                                 <button key={tag} onClick={() => setResourceFilter(tag === resourceFilter ? null : tag)}
-                                  className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === tag ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200" : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
+                                  className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === tag ? "bg-indigo-600 text-slate-50 border-indigo-600 shadow-md shadow-indigo-200" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
                                   {tag}
                                 </button>
                               ))}
                             </div>
                             {!isDemo && (
-                              <Button variant="primary" onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }} className="pl-6 pr-8 w-full sm:w-auto min-h-[44px]">
+                              <Button variant="primary" onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }} className="pl-6 pr-8 w-full md:w-auto">
                                 <Plus className="w-5 h-5" /> Add Resource
                               </Button>
                             )}
@@ -1216,29 +1308,29 @@ export default function App() {
 
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {filteredResources.map(resource => (
-                              <div key={resource.id} className="group bg-white rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col border border-slate-100">
+                              <div key={resource.id} className="group bg-slate-50 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col h-full border border-slate-200">
                                 {resource.type === "image" && (
                                   <div className="h-40 bg-slate-100 w-full relative cursor-pointer overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
                                     <img src={resource.url} alt={resource.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                       onError={e => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/f1f5f9/94a3b8?text=No+Preview"; }} />
-                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
-                                      <div className="bg-white/90 p-3 rounded-full backdrop-blur-md shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
+                                      <div className="bg-slate-50/90 p-3 rounded-full backdrop-blur-md shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                                         <ExternalLink className="w-6 h-6 text-slate-900" />
                                       </div>
                                     </div>
                                   </div>
                                 )}
                                 {resource.type === "document" && (
-                                  <div className="h-40 bg-indigo-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-indigo-100" onClick={() => window.open(resource.url, "_blank")}>
-                                    <div className="w-20 h-20 bg-white rounded-3xl shadow-lg shadow-indigo-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                  <div className="h-40 bg-indigo-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-indigo-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
+                                    <div className="w-20 h-20 bg-slate-50 rounded-3xl shadow-lg shadow-indigo-100 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300 ease-apple">
                                       <FileIcon className="w-10 h-10 text-indigo-500" />
                                     </div>
                                     <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Document</span>
                                   </div>
                                 )}
                                 {resource.type === "link" && (
-                                  <div className="h-40 bg-blue-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-blue-100" onClick={() => window.open(resource.url, "_blank")}>
-                                    <div className="w-20 h-20 bg-white rounded-3xl shadow-lg shadow-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                  <div className="h-40 bg-blue-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-blue-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
+                                    <div className="w-20 h-20 bg-slate-50 rounded-3xl shadow-lg shadow-blue-100 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300 ease-apple">
                                       <LinkIcon className="w-10 h-10 text-blue-500" />
                                     </div>
                                     <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Web Link</span>
@@ -1253,7 +1345,7 @@ export default function App() {
                                     </div>
                                     {!isDemo && (
                                       <div className="flex gap-1 -mr-2">
-                                        <Button variant="icon" onClick={() => { setEditingResource(resource); setIsResourceModalOpen(true); }} className="opacity-0 group-hover:opacity-100 hover:bg-slate-50 hover:text-indigo-600">
+                                        <Button variant="icon" onClick={() => { setEditingResource(resource); setIsResourceModalOpen(true); }} className="opacity-0 group-hover:opacity-100 hover:bg-slate-100 hover:text-indigo-600">
                                           <Edit2 className="w-4 h-4" />
                                         </Button>
                                         <Button variant="icon" onClick={() => deleteRes(resource.id)} className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500">
@@ -1263,15 +1355,20 @@ export default function App() {
                                     )}
                                   </div>
                                   <h3 className="font-bold text-xl text-slate-900 truncate mb-3 tracking-tight">{resource.title}</h3>
-                                  {resource.description && <p className="text-sm text-slate-500 mb-8 line-clamp-2 leading-relaxed flex-1 font-medium">{resource.description}</p>}
-                                  <div className="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
+                                  {resource.description && (
+                                    <p className="text-sm text-slate-500 mb-8 line-clamp-2 leading-relaxed flex-1 font-medium">{resource.description}</p>
+                                  )}
+                                  <div className="mt-auto pt-6 border-t border-slate-200 flex items-center justify-between">
                                     <div className="flex flex-wrap gap-2">
                                       {resource.tags?.slice(0, 2).map((tag, i) => (
-                                        <span key={i} className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500 border border-slate-100">{tag}</span>
+                                        <span key={i} className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 border border-slate-200">{tag}</span>
                                       ))}
-                                      {resource.tags?.length > 2 && <span className="text-[10px] text-slate-400 self-center pl-1 font-bold">+{resource.tags.length - 2}</span>}
+                                      {resource.tags?.length > 2 && (
+                                        <span className="text-[10px] text-slate-400 self-center pl-1 font-bold">+{resource.tags.length - 2}</span>
+                                      )}
                                     </div>
-                                    <a href={resource.url} target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-full hover:bg-indigo-50 text-slate-300 hover:text-indigo-600 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center">
+                                    <a href={resource.url} target="_blank" rel="noopener noreferrer"
+                                      className="p-2.5 rounded-full hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors">
                                       <ExternalLink className="w-5 h-5" />
                                     </a>
                                   </div>
@@ -1280,7 +1377,7 @@ export default function App() {
                             ))}
                             {!isDemo && (
                               <button onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }}
-                                className="rounded-[28px] border-2 border-dashed border-slate-300/80 flex flex-col items-center justify-center min-h-[260px] text-slate-400 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all duration-300 p-8 group ease-apple">
+                                className="rounded-[28px] border-2 border-dashed border-slate-300/80 flex flex-col items-center justify-center h-full min-h-[260px] text-slate-400 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all duration-300 p-8 group ease-apple">
                                 <div className="w-20 h-20 rounded-[2rem] bg-slate-100 group-hover:bg-indigo-100 transition-colors mb-6 flex items-center justify-center duration-300">
                                   <Plus className="w-10 h-10 text-slate-300 group-hover:text-indigo-500 transition-colors" />
                                 </div>
@@ -1295,18 +1392,17 @@ export default function App() {
                 </div>
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-6 animate-in fade-in duration-500">
+              <div className="flex-1 flex flex-col items-center justify-center text-slate-400 animate-in fade-in zoom-in-95 duration-500 ease-apple px-6">
                 <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center mb-8 shadow-inner">
                   <Folder className="w-16 h-16 text-slate-300" />
                 </div>
                 <p className="text-xl font-bold text-slate-900 mb-2">Ready to work?</p>
                 <p className="text-slate-500 mb-8 text-center">Select a project from the sidebar to begin</p>
-                <button onClick={() => setSidebarOpen(true)}
-                  className="mb-4 flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors min-h-[44px]">
+                <button onClick={() => setSidebarOpen(true)} className="md:hidden mb-4 flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
                   <Menu className="w-4 h-4" /> Open projects
                 </button>
                 {!isDemo && (
-                  <Button onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }} className="min-h-[48px] pl-6 pr-8">
+                  <Button className="pl-6 pr-8 py-3.5 text-base shadow-lg shadow-indigo-200" onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}>
                     <Plus className="w-5 h-5" /> Create First Project
                   </Button>
                 )}
