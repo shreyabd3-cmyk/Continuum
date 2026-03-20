@@ -35,14 +35,15 @@ import {
   RotateCcw,
   Check,
   Eraser,
+  MapPin,
+  ArrowRight,
+  AlertTriangle,
 } from "lucide-react";
 
 // --- Firebase Imports ---
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
-  signInAnonymously,
-  signInWithCustomToken,
   signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -175,7 +176,6 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
   const [customTag, setCustomTag] = useState("");
   const [resourceType, setResourceType] = useState(resource?.type || "link");
 
-  // Reset state when the modal opens with a different resource
   useEffect(() => {
     setSelectedTags(resource?.tags || []);
     setResourceType(resource?.type || "link");
@@ -204,7 +204,6 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     onSubmit({
-      // Pass the existing resource id so the handler knows this is an edit
       id: resource?.id || null,
       type: resourceType,
       title: formData.get("title"),
@@ -255,96 +254,49 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">
-                  Title
-                </label>
-                <Input
-                  name="title"
-                  defaultValue={resource?.title || ""}
-                  autoFocus
-                  placeholder="e.g., Competitor Analysis"
-                  required
-                />
+                <label className="block text-xs font-medium text-slate-500 ml-1">Title</label>
+                <Input name="title" defaultValue={resource?.title || ""} autoFocus placeholder="e.g., Competitor Analysis" required />
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">
-                  URL
-                </label>
-                <Input
-                  name="url"
-                  defaultValue={resource?.url || ""}
-                  type="url"
-                  placeholder="https://..."
-                  required
-                />
+                <label className="block text-xs font-medium text-slate-500 ml-1">URL</label>
+                <Input name="url" defaultValue={resource?.url || ""} type="url" placeholder="https://..." required />
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">
-                  Description
-                </label>
-                <TextArea
-                  name="description"
-                  defaultValue={resource?.description || ""}
-                  rows="3"
-                  placeholder="Add a brief description..."
-                />
+                <label className="block text-xs font-medium text-slate-500 ml-1">Description</label>
+                <TextArea name="description" defaultValue={resource?.description || ""} rows="3" placeholder="Add a brief description..." />
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">
-                  Tags
-                </label>
+                <label className="block text-xs font-medium text-slate-500 ml-1">Tags</label>
                 <div className="flex gap-2 mb-3">
                   <Input
                     value={customTag}
                     onChange={(e) => setCustomTag(e.target.value)}
                     placeholder="Add custom tag..."
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddCustomTag(e);
-                      }
+                      if (e.key === "Enter") { e.preventDefault(); handleAddCustomTag(e); }
                     }}
                     className="py-2"
                   />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={handleAddCustomTag}
-                    className="px-4"
-                  >
-                    Add
-                  </Button>
+                  <Button type="button" variant="secondary" onClick={handleAddCustomTag} className="px-4">Add</Button>
                 </div>
                 <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1">
                   {selectedTags.map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => toggleTag(tag)}
-                      className="px-4 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-indigo-50 border-indigo-200 text-indigo-700 active:scale-95"
-                    >
+                    <button key={tag} type="button" onClick={() => toggleTag(tag)}
+                      className="px-4 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-indigo-50 border-indigo-200 text-indigo-700 active:scale-95">
                       {tag} <X className="w-3 h-3 inline ml-1" />
                     </button>
                   ))}
                   {DEFAULT_TAGS.filter((t) => !selectedTags.includes(t)).map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => toggleTag(tag)}
-                      className="px-4 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-white border-slate-200 text-slate-500 hover:bg-slate-50 active:scale-95"
-                    >
+                    <button key={tag} type="button" onClick={() => toggleTag(tag)}
+                      className="px-4 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-white border-slate-200 text-slate-500 hover:bg-slate-50 active:scale-95">
                       {tag}
                     </button>
                   ))}
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-8 pt-4">
-                <Button type="button" variant="tertiary" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button type="submit" variant="primary" className="px-8">
-                  {resource ? "Save Changes" : "Add Resource"}
-                </Button>
+                <Button type="button" variant="tertiary" onClick={onClose}>Cancel</Button>
+                <Button type="submit" variant="primary" className="px-8">{resource ? "Save Changes" : "Add Resource"}</Button>
               </div>
             </div>
           </form>
@@ -371,100 +323,56 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
           <h3 className="font-bold text-xl text-slate-900">
             {isEditing ? "Edit Project Details" : "Create New Project"}
           </h3>
-          <Button variant="icon" onClick={onClose}>
-            <X className="w-5 h-5" />
-          </Button>
+          <Button variant="icon" onClick={onClose}><X className="w-5 h-5" /></Button>
         </div>
         <div className="p-8">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
-              const data = {
+              onSubmit({
                 title: formData.get("title"),
                 client: formData.get("client"),
                 startDate: formData.get("startDate"),
                 description: formData.get("description"),
-              };
-              onSubmit(data);
+              });
               onClose();
             }}
           >
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">
-                  Project Name
-                </label>
-                <Input
-                  name="title"
-                  defaultValue={project?.title || ""}
-                  autoFocus
-                  placeholder="e.g., Nebula Brand Identity"
-                  required
-                />
+                <label className="block text-xs font-medium text-slate-500 ml-1">Project Name</label>
+                <Input name="title" defaultValue={project?.title || ""} autoFocus placeholder="e.g., Nebula Brand Identity" required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium text-slate-500 ml-1">
-                    Client Name
-                  </label>
-                  <Input
-                    name="client"
-                    defaultValue={project?.client || ""}
-                    placeholder="e.g., Nebula Tech"
-                    required
-                  />
+                  <label className="block text-xs font-medium text-slate-500 ml-1">Client Name</label>
+                  <Input name="client" defaultValue={project?.client || ""} placeholder="e.g., Nebula Tech" required />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium text-slate-500 ml-1">
-                    Start Date
-                  </label>
-                  <Input
-                    name="startDate"
-                    type="date"
-                    defaultValue={project?.startDate || ""}
-                  />
+                  <label className="block text-xs font-medium text-slate-500 ml-1">Start Date</label>
+                  <Input name="startDate" type="date" defaultValue={project?.startDate || ""} />
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">
-                  Description
-                </label>
-                <TextArea
-                  name="description"
-                  defaultValue={project?.description || ""}
-                  rows="4"
-                  placeholder="Brief summary of the project goals..."
-                />
+                <label className="block text-xs font-medium text-slate-500 ml-1">Description</label>
+                <TextArea name="description" defaultValue={project?.description || ""} rows="4" placeholder="Brief summary of the project goals..." />
               </div>
               <div className="flex justify-between items-center mt-8 pt-4">
                 {isEditing ? (
-                  <Button
-                    type="button"
-                    variant="destructive"
+                  <Button type="button" variant="destructive"
                     onClick={() => {
-                      if (
-                        confirm(
-                          "Are you sure you want to delete this project?"
-                        )
-                      ) {
+                      if (confirm("Are you sure you want to delete this project?")) {
                         onDelete(project.id);
                         onClose();
                       }
-                    }}
-                  >
+                    }}>
                     Delete Project
                   </Button>
-                ) : (
-                  <div></div>
-                )}
+                ) : <div></div>}
                 <div className="flex gap-3">
-                  <Button type="button" variant="tertiary" onClick={onClose}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" variant="primary" className="px-8">
-                    {isEditing ? "Save Changes" : "Create Project"}
-                  </Button>
+                  <Button type="button" variant="tertiary" onClick={onClose}>Cancel</Button>
+                  <Button type="submit" variant="primary" className="px-8">{isEditing ? "Save Changes" : "Create Project"}</Button>
                 </div>
               </div>
             </div>
@@ -483,32 +391,19 @@ const LoginScreen = ({ onLogin, loading, error }) => (
         <InfinityIcon className="w-12 h-12 text-white" />
       </div>
       <div className="space-y-3">
-        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
-          Continuum
-        </h1>
-        <p className="text-slate-500 text-lg font-medium">
-          Your digital second brain for creative work.
-        </p>
+        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">Continuum</h1>
+        <p className="text-slate-500 text-lg font-medium">Your digital second brain for creative work.</p>
       </div>
-
       {error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-sm flex items-center gap-3 text-left animate-in slide-in-from-top-2 duration-200">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <p>{error}</p>
         </div>
       )}
-
       <div className="pt-8">
-        <Button
-          onClick={onLogin}
-          variant="google"
-          className="w-full py-4 text-lg transition-all duration-300 gap-3 hover:shadow-lg"
-          disabled={loading}
-        >
+        <Button onClick={onLogin} variant="google" className="w-full py-4 text-lg transition-all duration-300 gap-3 hover:shadow-lg" disabled={loading}>
           {loading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin mr-2" /> Connecting...
-            </>
+            <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Connecting...</>
           ) : (
             <>
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -522,15 +417,122 @@ const LoginScreen = ({ onLogin, loading, error }) => (
           )}
         </Button>
       </div>
-      <p className="text-xs text-slate-400 mt-8 font-medium">
-        Securely synced with Firebase
-      </p>
+      <p className="text-xs text-slate-400 mt-8 font-medium">Securely synced with Firebase</p>
     </div>
   </div>
 );
 
-// --- Main App Component ---
+// --- Briefing Card Component ---
+const BriefingCard = ({ project, onUpdate }) => {
+  const [localWhereIAm, setLocalWhereIAm] = useState(project?.whereIAm || "");
+  const [localUpNext, setLocalUpNext] = useState(project?.upNext || "");
+  const [localDontForget, setLocalDontForget] = useState(project?.dontForget || "");
 
+  // Sync when project changes
+  useEffect(() => {
+    setLocalWhereIAm(project?.whereIAm || "");
+    setLocalUpNext(project?.upNext || "");
+    setLocalDontForget(project?.dontForget || "");
+  }, [project?.id]);
+
+  // Debounced autosave — whereIAm
+  useEffect(() => {
+    if (!project) return;
+    const timer = setTimeout(() => {
+      if (localWhereIAm !== (project.whereIAm || "")) {
+        onUpdate({ whereIAm: localWhereIAm });
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [localWhereIAm]);
+
+  // Debounced autosave — upNext
+  useEffect(() => {
+    if (!project) return;
+    const timer = setTimeout(() => {
+      if (localUpNext !== (project.upNext || "")) {
+        onUpdate({ upNext: localUpNext });
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [localUpNext]);
+
+  // Debounced autosave — dontForget
+  useEffect(() => {
+    if (!project) return;
+    const timer = setTimeout(() => {
+      if (localDontForget !== (project.dontForget || "")) {
+        onUpdate({ dontForget: localDontForget });
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [localDontForget]);
+
+  const fieldBase = "w-full bg-transparent focus:outline-none text-slate-700 leading-relaxed resize-none placeholder:text-slate-300 text-sm font-light";
+
+  return (
+    <section className="mb-10">
+      <Card className="p-0 overflow-hidden border-none shadow-lg shadow-slate-200/50">
+        {/* Card header */}
+        <div className="px-8 py-5 flex justify-between items-center border-b border-slate-100 bg-slate-50/50">
+          <h2 className="text-xs font-semibold text-indigo-900 uppercase tracking-wider flex items-center gap-2">
+            <Clock className="w-4 h-4 text-indigo-500" /> Project briefing
+          </h2>
+          <span className="text-[10px] font-bold text-slate-400 bg-white border border-slate-100 px-3 py-1 rounded-full uppercase tracking-wider">
+            Autosaved
+          </span>
+        </div>
+
+        {/* Where I am — full width */}
+        <div className="px-8 pt-7 pb-6 border-b border-slate-100">
+          <label className="flex items-center gap-2 text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block"></span>
+            Where I am
+          </label>
+          <textarea
+            className={`${fieldBase} h-24 text-base`}
+            placeholder="Current phase, what just happened, where things stand..."
+            value={localWhereIAm}
+            onChange={(e) => setLocalWhereIAm(e.target.value)}
+          />
+        </div>
+
+        {/* Up next + Don't forget — side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+          {/* Up next */}
+          <div className="px-8 pt-6 pb-7">
+            <label className="flex items-center gap-2 text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block"></span>
+              Up next
+            </label>
+            <textarea
+              className={`${fieldBase} h-28`}
+              placeholder={"What needs to happen next on this project..."}
+              value={localUpNext}
+              onChange={(e) => setLocalUpNext(e.target.value)}
+            />
+          </div>
+
+          {/* Don't forget */}
+          <div className="px-8 pt-6 pb-7">
+            <label className="flex items-center gap-2 text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block"></span>
+              Don't forget
+            </label>
+            <textarea
+              className={`${fieldBase} h-28`}
+              placeholder={"Key constraints, decisions, things you'd forget after a few days..."}
+              value={localDontForget}
+              onChange={(e) => setLocalDontForget(e.target.value)}
+            />
+          </div>
+        </div>
+      </Card>
+    </section>
+  );
+};
+
+// --- Main App Component ---
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -540,7 +542,7 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   // UI State
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("questions");
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState(null);
@@ -550,9 +552,6 @@ export default function App() {
 
   // Resource filtering
   const [resourceFilter, setResourceFilter] = useState(null);
-
-  // Note/Context Local State
-  const [localContextNote, setLocalContextNote] = useState("");
 
   // Modal State
   const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
@@ -574,42 +573,19 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      setProjects([]);
-      return;
-    }
-
-    const projectsRef = collection(
-      db,
-      "artifacts",
-      appId,
-      "users",
-      user.uid,
-      "projects"
-    );
-
+    if (!user) { setProjects([]); return; }
+    const projectsRef = collection(db, "artifacts", appId, "users", user.uid, "projects");
     const q = query(projectsRef);
-
-    const unsubDocs = onSnapshot(
-      q,
-      (snapshot) => {
-        const loadedProjects = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProjects(loadedProjects);
-
-        if (loadedProjects.length > 0) {
-          setSelectedId((prev) => {
-            const stillExists = loadedProjects.find((p) => p.id === prev);
-            return stillExists ? prev : loadedProjects[0].id;
-          });
-        }
-      },
-      (error) => {
-        console.error("SNAPSHOT ERROR:", error);
+    const unsubDocs = onSnapshot(q, (snapshot) => {
+      const loadedProjects = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setProjects(loadedProjects);
+      if (loadedProjects.length > 0) {
+        setSelectedId((prev) => {
+          const stillExists = loadedProjects.find((p) => p.id === prev);
+          return stillExists ? prev : loadedProjects[0].id;
+        });
       }
-    );
+    }, (error) => { console.error("SNAPSHOT ERROR:", error); });
     return () => unsubDocs();
   }, [user]);
 
@@ -619,9 +595,7 @@ export default function App() {
     return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const handleScroll = (e) => {
-    setIsScrolled(e.target.scrollTop > 60);
-  };
+  const handleScroll = (e) => { setIsScrolled(e.target.scrollTop > 60); };
 
   const handleLogin = async () => {
     setLoading(true);
@@ -650,7 +624,10 @@ export default function App() {
     const newProject = {
       status: "active",
       lastUpdated: new Date().toISOString(),
-      contextNote: "",
+      // Briefing fields (replaces contextNote)
+      whereIAm: "",
+      upNext: "",
+      dontForget: "",
       notes: [],
       resources: [],
       ...projectData,
@@ -661,42 +638,23 @@ export default function App() {
         newProject
       );
       setSelectedId(ref.id);
-    } catch (e) {
-      console.error("CREATE PROJECT ERROR:", e);
-    }
+    } catch (e) { console.error("CREATE PROJECT ERROR:", e); }
   };
 
   const updateProject = async (projectId, data) => {
     if (!user) return;
     try {
-      const projectRef = doc(
-        db,
-        "artifacts",
-        appId,
-        "users",
-        user.uid,
-        "projects",
-        projectId
-      );
-      await updateDoc(projectRef, {
-        ...data,
-        lastUpdated: new Date().toISOString(),
-      });
-    } catch (e) {
-      console.error(e);
-    }
+      const projectRef = doc(db, "artifacts", appId, "users", user.uid, "projects", projectId);
+      await updateDoc(projectRef, { ...data, lastUpdated: new Date().toISOString() });
+    } catch (e) { console.error(e); }
   };
 
   const deleteProject = async (projectId) => {
     if (!user) return;
     try {
-      await deleteDoc(
-        doc(db, "artifacts", appId, "users", user.uid, "projects", projectId)
-      );
+      await deleteDoc(doc(db, "artifacts", appId, "users", user.uid, "projects", projectId));
       if (selectedId === projectId) setSelectedId(null);
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) { console.error(e); }
   };
 
   const selectedProject = projects.find((p) => p.id === selectedId);
@@ -713,49 +671,42 @@ export default function App() {
     setIsProjectModalOpen(false);
   };
 
-  const handleDeleteProjectModal = (id) => {
-    deleteProject(id);
-  };
+  const handleDeleteProjectModal = (id) => { deleteProject(id); };
 
   const updateCtx = (field, value) => {
     if (selectedId) updateProject(selectedId, { [field]: value });
   };
 
+  const handleBriefingUpdate = (fields) => {
+    if (selectedId) updateProject(selectedId, fields);
+  };
+
   const toggleStatus = (id) => {
     const p = projects.find((x) => x.id === id);
-    if (p)
-      updateProject(id, {
-        status: p.status === "active" ? "paused" : "active",
-      });
+    if (p) updateProject(id, { status: p.status === "active" ? "paused" : "active" });
   };
 
-  const markCompleted = (id) => {
-    updateProject(id, { status: "completed" });
-  };
+  const markCompleted = (id) => { updateProject(id, { status: "completed" }); };
+  const reopenProject = (id) => { updateProject(id, { status: "active" }); };
 
-  const reopenProject = (id) => {
-    updateProject(id, { status: "active" });
-  };
-
-  const addNote = (type, content) => {
+  // Questions only (no notes)
+  const addQuestion = (content) => {
     if (!content.trim() || !selectedProject) return;
     const newNote = {
       id: generateId(),
-      type,
+      type: "question",
       content,
       timestamp: new Date().toLocaleDateString(),
       isResolved: false,
     };
-    updateCtx("notes", [newNote, ...selectedProject.notes]);
+    updateCtx("notes", [newNote, ...(selectedProject.notes || [])]);
   };
 
   const deleteNote = (noteId) => {
     if (!selectedProject) return;
-    const newNotes = selectedProject.notes.filter((n) => n.id !== noteId);
-    updateCtx("notes", newNotes);
+    updateCtx("notes", selectedProject.notes.filter((n) => n.id !== noteId));
   };
 
-  // FIX: Added the missing startEditing function
   const startEditing = (note, e) => {
     e.stopPropagation();
     setEditingId(note.id);
@@ -783,28 +734,19 @@ export default function App() {
 
   const handleSaveResource = (data) => {
     if (!selectedProject) return;
-
     if (data.id) {
-      // Edit existing resource
-      const newResources = selectedProject.resources.map((r) =>
-        r.id === data.id ? { ...r, ...data } : r
-      );
+      const newResources = selectedProject.resources.map((r) => r.id === data.id ? { ...r, ...data } : r);
       updateCtx("resources", newResources);
     } else {
-      // Add new resource — strip the null id and generate a fresh one
       const { id: _discarded, ...rest } = data;
-      const newRes = {
-        id: generateId(),
-        ...rest,
-      };
+      const newRes = { id: generateId(), ...rest };
       updateCtx("resources", [newRes, ...(selectedProject.resources || [])]);
     }
   };
 
   const deleteRes = (resId) => {
     if (!selectedProject) return;
-    const newRes = selectedProject.resources.filter((r) => r.id !== resId);
-    updateCtx("resources", newRes);
+    updateCtx("resources", selectedProject.resources.filter((r) => r.id !== resId));
   };
 
   const uniqueTags = selectedProject
@@ -812,28 +754,8 @@ export default function App() {
     : [];
 
   const filteredResources = selectedProject
-    ? selectedProject.resources.filter(
-        (r) => !resourceFilter || (r.tags && r.tags.includes(resourceFilter))
-      )
+    ? selectedProject.resources.filter((r) => !resourceFilter || (r.tags && r.tags.includes(resourceFilter)))
     : [];
-
-  // Sync context note local state when project changes
-  useEffect(() => {
-    if (selectedProject) {
-      setLocalContextNote(selectedProject.contextNote || "");
-    }
-  }, [selectedProject?.id]);
-
-  // Debounced autosave for context note
-  useEffect(() => {
-    if (!selectedProject) return;
-    const timer = setTimeout(() => {
-      if (localContextNote !== selectedProject.contextNote) {
-        updateCtx("contextNote", localContextNote);
-      }
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [localContextNote]);
 
   if (loading || !user)
     return <LoginScreen onLogin={handleLogin} loading={loading} error={authError} />;
@@ -848,17 +770,15 @@ export default function App() {
       }`}
     >
       <div className="flex items-center gap-3 overflow-hidden">
-        <div
-          className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform duration-300 ease-apple group-hover:scale-110 ${
-            selectedId === project.id
-              ? "bg-indigo-500"
-              : project.status === "active"
-              ? "bg-slate-300"
-              : project.status === "completed"
-              ? "bg-emerald-300"
-              : "bg-amber-200"
-          }`}
-        />
+        <div className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform duration-300 ease-apple group-hover:scale-110 ${
+          selectedId === project.id
+            ? "bg-indigo-500"
+            : project.status === "active"
+            ? "bg-slate-300"
+            : project.status === "completed"
+            ? "bg-emerald-300"
+            : "bg-amber-200"
+        }`} />
         <div className="truncate">
           <p className="text-sm font-medium truncate">{project.title}</p>
         </div>
@@ -876,11 +796,7 @@ export default function App() {
       </style>
       <div className="flex h-screen text-slate-900 overflow-hidden bg-[#F2F4F6]">
         {/* Sidebar */}
-        <div
-          className={`${
-            isSidebarOpen ? "w-80" : "w-0"
-          } bg-white flex-shrink-0 transition-all duration-500 ease-apple flex flex-col h-full shadow-2xl z-20 overflow-hidden`}
-        >
+        <div className={`${isSidebarOpen ? "w-80" : "w-0"} bg-white flex-shrink-0 transition-all duration-500 ease-apple flex flex-col h-full shadow-2xl z-20 overflow-hidden`}>
           <div className="p-6 pb-4 min-w-[320px]">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3 text-slate-800 font-extrabold text-xl tracking-tight">
@@ -889,18 +805,12 @@ export default function App() {
                 </div>
                 <span>Continuum</span>
               </div>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors ease-apple active:scale-95"
-              >
+              <button onClick={() => setSidebarOpen(false)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors ease-apple active:scale-95">
                 <PanelLeft className="w-5 h-5" />
               </button>
             </div>
             <button
-              onClick={() => {
-                setEditingProject(null);
-                setIsProjectModalOpen(true);
-              }}
+              onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
               className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-100 py-3.5 rounded-2xl flex items-center justify-center gap-2 font-bold transition-all duration-200 ease-apple active:scale-95"
             >
               <Plus className="w-5 h-5" /> New Project
@@ -908,20 +818,12 @@ export default function App() {
           </div>
           <div className="flex-1 overflow-y-auto custom-scrollbar min-w-[320px] px-2">
             <div className="mb-8">
-              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">
-                Active
-              </h3>
-              {activeProjects.map((p) => (
-                <SidebarItem key={p.id} project={p} />
-              ))}
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">Active</h3>
+              {activeProjects.map((p) => <SidebarItem key={p.id} project={p} />)}
             </div>
             <div className="mb-8">
-              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">
-                On Hold
-              </h3>
-              {pausedProjects.map((p) => (
-                <SidebarItem key={p.id} project={p} />
-              ))}
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">On Hold</h3>
+              {pausedProjects.map((p) => <SidebarItem key={p.id} project={p} />)}
             </div>
             <div className="mb-8">
               <button
@@ -929,16 +831,9 @@ export default function App() {
                 className="flex items-center justify-between w-full text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4 hover:text-indigo-600 transition-colors ease-apple"
               >
                 Completed
-                {isCompletedExpanded ? (
-                  <ChevronUp className="w-3 h-3" />
-                ) : (
-                  <ChevronDown className="w-3 h-3" />
-                )}
+                {isCompletedExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
               </button>
-              {isCompletedExpanded &&
-                completedProjects.map((p) => (
-                  <SidebarItem key={p.id} project={p} />
-                ))}
+              {isCompletedExpanded && completedProjects.map((p) => <SidebarItem key={p.id} project={p} />)}
             </div>
           </div>
           <div className="p-4 border-t border-slate-100 min-w-[320px]">
@@ -946,8 +841,7 @@ export default function App() {
               onClick={handleLogout}
               className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all ease-apple active:scale-95"
             >
-              <LogOut className="w-4 h-4" />
-              Sign Out
+              <LogOut className="w-4 h-4" /> Sign Out
             </button>
           </div>
         </div>
@@ -967,56 +861,27 @@ export default function App() {
           {selectedProject ? (
             <>
               {/* Sticky Compact Header */}
-              <div
-                className={`absolute top-0 left-0 right-0 bg-white/85 backdrop-blur-xl z-20 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${
-                  isScrolled
-                    ? "translate-y-0 opacity-100 shadow-sm"
-                    : "-translate-y-full opacity-0"
-                }`}
-              >
+              <div className={`absolute top-0 left-0 right-0 bg-white/85 backdrop-blur-xl z-20 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0"}`}>
                 <div className="max-w-5xl mx-auto px-6 md:px-12 py-3 flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-slate-900 truncate mr-4 tracking-tight">
-                    {selectedProject.title}
-                  </h2>
+                  <h2 className="text-lg font-bold text-slate-900 truncate mr-4 tracking-tight">{selectedProject.title}</h2>
                   <div className="flex items-center gap-2 shrink-0">
                     {selectedProject.status !== "completed" ? (
                       <>
-                        <Button
-                          onClick={() => toggleStatus(selectedProject.id)}
-                          variant="secondary"
-                          className="h-9 px-4 text-xs font-semibold"
-                        >
-                          {selectedProject.status === "active" ? (
-                            <><PauseCircle className="w-3.5 h-3.5 mr-2" /> Pause</>
-                          ) : (
-                            <><PlayCircle className="w-3.5 h-3.5 mr-2" /> Resume</>
-                          )}
+                        <Button onClick={() => toggleStatus(selectedProject.id)} variant="secondary" className="h-9 px-4 text-xs font-semibold">
+                          {selectedProject.status === "active"
+                            ? <><PauseCircle className="w-3.5 h-3.5 mr-2" /> Pause</>
+                            : <><PlayCircle className="w-3.5 h-3.5 mr-2" /> Resume</>}
                         </Button>
-                        <Button
-                          variant="secondary"
-                          onClick={() => markCompleted(selectedProject.id)}
-                          className="h-9 px-4 text-xs font-semibold"
-                        >
+                        <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-9 px-4 text-xs font-semibold">
                           <CheckSquare className="w-3.5 h-3.5 mr-2" /> Done
                         </Button>
                       </>
                     ) : (
-                      <Button
-                        variant="primary"
-                        onClick={() => reopenProject(selectedProject.id)}
-                        className="h-9 px-4 text-xs font-semibold"
-                      >
+                      <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-9 px-4 text-xs font-semibold">
                         <RotateCcw className="w-3.5 h-3.5 mr-2" /> Reopen
                       </Button>
                     )}
-                    <Button
-                      variant="icon"
-                      onClick={() => {
-                        setEditingProject(selectedProject);
-                        setIsProjectModalOpen(true);
-                      }}
-                      className="h-9 w-9"
-                    >
+                    <Button variant="icon" onClick={() => { setEditingProject(selectedProject); setIsProjectModalOpen(true); }} className="h-9 w-9">
                       <Settings className="w-4 h-4" />
                     </Button>
                   </div>
@@ -1024,79 +889,36 @@ export default function App() {
               </div>
 
               {/* Main Scrollable Area */}
-              <div
-                className="flex-1 overflow-y-auto px-6 md:px-12 pb-12 scroll-smooth"
-                onScroll={handleScroll}
-              >
+              <div className="flex-1 overflow-y-auto px-6 md:px-12 pb-12 scroll-smooth" onScroll={handleScroll}>
                 {/* Hero Header */}
                 <header className="py-12 md:py-16">
                   <div className="max-w-5xl mx-auto">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                       <div className="flex items-center gap-4">
-                        <Badge
-                          color={
-                            selectedProject.status === "active"
-                              ? "green"
-                              : selectedProject.status === "completed"
-                              ? "blue"
-                              : "amber"
-                          }
-                        >
-                          {selectedProject.status === "active"
-                            ? "Active"
-                            : selectedProject.status === "completed"
-                            ? "Completed"
-                            : "Paused"}
+                        <Badge color={selectedProject.status === "active" ? "green" : selectedProject.status === "completed" ? "blue" : "amber"}>
+                          {selectedProject.status === "active" ? "Active" : selectedProject.status === "completed" ? "Completed" : "Paused"}
                         </Badge>
                         <span className="text-slate-300">|</span>
-                        <span className="text-sm font-semibold text-slate-500 tracking-wide">
-                          {selectedProject.client}
-                        </span>
+                        <span className="text-sm font-semibold text-slate-500 tracking-wide">{selectedProject.client}</span>
                       </div>
-
                       <div className="flex items-center gap-2">
                         {selectedProject.status !== "completed" ? (
                           <>
-                            <Button
-                              onClick={() => toggleStatus(selectedProject.id)}
-                              variant={
-                                selectedProject.status === "active"
-                                  ? "secondary"
-                                  : "primary"
-                              }
-                              className="h-10 px-5 text-sm"
-                            >
-                              {selectedProject.status === "active" ? (
-                                <><PauseCircle className="w-4 h-4 mr-2" /> Pause</>
-                              ) : (
-                                <><PlayCircle className="w-4 h-4 mr-2" /> Resume</>
-                              )}
+                            <Button onClick={() => toggleStatus(selectedProject.id)} variant={selectedProject.status === "active" ? "secondary" : "primary"} className="h-10 px-5 text-sm">
+                              {selectedProject.status === "active"
+                                ? <><PauseCircle className="w-4 h-4 mr-2" /> Pause</>
+                                : <><PlayCircle className="w-4 h-4 mr-2" /> Resume</>}
                             </Button>
-                            <Button
-                              variant="secondary"
-                              onClick={() => markCompleted(selectedProject.id)}
-                              className="h-10 px-5 text-sm"
-                            >
+                            <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-10 px-5 text-sm">
                               <CheckSquare className="w-4 h-4 mr-2" /> Done
                             </Button>
                           </>
                         ) : (
-                          <Button
-                            variant="primary"
-                            onClick={() => reopenProject(selectedProject.id)}
-                            className="h-10 px-5 text-sm"
-                          >
+                          <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-10 px-5 text-sm">
                             <RotateCcw className="w-4 h-4 mr-2" /> Reopen
                           </Button>
                         )}
-                        <Button
-                          variant="icon"
-                          onClick={() => {
-                            setEditingProject(selectedProject);
-                            setIsProjectModalOpen(true);
-                          }}
-                          className="h-10 w-10"
-                        >
+                        <Button variant="icon" onClick={() => { setEditingProject(selectedProject); setIsProjectModalOpen(true); }} className="h-10 w-10">
                           <Settings className="w-5 h-5" />
                         </Button>
                       </div>
@@ -1108,85 +930,39 @@ export default function App() {
 
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-5 border-t border-slate-200/60 pt-8">
                       <div className="md:col-span-3 space-y-3">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Start Date
-                        </p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Start Date</p>
                         <div className="flex items-center gap-2 text-slate-700 font-medium text-base">
                           <Calendar className="w-4 h-4 text-slate-400" />
-                          {selectedProject.startDate
-                            ? new Date(selectedProject.startDate).toLocaleDateString()
-                            : "N/A"}
+                          {selectedProject.startDate ? new Date(selectedProject.startDate).toLocaleDateString() : "N/A"}
                         </div>
                       </div>
-
                       <div className="md:col-span-9 space-y-3">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                          Description
-                        </p>
-                        <p className="text-base text-slate-600 leading-relaxed">
-                          {selectedProject.description || "No description provided."}
-                        </p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Description</p>
+                        <p className="text-base text-slate-600 leading-relaxed">{selectedProject.description || "No description provided."}</p>
                       </div>
                     </div>
                   </div>
                 </header>
 
                 <div className="max-w-5xl mx-auto mt-8">
-                  {/* Context Note */}
-                  <section className="mb-10">
-                    <Card className="p-0 overflow-hidden bg-white border-none shadow-lg shadow-slate-200/50">
-                      <div className="px-8 py-5 flex justify-between items-center border-b border-slate-100 bg-slate-50/50">
-                        <h2 className="text-xs font-semibold text-indigo-900 uppercase tracking-wider flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-indigo-500" /> Where you left off
-                        </h2>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-slate-400 bg-white border border-slate-100 px-3 py-1 rounded-full uppercase tracking-wider">
-                            Autosaved
-                          </span>
-                          <button
-                            onClick={() => setLocalContextNote("")}
-                            className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                            title="Clear Text"
-                          >
-                            <Eraser className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                      <textarea
-                        className="w-full h-40 p-8 text-slate-700 leading-relaxed resize-none focus:outline-none text-lg bg-white placeholder:text-slate-300 font-light"
-                        placeholder="Before you leave, write down exactly where you left off..."
-                        value={localContextNote}
-                        onChange={(e) => setLocalContextNote(e.target.value)}
-                      />
-                    </Card>
-                  </section>
+                  {/* Briefing Card — replaces the old context note textarea */}
+                  <BriefingCard
+                    project={selectedProject}
+                    onUpdate={handleBriefingUpdate}
+                  />
 
                   {/* Tab Switcher */}
                   <div className="relative flex items-center bg-white p-1 rounded-full w-full max-w-md mx-auto md:mx-0 shadow-sm border border-slate-200 mb-10">
-                    <div
-                      className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${
-                        activeTab === "overview"
-                          ? "left-1 translate-x-0"
-                          : "translate-x-full left-0"
-                      }`}
-                    />
+                    <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${activeTab === "questions" ? "left-1 translate-x-0" : "translate-x-full left-0"}`} />
                     <button
-                      onClick={() => setActiveTab("overview")}
-                      className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${
-                        activeTab === "overview"
-                          ? "text-indigo-900"
-                          : "text-slate-500 hover:text-slate-700"
-                      }`}
+                      onClick={() => setActiveTab("questions")}
+                      className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "questions" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}
                     >
-                      Notes & Questions
+                      Questions
                     </button>
                     <button
                       onClick={() => setActiveTab("resources")}
-                      className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${
-                        activeTab === "resources"
-                          ? "text-indigo-900"
-                          : "text-slate-500 hover:text-slate-700"
-                      }`}
+                      className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "resources" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}
                     >
                       Resources
                     </button>
@@ -1195,21 +971,20 @@ export default function App() {
                   {/* Tab Content */}
                   <div className="min-h-[400px]">
                     <div key={activeTab} className="animate-in fade-in duration-500 ease-apple">
-                      {activeTab === "overview" ? (
+                      {activeTab === "questions" ? (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                          {/* Left: Input cards */}
+                          {/* Left: Question input */}
                           <div className="lg:col-span-1 space-y-6">
                             <Card className="p-6 shadow-md shadow-slate-200/50">
                               <label className="text-xs font-semibold text-amber-900 mb-4 block flex items-center gap-2 uppercase tracking-wider">
-                                <MessageCircle className="w-4 h-4 text-amber-600" />{" "}
-                                Ask a Question
+                                <MessageCircle className="w-4 h-4 text-amber-600" /> Ask a Question
                               </label>
                               <Input
                                 id="new-question"
                                 placeholder="What do you need to ask?"
                                 onKeyDown={(e) => {
                                   if (e.key === "Enter") {
-                                    addNote("question", e.target.value);
+                                    addQuestion(e.target.value);
                                     e.target.value = "";
                                   }
                                 }}
@@ -1220,160 +995,76 @@ export default function App() {
                                 className="w-full justify-between group bg-amber-50 hover:bg-amber-100 text-amber-900"
                                 onClick={() => {
                                   const el = document.getElementById("new-question");
-                                  addNote("question", el.value);
+                                  addQuestion(el.value);
                                   el.value = "";
                                 }}
                               >
-                                Add Question{" "}
-                                <Plus className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-                              </Button>
-                            </Card>
-                            <Card className="p-6 shadow-md shadow-slate-200/50">
-                              <label className="text-xs font-semibold text-indigo-900 mb-4 block flex items-center gap-2 uppercase tracking-wider">
-                                <FileText className="w-4 h-4 text-indigo-500" /> Add a
-                                Note
-                              </label>
-                              <TextArea
-                                id="new-note"
-                                className="h-32 mb-4 bg-slate-50 !border-0"
-                                placeholder="Meeting notes, ideas..."
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault();
-                                    addNote("note", e.target.value);
-                                    e.target.value = "";
-                                  }
-                                }}
-                              />
-                              <Button
-                                variant="soft"
-                                className="w-full justify-between group"
-                                onClick={() => {
-                                  const el = document.getElementById("new-note");
-                                  addNote("note", el.value);
-                                  el.value = "";
-                                }}
-                              >
-                                Save Note{" "}
-                                <Save className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+                                Add Question <Plus className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
                               </Button>
                             </Card>
                           </div>
 
-                          {/* Right: Notes list */}
+                          {/* Right: Questions list */}
                           <div className="lg:col-span-2 space-y-6">
                             <div className="space-y-4">
-                              {selectedProject.notes?.filter((n) => !n.isResolved)
-                                .length === 0 && (
+                              {/* Filter to questions only (no notes) */}
+                              {selectedProject.notes?.filter((n) => !n.isResolved && n.type === "question").length === 0 && (
                                 <div className="text-center py-20 bg-white rounded-[32px] border-2 border-dashed border-slate-200">
                                   <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <FileText className="w-8 h-8 text-slate-300" />
+                                    <MessageCircle className="w-8 h-8 text-slate-300" />
                                   </div>
-                                  <p className="text-slate-400 font-medium">
-                                    No open questions or notes.
-                                  </p>
+                                  <p className="text-slate-400 font-medium">No open questions.</p>
                                 </div>
                               )}
                               {selectedProject.notes
-                                ?.filter((n) => !n.isResolved)
+                                ?.filter((n) => !n.isResolved && n.type === "question")
                                 .map((note) => (
-                                  <Card
-                                    key={note.id}
-                                    className="p-6 group hover:shadow-md transition-all duration-300 ease-apple bg-white"
-                                  >
+                                  <Card key={note.id} className="p-6 group hover:shadow-md transition-all duration-300 ease-apple bg-white">
                                     <div className="flex items-start gap-5">
                                       <div className="mt-1 shrink-0">
-                                        {note.type === "question" ? (
-                                          <button
-                                            onClick={() => toggleNoteRes(note.id)}
-                                            className="w-10 h-10 rounded-full border-2 border-amber-100 text-amber-600 bg-amber-50 flex items-center justify-center hover:bg-amber-100 hover:scale-110 transition-all ease-apple"
-                                          >
-                                            <Circle className="w-5 h-5" />
-                                          </button>
-                                        ) : (
-                                          <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
-                                            <FileText className="w-5 h-5" />
-                                          </div>
-                                        )}
+                                        <button
+                                          onClick={() => toggleNoteRes(note.id)}
+                                          className="w-10 h-10 rounded-full border-2 border-amber-100 text-amber-600 bg-amber-50 flex items-center justify-center hover:bg-amber-100 hover:scale-110 transition-all ease-apple"
+                                        >
+                                          <Circle className="w-5 h-5" />
+                                        </button>
                                       </div>
                                       <div className="flex-1">
                                         <div className="flex items-center justify-between mb-3">
-                                          <Badge
-                                            color={
-                                              note.type === "question"
-                                                ? "amber"
-                                                : "indigo"
-                                            }
-                                          >
-                                            {note.type}
-                                          </Badge>
-                                          <span className="text-xs font-semibold text-slate-400">
-                                            {note.timestamp}
-                                          </span>
+                                          <Badge color="amber">question</Badge>
+                                          <span className="text-xs font-semibold text-slate-400">{note.timestamp}</span>
                                         </div>
                                         {editingId === note.id ? (
                                           <div className="mt-2 bg-slate-50 p-4 rounded-2xl">
                                             <TextArea
                                               className="bg-white"
                                               value={editContent}
-                                              onChange={(e) =>
-                                                setEditContent(e.target.value)
-                                              }
+                                              onChange={(e) => setEditContent(e.target.value)}
                                               rows={3}
                                               autoFocus
                                             />
                                             <div className="flex gap-3 mt-4 justify-end">
-                                              <Button
-                                                variant="tertiary"
-                                                onClick={() => setEditingId(null)}
-                                                className="px-4 py-2 text-xs"
-                                              >
-                                                Cancel
-                                              </Button>
-                                              <Button
-                                                variant="primary"
-                                                onClick={saveEditNote}
-                                                className="px-4 py-2 text-xs"
-                                              >
-                                                Save
-                                              </Button>
+                                              <Button variant="tertiary" onClick={() => setEditingId(null)} className="px-4 py-2 text-xs">Cancel</Button>
+                                              <Button variant="primary" onClick={saveEditNote} className="px-4 py-2 text-xs">Save</Button>
                                             </div>
                                           </div>
                                         ) : (
-                                          <p className="text-slate-800 text-base leading-relaxed whitespace-pre-wrap font-normal">
-                                            {note.content}
-                                          </p>
+                                          <p className="text-slate-800 text-base leading-relaxed whitespace-pre-wrap font-normal">{note.content}</p>
                                         )}
                                       </div>
                                       <div className="relative">
                                         <Button
                                           variant="icon"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setActiveMenuId(
-                                              activeMenuId === note.id
-                                                ? null
-                                                : note.id
-                                            );
-                                          }}
+                                          onClick={(e) => { e.stopPropagation(); setActiveMenuId(activeMenuId === note.id ? null : note.id); }}
                                         >
                                           <MoreVertical className="w-5 h-5" />
                                         </Button>
                                         {activeMenuId === note.id && (
                                           <div className="absolute right-0 top-10 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                                            <button
-                                              onClick={(e) => startEditing(note, e)}
-                                              className="w-full text-left px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-3 font-medium transition-colors"
-                                            >
+                                            <button onClick={(e) => startEditing(note, e)} className="w-full text-left px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-3 font-medium transition-colors">
                                               <Edit2 className="w-4 h-4" /> Edit
                                             </button>
-                                            <button
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                deleteNote(note.id);
-                                              }}
-                                              className="w-full text-left px-5 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 font-medium transition-colors"
-                                            >
+                                            <button onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }} className="w-full text-left px-5 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 font-medium transition-colors">
                                               <Trash2 className="w-4 h-4" /> Delete
                                             </button>
                                           </div>
@@ -1390,46 +1081,26 @@ export default function App() {
                                 onClick={() => setShowHistory(!showHistory)}
                                 className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-indigo-600 transition-colors mb-6"
                               >
-                                {showHistory ? (
-                                  <ChevronUp className="w-4 h-4" />
-                                ) : (
-                                  <ChevronDown className="w-4 h-4" />
-                                )}{" "}
+                                {showHistory ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                                 Resolved Questions History
                               </button>
                               {showHistory && (
                                 <div className="space-y-4 pl-6 border-l-2 border-slate-200">
-                                  {selectedProject.notes?.filter((n) => n.isResolved)
-                                    .length === 0 && (
-                                    <p className="text-sm text-slate-400 italic">
-                                      No resolved questions yet.
-                                    </p>
+                                  {selectedProject.notes?.filter((n) => n.isResolved && n.type === "question").length === 0 && (
+                                    <p className="text-sm text-slate-400 italic">No resolved questions yet.</p>
                                   )}
                                   {selectedProject.notes
-                                    ?.filter((n) => n.isResolved)
+                                    ?.filter((n) => n.isResolved && n.type === "question")
                                     .map((note) => (
-                                      <div
-                                        key={note.id}
-                                        className="opacity-60 hover:opacity-100 transition-opacity relative group bg-slate-50 p-5 rounded-2xl"
-                                      >
+                                      <div key={note.id} className="opacity-60 hover:opacity-100 transition-opacity relative group bg-slate-50 p-5 rounded-2xl">
                                         <div className="flex items-center gap-3">
                                           <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                                          <p className="text-sm text-slate-600 line-through decoration-slate-300">
-                                            {note.content}
-                                          </p>
+                                          <p className="text-sm text-slate-600 line-through decoration-slate-300">{note.content}</p>
                                           <div className="ml-auto flex items-center gap-2">
-                                            <Button
-                                              variant="tertiary"
-                                              onClick={() => toggleNoteRes(note.id)}
-                                              className="text-xs px-2 py-1"
-                                            >
-                                              Undo
-                                            </Button>
+                                            <Button variant="tertiary" onClick={() => toggleNoteRes(note.id)} className="text-xs px-2 py-1">Undo</Button>
                                           </div>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 pl-8 mt-1 font-semibold">
-                                          Asked on {note.timestamp}
-                                        </p>
+                                        <p className="text-[10px] text-slate-400 pl-8 mt-1 font-semibold">Asked on {note.timestamp}</p>
                                       </div>
                                     ))}
                                 </div>
@@ -1442,46 +1113,22 @@ export default function App() {
                         <div>
                           <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
                             <div className="flex flex-wrap items-center gap-2">
-                              <p className="text-slate-500 text-sm font-semibold mr-2">
-                                Filter by:
-                              </p>
+                              <p className="text-slate-500 text-sm font-semibold mr-2">Filter by:</p>
                               <button
                                 onClick={() => setResourceFilter(null)}
-                                className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${
-                                  resourceFilter === null
-                                    ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200"
-                                    : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
-                                }`}
+                                className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === null ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200" : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}
                               >
                                 All
                               </button>
                               {uniqueTags.map((tag) => (
-                                <button
-                                  key={tag}
-                                  onClick={() =>
-                                    setResourceFilter(
-                                      tag === resourceFilter ? null : tag
-                                    )
-                                  }
-                                  className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${
-                                    resourceFilter === tag
-                                      ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200"
-                                      : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
-                                  }`}
-                                >
+                                <button key={tag} onClick={() => setResourceFilter(tag === resourceFilter ? null : tag)}
+                                  className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === tag ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200" : "bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
                                   {tag}
                                 </button>
                               ))}
                             </div>
                             <div className="flex gap-2 w-full md:w-auto">
-                              <Button
-                                variant="primary"
-                                onClick={() => {
-                                  setEditingResource(null);
-                                  setIsResourceModalOpen(true);
-                                }}
-                                className="pl-6 pr-8 w-full md:w-auto"
-                              >
+                              <Button variant="primary" onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }} className="pl-6 pr-8 w-full md:w-auto">
                                 <Plus className="w-5 h-5" /> Add Resource
                               </Button>
                             </div>
@@ -1489,25 +1136,11 @@ export default function App() {
 
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {filteredResources?.map((resource) => (
-                              <div
-                                key={resource.id}
-                                className="group bg-white rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col h-full border border-slate-100"
-                              >
+                              <div key={resource.id} className="group bg-white rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col h-full border border-slate-100">
                                 {resource.type === "image" && (
-                                  <div
-                                    className="h-40 bg-slate-100 w-full relative group/image cursor-pointer overflow-hidden"
-                                    onClick={() => window.open(resource.url, "_blank")}
-                                  >
-                                    <img
-                                      src={resource.url}
-                                      alt={resource.title}
-                                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/image:scale-105"
-                                      onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src =
-                                          "https://placehold.co/600x400/f1f5f9/94a3b8?text=No+Preview";
-                                      }}
-                                    />
+                                  <div className="h-40 bg-slate-100 w-full relative group/image cursor-pointer overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
+                                    <img src={resource.url} alt={resource.title} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/image:scale-105"
+                                      onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/f1f5f9/94a3b8?text=No+Preview"; }} />
                                     <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover/image:opacity-100 duration-300">
                                       <div className="bg-white/90 p-3 rounded-full backdrop-blur-md shadow-lg transform translate-y-4 group-hover/image:translate-y-0 transition-transform duration-300 ease-apple">
                                         <ExternalLink className="w-6 h-6 text-slate-900" />
@@ -1516,108 +1149,53 @@ export default function App() {
                                   </div>
                                 )}
                                 {resource.type === "document" && (
-                                  <div
-                                    className="h-40 bg-indigo-50 w-full relative group/image cursor-pointer flex flex-col items-center justify-center border-b border-indigo-100 overflow-hidden"
-                                    onClick={() => window.open(resource.url, "_blank")}
-                                  >
+                                  <div className="h-40 bg-indigo-50 w-full relative group/image cursor-pointer flex flex-col items-center justify-center border-b border-indigo-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
                                     <div className="w-20 h-20 bg-white rounded-3xl shadow-lg shadow-indigo-100 flex items-center justify-center mb-4 transform group-hover/image:scale-110 transition-transform duration-300 ease-apple">
                                       <FileIcon className="w-10 h-10 text-indigo-500" />
                                     </div>
-                                    <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">
-                                      Document
-                                    </span>
+                                    <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Document</span>
                                   </div>
                                 )}
                                 {resource.type === "link" && (
-                                  <div
-                                    className="h-40 bg-blue-50 w-full relative group/image cursor-pointer flex flex-col items-center justify-center border-b border-blue-100 overflow-hidden"
-                                    onClick={() => window.open(resource.url, "_blank")}
-                                  >
+                                  <div className="h-40 bg-blue-50 w-full relative group/image cursor-pointer flex flex-col items-center justify-center border-b border-blue-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
                                     <div className="w-20 h-20 bg-white rounded-3xl shadow-lg shadow-blue-100 flex items-center justify-center mb-4 transform group-hover/image:scale-110 transition-transform duration-300 ease-apple">
                                       <LinkIcon className="w-10 h-10 text-blue-500" />
                                     </div>
-                                    <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">
-                                      Web Link
-                                    </span>
+                                    <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Web Link</span>
                                   </div>
                                 )}
                                 <div className="p-8 flex-1 flex flex-col">
                                   <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center gap-2">
-                                      <div
-                                        className={`p-2.5 rounded-xl ${
-                                          resource.type === "link"
-                                            ? "bg-blue-50 text-blue-600"
-                                            : resource.type === "image"
-                                            ? "bg-purple-50 text-purple-600"
-                                            : "bg-indigo-50 text-indigo-600"
-                                        }`}
-                                      >
-                                        {resource.type === "link" && (
-                                          <LinkIcon className="w-5 h-5" />
-                                        )}
-                                        {resource.type === "image" && (
-                                          <ImageIcon className="w-5 h-5" />
-                                        )}
-                                        {resource.type === "document" && (
-                                          <FileIcon className="w-5 h-5" />
-                                        )}
+                                      <div className={`p-2.5 rounded-xl ${resource.type === "link" ? "bg-blue-50 text-blue-600" : resource.type === "image" ? "bg-purple-50 text-purple-600" : "bg-indigo-50 text-indigo-600"}`}>
+                                        {resource.type === "link" && <LinkIcon className="w-5 h-5" />}
+                                        {resource.type === "image" && <ImageIcon className="w-5 h-5" />}
+                                        {resource.type === "document" && <FileIcon className="w-5 h-5" />}
                                       </div>
                                     </div>
                                     <div className="flex gap-1 -mr-2">
-                                      <Button
-                                        variant="icon"
-                                        onClick={() => {
-                                          setEditingResource(resource);
-                                          setIsResourceModalOpen(true);
-                                        }}
-                                        className="opacity-0 group-hover:opacity-100 hover:bg-slate-50 hover:text-indigo-600"
-                                        title="Edit Resource"
-                                      >
+                                      <Button variant="icon" onClick={() => { setEditingResource(resource); setIsResourceModalOpen(true); }} className="opacity-0 group-hover:opacity-100 hover:bg-slate-50 hover:text-indigo-600" title="Edit Resource">
                                         <Edit2 className="w-4 h-4" />
                                       </Button>
-                                      <Button
-                                        variant="icon"
-                                        onClick={() => deleteRes(resource.id)}
-                                        className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500"
-                                        title="Delete Resource"
-                                      >
+                                      <Button variant="icon" onClick={() => deleteRes(resource.id)} className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500" title="Delete Resource">
                                         <Trash2 className="w-4 h-4" />
                                       </Button>
                                     </div>
                                   </div>
-                                  <h3 className="font-bold text-xl text-slate-900 truncate mb-3 tracking-tight">
-                                    {resource.title}
-                                  </h3>
+                                  <h3 className="font-bold text-xl text-slate-900 truncate mb-3 tracking-tight">{resource.title}</h3>
                                   {resource.description && (
-                                    <p className="text-sm text-slate-500 mb-8 line-clamp-2 leading-relaxed flex-1 font-medium">
-                                      {resource.description}
-                                    </p>
+                                    <p className="text-sm text-slate-500 mb-8 line-clamp-2 leading-relaxed flex-1 font-medium">{resource.description}</p>
                                   )}
                                   <div className="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
                                     <div className="flex flex-wrap gap-2">
-                                      {resource.tags &&
-                                        resource.tags.slice(0, 2).map((tag, i) => (
-                                          <span
-                                            key={i}
-                                            className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500 border border-slate-100"
-                                          >
-                                            {tag}
-                                          </span>
-                                        ))}
+                                      {resource.tags && resource.tags.slice(0, 2).map((tag, i) => (
+                                        <span key={i} className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500 border border-slate-100">{tag}</span>
+                                      ))}
                                       {resource.tags && resource.tags.length > 2 && (
-                                        <span className="text-[10px] text-slate-400 self-center pl-1 font-bold">
-                                          +{resource.tags.length - 2}
-                                        </span>
+                                        <span className="text-[10px] text-slate-400 self-center pl-1 font-bold">+{resource.tags.length - 2}</span>
                                       )}
                                     </div>
-                                    <a
-                                      href={resource.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="p-2.5 rounded-full hover:bg-indigo-50 text-slate-300 hover:text-indigo-600 transition-colors"
-                                      title="Open in new tab"
-                                    >
+                                    <a href={resource.url} target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-full hover:bg-indigo-50 text-slate-300 hover:text-indigo-600 transition-colors" title="Open in new tab">
                                       <ExternalLink className="w-5 h-5" />
                                     </a>
                                   </div>
@@ -1627,18 +1205,13 @@ export default function App() {
 
                             {/* Add resource ghost card */}
                             <button
-                              onClick={() => {
-                                setEditingResource(null);
-                                setIsResourceModalOpen(true);
-                              }}
+                              onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }}
                               className="rounded-[28px] border-2 border-dashed border-slate-300/80 flex flex-col items-center justify-center h-full min-h-[260px] text-slate-400 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all duration-300 p-8 group ease-apple"
                             >
                               <div className="w-20 h-20 rounded-[2rem] bg-slate-100 group-hover:bg-indigo-100 transition-colors mb-6 flex items-center justify-center duration-300">
                                 <Plus className="w-10 h-10 text-slate-300 group-hover:text-indigo-500 transition-colors" />
                               </div>
-                              <span className="font-bold text-xl tracking-tight">
-                                Add Resource
-                              </span>
+                              <span className="font-bold text-xl tracking-tight">Add Resource</span>
                             </button>
                           </div>
                         </div>
@@ -1650,21 +1223,10 @@ export default function App() {
 
               {/* Modals */}
               {isResourceModalOpen && (
-                <ResourceModal
-                  isOpen={isResourceModalOpen}
-                  onClose={() => setIsResourceModalOpen(false)}
-                  onSubmit={handleSaveResource}
-                  resource={editingResource}
-                />
+                <ResourceModal isOpen={isResourceModalOpen} onClose={() => setIsResourceModalOpen(false)} onSubmit={handleSaveResource} resource={editingResource} />
               )}
               {isProjectModalOpen && (
-                <ProjectModal
-                  isOpen={isProjectModalOpen}
-                  onClose={() => setIsProjectModalOpen(false)}
-                  project={editingProject}
-                  onSubmit={handleSaveProjectModal}
-                  onDelete={handleDeleteProjectModal}
-                />
+                <ProjectModal isOpen={isProjectModalOpen} onClose={() => setIsProjectModalOpen(false)} project={editingProject} onSubmit={handleSaveProjectModal} onDelete={handleDeleteProjectModal} />
               )}
             </>
           ) : (
@@ -1674,26 +1236,15 @@ export default function App() {
                 <Folder className="w-16 h-16 text-slate-300" />
               </div>
               <p className="text-xl font-bold text-slate-900 mb-2">Ready to work?</p>
-              <p className="text-slate-500 mb-8">
-                Select a project from the sidebar to begin
-              </p>
+              <p className="text-slate-500 mb-8">Select a project from the sidebar to begin</p>
               <Button
                 className="pl-6 pr-8 py-3.5 text-base shadow-lg shadow-indigo-200"
-                onClick={() => {
-                  setEditingProject(null);
-                  setIsProjectModalOpen(true);
-                }}
+                onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
               >
                 <Plus className="w-5 h-5 mr-2" /> Create First Project
               </Button>
               {isProjectModalOpen && (
-                <ProjectModal
-                  isOpen={isProjectModalOpen}
-                  onClose={() => setIsProjectModalOpen(false)}
-                  project={editingProject}
-                  onSubmit={handleSaveProjectModal}
-                  onDelete={handleDeleteProjectModal}
-                />
+                <ProjectModal isOpen={isProjectModalOpen} onClose={() => setIsProjectModalOpen(false)} project={editingProject} onSubmit={handleSaveProjectModal} onDelete={handleDeleteProjectModal} />
               )}
             </div>
           )}
