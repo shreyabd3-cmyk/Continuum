@@ -6,7 +6,7 @@ import {
   File as FileIcon, Calendar, Settings, PanelLeft, PanelRight,
   Infinity as InfinityIcon, LogOut, Loader2, AlertCircle,
   CheckSquare, RotateCcw, List, MessageCircle, Mail, ArrowLeft,
-  Send, Menu, Smile, Upload,
+  Send, Menu, Smile, Upload, Clock, AlertTriangle,
 } from "lucide-react";
 
 import { initializeApp } from "firebase/app";
@@ -615,9 +615,11 @@ const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
 
   return (
     <div className="bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block" />
-        <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Where I am</span>
+      <div className="flex items-center gap-2.5 mb-4">
+        <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
+          <Clock className="w-3.5 h-3.5 text-indigo-500" />
+        </div>
+        <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Where I am</span>
       </div>
       <textarea
         ref={textareaRef}
@@ -685,8 +687,10 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
 
   return (
     <div className="bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+      <div className="flex items-center gap-2.5 mb-4">
+        <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+        </div>
         <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">Don't forget</span>
         {!isDemo && (
           <button onClick={switchMode}
@@ -1193,9 +1197,9 @@ export default function App() {
                   <p className="text-sm font-semibold text-slate-500 truncate">{selectedProject.title}</p>
                 </div>
 
-                {/* Hero header — max-w-5xl, generous top padding */}
+                {/* Hero header — max-w-5xl aligned with tabs */}
                 <header className="px-6 md:px-12 pt-10 md:pt-16 pb-6">
-                  <div className="max-w-5xl mx-auto">
+                  <div className="max-w-5xl mx-auto w-full">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                       <div className="flex items-center gap-4">
                         <Badge color={selectedProject.status === "active" ? "green" : selectedProject.status === "completed" ? "blue" : "amber"}>
@@ -1249,8 +1253,8 @@ export default function App() {
                   </div>
                 </header>
 
-                {/* Tabs + content — max-w-5xl, extra top gap */}
-                <div className="px-6 md:px-12 max-w-5xl mx-auto mt-3">
+                {/* Tabs + content — max-w-5xl aligned with header */}
+                <div className="px-6 md:px-12 max-w-5xl mx-auto w-full mt-3">
                   {/* Tab switcher — z-0 */}
                   <div className="relative flex items-center bg-slate-50 p-1 rounded-full w-full max-w-md mx-auto md:mx-0 shadow-sm border border-slate-200 mb-10 z-0">
                     <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${activeTab === "overview" ? "left-1 translate-x-0" : "translate-x-full left-0"}`} />
