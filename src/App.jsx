@@ -1374,9 +1374,9 @@ export default function App() {
                       )}
                     </div>
                   </div>
-                </div>{/* close mt-3 tabs wrapper */}
-                </div>{/* close shared max-w-5xl container */}
-              </div>{/* close scroll area */}
+                </div>
+                </div>
+              </div>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-slate-400 animate-in fade-in zoom-in-95 duration-500 ease-apple px-6">
                 <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center mb-8 shadow-inner">
