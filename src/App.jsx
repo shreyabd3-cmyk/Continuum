@@ -1197,9 +1197,11 @@ export default function App() {
                   <p className="text-sm font-semibold text-slate-500 truncate">{selectedProject.title}</p>
                 </div>
 
-                {/* Hero header — max-w-5xl aligned with tabs */}
-                <header className="px-6 md:px-12 pt-10 md:pt-16 pb-6">
-                  <div className="max-w-5xl mx-auto w-full">
+                {/* Single shared container — header + tabs + content all use the same max-w-5xl and padding */}
+                <div className="w-full max-w-5xl mx-auto px-6 md:px-12 pt-10 md:pt-16 pb-12">
+
+                  {/* Header */}
+                  <div className="mb-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                       <div className="flex items-center gap-4">
                         <Badge color={selectedProject.status === "active" ? "green" : selectedProject.status === "completed" ? "blue" : "amber"}>
@@ -1229,7 +1231,6 @@ export default function App() {
                       )}
                     </div>
 
-                    {/* Title with optional project icon */}
                     <div className="flex items-start gap-4 mb-8">
                       {selectedProject.icon && <ProjectIcon icon={selectedProject.icon} size="lg" className="mt-1 shrink-0" />}
                       <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 break-words leading-[1.1]">
@@ -1251,10 +1252,9 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                </header>
 
-                {/* Tabs + content — max-w-5xl aligned with header */}
-                <div className="px-6 md:px-12 max-w-5xl mx-auto w-full mt-3">
+                  {/* Tabs + content — same container, just 12px gap below header */}
+                  <div className="mt-3">
                   {/* Tab switcher — z-0 */}
                   <div className="relative flex items-center bg-slate-50 p-1 rounded-full w-full max-w-md mx-auto md:mx-0 shadow-sm border border-slate-200 mb-10 z-0">
                     <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${activeTab === "overview" ? "left-1 translate-x-0" : "translate-x-full left-0"}`} />
@@ -1374,8 +1374,9 @@ export default function App() {
                       )}
                     </div>
                   </div>
-                </div>
-              </div>
+                </div>{/* close mt-3 tabs wrapper */}
+                </div>{/* close shared max-w-5xl container */}
+              </div>{/* close scroll area */}
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-slate-400 animate-in fade-in zoom-in-95 duration-500 ease-apple px-6">
                 <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center mb-8 shadow-inner">
