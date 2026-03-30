@@ -41,9 +41,8 @@ const DEFAULT_TAGS = [
   "UX", "Frontend", "Backend", "Design System",
 ];
 const generateId = () => Math.random().toString(36).substr(2, 9);
-
-// Quick emoji suggestions for the picker
 const EMOJI_SUGGESTIONS = ["🎨", "📐", "🗺️", "📊", "💡", "🏗️", "🌿", "⚡", "🔬", "📱", "🛒", "🏥", "✈️", "🎯", "🌊", "🔧"];
+const SLIDE_DURATION = 3800;
 
 // --- Demo Data ---
 const DEMO_PROJECTS = [
@@ -113,10 +112,6 @@ const Button = ({ variant = "primary", className = "", children, ...props }) => 
   );
 };
 
-const Card = ({ children, className = "" }) => (
-  <div className={`bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 ${className}`}>{children}</div>
-);
-
 const Input = ({ className = "", ...props }) => (
   <input className={`w-full bg-slate-100 hover:bg-slate-200/60 focus:bg-slate-50 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 border border-slate-200 transition-all duration-200 ease-apple placeholder:text-slate-400 ${className}`} {...props} />
 );
@@ -136,7 +131,6 @@ const Badge = ({ children, color = "slate", className = "" }) => {
   return <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${colors[color]} ${className}`}>{children}</span>;
 };
 
-// --- Project Icon Display ---
 const ProjectIcon = ({ icon, size = "sm", className = "" }) => {
   const sizes = { sm: "w-7 h-7 text-base", md: "w-10 h-10 text-xl", lg: "w-14 h-14 text-3xl" };
   if (!icon) return null;
@@ -150,25 +144,17 @@ const ProjectIcon = ({ icon, size = "sm", className = "" }) => {
   );
 };
 
-// --- Icon Picker (used in Project Modal) ---
 const IconPicker = ({ value, onChange }) => {
   const [mode, setMode] = useState("emoji");
   const [emojiInput, setEmojiInput] = useState(value && !value.startsWith("data:") ? value : "");
   const fileRef = useRef(null);
-
-  const handleEmojiInput = (val) => {
-    setEmojiInput(val);
-    if (val.trim()) onChange(val.trim());
-  };
-
+  const handleEmojiInput = (val) => { setEmojiInput(val); if (val.trim()) onChange(val.trim()); };
   const handleFile = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = (ev) => onChange(ev.target.result);
     reader.readAsDataURL(file);
   };
-
   return (
     <div className="space-y-3">
       <div className="flex gap-2 p-1 bg-slate-100 rounded-full border border-slate-200 w-fit">
@@ -179,15 +165,9 @@ const IconPicker = ({ value, onChange }) => {
           </button>
         ))}
       </div>
-
       {mode === "emoji" ? (
         <div className="space-y-3">
-          <Input
-            placeholder="Type or paste an emoji, e.g. 🎨"
-            value={emojiInput}
-            onChange={e => handleEmojiInput(e.target.value)}
-            className="text-lg"
-          />
+          <Input placeholder="Type or paste an emoji, e.g. 🎨" value={emojiInput} onChange={e => handleEmojiInput(e.target.value)} className="text-lg" />
           <div className="flex flex-wrap gap-2">
             {EMOJI_SUGGESTIONS.map(e => (
               <button key={e} type="button" onClick={() => { setEmojiInput(e); onChange(e); }}
@@ -217,6 +197,53 @@ const IconPicker = ({ value, onChange }) => {
   );
 };
 
+// ── Progress-pill slider indicator ──
+const SliderDots = ({ total, current, onSelect, duration }) => {
+  const [progress, setProgress] = useState(0);
+  const animRef = useRef(null);
+  const startRef = useRef(null);
+
+  useEffect(() => {
+    setProgress(0);
+    startRef.current = null;
+    if (animRef.current) cancelAnimationFrame(animRef.current);
+    const animate = (ts) => {
+      if (!startRef.current) startRef.current = ts;
+      const pct = Math.min(((ts - startRef.current) / duration) * 100, 100);
+      setProgress(pct);
+      if (pct < 100) animRef.current = requestAnimationFrame(animate);
+    };
+    animRef.current = requestAnimationFrame(animate);
+    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
+  }, [current, duration]);
+
+  return (
+    <div className="flex gap-2 items-center">
+      {Array.from({ length: total }).map((_, i) => (
+        <button
+          key={i}
+          onClick={() => onSelect(i)}
+          className="relative overflow-hidden rounded-full transition-all duration-300 ease-apple focus:outline-none"
+          style={{ width: i === current ? 40 : 8, height: 6, background: "rgba(255,255,255,0.25)" }}
+          aria-label={`Go to slide ${i + 1}`}
+        >
+          {/* Current — animated fill */}
+          {i === current && (
+            <div
+              className="absolute inset-y-0 left-0 rounded-full bg-white"
+              style={{ width: `${progress}%` }}
+            />
+          )}
+          {/* Past — fully filled */}
+          {i < current && (
+            <div className="absolute inset-0 rounded-full bg-white/70" />
+          )}
+        </button>
+      ))}
+    </div>
+  );
+};
+
 // --- Login Screen ---
 const SLIDES = [
   {
@@ -224,20 +251,20 @@ const SLIDES = [
     title: "Pick up exactly where you left off",
     desc: "Stop wasting time figuring out where you were. Continuum keeps your project context front and centre every time you return.",
     preview: (
-      <div className="flex gap-3 mt-6">
-        <div className="flex-1 bg-slate-50/10 rounded-2xl p-4 border border-slate-50/10">
+      <div className="flex gap-3 mt-8">
+        <div className="flex-1 bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-300 inline-block" />
             <span className="text-[9px] font-bold text-indigo-200 uppercase tracking-widest">Where I am</span>
           </div>
-          <p className="text-xs text-slate-200/70 leading-relaxed">Sitemap v2 approved. Moving into content audit.</p>
+          <p className="text-xs text-white/70 leading-relaxed">Sitemap v2 approved. Moving into content audit.</p>
         </div>
-        <div className="flex-1 bg-slate-50/10 rounded-2xl p-4 border border-slate-50/10">
+        <div className="flex-1 bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-300 inline-block" />
             <span className="text-[9px] font-bold text-amber-200 uppercase tracking-widest">Don't forget</span>
           </div>
-          <p className="text-xs text-slate-200/70 leading-relaxed">Max 6 nav items. Blog retired.</p>
+          <p className="text-xs text-white/70 leading-relaxed">Max 6 nav items. Blog retired.</p>
         </div>
       </div>
     ),
@@ -247,11 +274,11 @@ const SLIDES = [
     title: "Never lose track of a blocker",
     desc: "Log questions the moment they come up. Resolve them when you get answers. Full history always there.",
     preview: (
-      <div className="flex flex-col gap-2 mt-6">
+      <div className="flex flex-col gap-2 mt-8">
         {["Has the client confirmed the new sitemap?", "Are we handling the CMS migration?"].map((q, i) => (
-          <div key={i} className="flex items-center gap-3 bg-slate-50/10 rounded-2xl px-4 py-3 border border-slate-50/10">
+          <div key={i} className="flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3 border border-white/10 backdrop-blur-sm">
             <div className="w-4 h-4 rounded-full border-2 border-amber-300 shrink-0" />
-            <p className="text-xs text-slate-200/75">{q}</p>
+            <p className="text-xs text-white/75">{q}</p>
           </div>
         ))}
       </div>
@@ -262,11 +289,11 @@ const SLIDES = [
     title: "Stop hunting through folders",
     desc: "Links, docs, and images — tagged and filterable, all in one place per project.",
     preview: (
-      <div className="grid grid-cols-2 gap-2 mt-6">
+      <div className="grid grid-cols-2 gap-2 mt-8">
         {[["Sitemap v2", "Project Doc"], ["Content Audit", "UX"], ["Moodboard", "UI Inspiration"], ["Client Brief", "Project Doc"]].map(([title, tag], i) => (
-          <div key={i} className="bg-slate-50/10 rounded-xl p-3 border border-slate-50/10">
-            <p className="text-[9px] font-bold text-slate-300/50 uppercase tracking-widest mb-1">{tag}</p>
-            <p className="text-xs font-semibold text-slate-200/80">{title}</p>
+          <div key={i} className="bg-white/10 rounded-xl p-3 border border-white/10 backdrop-blur-sm">
+            <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-1">{tag}</p>
+            <p className="text-xs font-semibold text-white/80">{title}</p>
           </div>
         ))}
       </div>
@@ -283,10 +310,11 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   const [localLoading, setLocalLoading] = useState(false);
   const [localError, setLocalError] = useState("");
 
+  // Auto-advance slide
   useEffect(() => {
-    const timer = setInterval(() => setSlide(s => (s + 1) % SLIDES.length), 3800);
-    return () => clearInterval(timer);
-  }, []);
+    const timer = setTimeout(() => setSlide(s => (s + 1) % SLIDES.length), SLIDE_DURATION);
+    return () => clearTimeout(timer);
+  }, [slide]);
 
   const handleEmailSubmit = async () => {
     if (!email.trim()) return;
@@ -302,51 +330,63 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
-      <div className="hidden md:flex flex-col flex-1 bg-indigo-600 px-12 py-12 justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-slate-50/15 rounded-2xl flex items-center justify-center">
-            <InfinityIcon className="w-6 h-6 text-slate-50" />
+
+      {/* ── Left panel — centered ── */}
+      <div className="hidden md:flex flex-col flex-1 bg-indigo-600 px-14 py-12">
+        {/* Logo — top left */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="w-10 h-10 bg-white/15 rounded-2xl flex items-center justify-center">
+            <InfinityIcon className="w-6 h-6 text-white" />
           </div>
-          <span className="text-slate-50 font-extrabold text-xl tracking-tight">Continuum</span>
+          <span className="text-white font-extrabold text-xl tracking-tight">Continuum</span>
         </div>
-        <div className="flex-1 flex flex-col justify-center py-12">
-          <div key={slide} className="animate-in fade-in slide-in-from-bottom-2 duration-500 max-w-md">
+
+        {/* Slide content — vertically centered */}
+        <div className="flex-1 flex items-center justify-center">
+          <div key={slide} className="animate-in fade-in slide-in-from-bottom-3 duration-500 w-full max-w-sm">
             <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-4">{currentSlide.tag}</p>
-            <h2 className="text-3xl font-bold text-slate-50 leading-tight tracking-tight mb-4">{currentSlide.title}</h2>
+            <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-4">{currentSlide.title}</h2>
             <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
             {currentSlide.preview}
           </div>
         </div>
-        <div className="flex gap-2">
-          {SLIDES.map((_, i) => (
-            <button key={i} onClick={() => setSlide(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ease-apple ${i === slide ? "bg-slate-50 w-8" : "bg-slate-50/30 w-1.5"}`} />
-          ))}
+
+        {/* Progress pill dots — bottom */}
+        <div className="shrink-0">
+          <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
         </div>
       </div>
 
-      <div className="flex flex-col justify-center flex-1 bg-[#F2F4F6] px-8 md:px-16 py-12 overflow-y-auto">
-        <div className="flex items-center gap-3 mb-10 md:hidden">
+      {/* ── Right panel — centered ── */}
+      <div className="flex flex-col items-center justify-center flex-1 bg-[#F2F4F6] px-8 md:px-16 py-12 overflow-y-auto">
+
+        {/* Mobile logo */}
+        <div className="flex items-center gap-3 mb-10 md:hidden self-start">
           <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
-            <InfinityIcon className="w-5 h-5 text-slate-50" />
+            <InfinityIcon className="w-5 h-5 text-white" />
           </div>
           <span className="text-slate-900 font-extrabold text-lg tracking-tight">Continuum</span>
         </div>
-        <div className="max-w-sm w-full mx-auto md:mx-0">
+
+        <div className="w-full max-w-sm">
           {step === "main" ? (
             <>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
-              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
-              <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
+              {/* Heading */}
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 text-center">Your creative second brain</p>
+              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2 text-center">Get started</h1>
+              <p className="text-sm text-slate-500 leading-relaxed mb-8 text-center">
+                New here? We'll create your account automatically.
+              </p>
+
+              {/* Error */}
               {(error || localError) && (
                 <div className="bg-red-50 text-red-600 p-3 rounded-2xl text-xs flex items-center gap-2 mb-5">
                   <AlertCircle className="w-4 h-4 shrink-0" /><p>{error || localError}</p>
                 </div>
               )}
-              <Input type="email" placeholder="Your email address" value={email}
-                onChange={e => setEmail(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
-                className="mb-3 bg-slate-100" />
-              <div className="flex gap-2 p-1 bg-slate-200/60 rounded-full border border-slate-200 mb-3">
+
+              {/* Auth mode tabs */}
+              <div className="flex gap-2 p-1 bg-slate-200/60 rounded-full border border-slate-200 mb-4">
                 {[["magic", "Magic link", "No password"], ["password", "Password", "Traditional"]].map(([mode, label, sub]) => (
                   <button key={mode} onClick={() => setAuthMode(mode)}
                     className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all duration-200 ease-apple ${authMode === mode ? "bg-slate-50 shadow-sm text-indigo-900 ring-1 ring-slate-900/5" : "text-slate-500 hover:text-slate-700"}`}>
@@ -354,27 +394,56 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                   </button>
                 ))}
               </div>
-              {authMode === "magic" ? (
-                <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
-                  We'll send a sign-in link to your email. Click it and you're in — no password ever.
-                </div>
-              ) : (
+
+              {/* Context note */}
+              <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
+                {authMode === "magic"
+                  ? "We'll send a sign-in link to your email. Click it and you're in — no password ever."
+                  : "Enter your email and password. New here? We'll create your account automatically."}
+              </div>
+
+              {/* Email input */}
+              <Input
+                type="email"
+                placeholder="Your email address"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
+                className="mb-3"
+              />
+
+              {/* Password input — only in password mode */}
+              {authMode === "password" && (
                 <div className="mb-5">
-                  <Input type="password" placeholder="Password" value={password}
-                    onChange={e => setPassword(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
-                    className="mb-2 bg-slate-100" />
+                  <Input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
+                    className="mb-2"
+                  />
                   <p className="text-xs text-slate-400 text-right cursor-pointer hover:text-indigo-600 transition-colors">Forgot password?</p>
                 </div>
               )}
+
+              {/* Primary CTA */}
               <Button variant="primary" className="w-full py-3.5 mb-4" onClick={handleEmailSubmit} disabled={localLoading || loading}>
-                {localLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
-                  : authMode === "magic" ? <><Send className="w-4 h-4" /> Send magic link</> : "Continue"}
+                {localLoading
+                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
+                  : authMode === "magic"
+                    ? <><Send className="w-4 h-4" /> Send magic link</>
+                    : "Continue"}
               </Button>
+
+              {/* Divider */}
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex-1 h-px bg-slate-200" />
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">or</span>
                 <div className="flex-1 h-px bg-slate-200" />
               </div>
+
+              {/* Google */}
               <Button variant="google" className="w-full py-3.5 mb-3" onClick={onGoogleLogin} disabled={loading}>
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Connecting...</> : (
                   <><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -385,6 +454,8 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                   </svg>Continue with Google</>
                 )}
               </Button>
+
+              {/* Demo */}
               <button onClick={onDemo}
                 className="w-full py-3.5 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-bold hover:bg-indigo-100 transition-all ease-apple active:scale-95 flex items-center justify-center gap-2">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -393,15 +464,16 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               <p className="text-[11px] text-slate-400 text-center mt-2">No account needed · Data won't be saved</p>
             </>
           ) : (
+            /* ── Email sent step ── */
             <>
               <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
                 <ArrowLeft className="w-3.5 h-3.5" /> Back
               </button>
-              <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <Mail className="w-7 h-7 text-indigo-600" />
               </div>
-              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">Check your inbox</h2>
-              <p className="text-sm text-slate-500 leading-relaxed mb-6">
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3 text-center">Check your inbox</h2>
+              <p className="text-sm text-slate-500 leading-relaxed mb-6 text-center">
                 We sent a sign-in link to <strong className="text-slate-800">{email}</strong>. Click it and you're in — no password needed.
               </p>
               <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
@@ -518,12 +590,10 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
   );
 };
 
-// --- Project Modal (with icon picker) ---
+// --- Project Modal ---
 const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
   const [icon, setIcon] = useState(project?.icon || "");
-
   useEffect(() => { setIcon(project?.icon || ""); }, [project?.id, isOpen]);
-
   if (!isOpen) return null;
   const isEditing = !!project;
 
@@ -542,13 +612,10 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
             onClose();
           }}>
             <div className="space-y-6">
-              {/* Icon picker */}
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-slate-500 ml-1">Project Icon <span className="text-slate-400 font-normal">(optional)</span></label>
                 <div className="flex items-center gap-4 mb-3">
-                  {icon ? (
-                    <ProjectIcon icon={icon} size="md" />
-                  ) : (
+                  {icon ? <ProjectIcon icon={icon} size="md" /> : (
                     <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center">
                       <Smile className="w-5 h-5 text-slate-400" />
                     </div>
@@ -557,7 +624,6 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
                 </div>
                 <IconPicker value={icon} onChange={setIcon} />
               </div>
-
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-slate-500 ml-1">Project Name</label>
                 <Input name="title" defaultValue={project?.title || ""} autoFocus placeholder="e.g., Nebula Brand Identity" required />
@@ -597,16 +663,10 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
 const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
   const [local, setLocal] = useState(project?.whereIAm || "");
   const textareaRef = useRef(null);
-
   useEffect(() => { setLocal(project?.whereIAm || ""); }, [project?.id]);
-
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
-    }
+    if (textareaRef.current) { textareaRef.current.style.height = "auto"; textareaRef.current.style.height = textareaRef.current.scrollHeight + "px"; }
   }, [local]);
-
   useEffect(() => {
     if (!project || isDemo) return;
     const t = setTimeout(() => { if (local !== (project.whereIAm || "")) onUpdate({ whereIAm: local }); }, 1000);
@@ -621,14 +681,10 @@ const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
         </div>
         <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Where I am</span>
       </div>
-      <textarea
-        ref={textareaRef}
+      <textarea ref={textareaRef}
         className="w-full bg-transparent focus:outline-none text-slate-700 leading-relaxed resize-none placeholder:text-slate-300 text-sm font-light min-h-[80px]"
         placeholder="Current phase, what just happened, where things stand..."
-        value={local}
-        onChange={e => setLocal(e.target.value)}
-        readOnly={isDemo}
-      />
+        value={local} onChange={e => setLocal(e.target.value)} readOnly={isDemo} />
     </div>
   );
 };
@@ -648,10 +704,7 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
   }, [project?.id]);
 
   useEffect(() => {
-    if (mode === "text" && textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
-    }
+    if (mode === "text" && textareaRef.current) { textareaRef.current.style.height = "auto"; textareaRef.current.style.height = textareaRef.current.scrollHeight + "px"; }
   }, [localText, mode]);
 
   useEffect(() => {
@@ -663,22 +716,18 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
   const switchMode = () => {
     if (isDemo) return;
     const next = mode === "text" ? "checklist" : "text";
-    setMode(next);
-    onUpdate({ dontForgetMode: next });
+    setMode(next); onUpdate({ dontForgetMode: next });
   };
-
   const addItem = () => {
     if (!newItem.trim() || isDemo) return;
     const updated = [...items, { id: generateId(), text: newItem.trim(), checked: false }];
     setItems(updated); setNewItem(""); onUpdate({ dontForgetItems: updated });
   };
-
   const toggleItem = (id) => {
     if (isDemo) return;
     const updated = items.map(it => it.id === id ? { ...it, checked: !it.checked } : it);
     setItems(updated); onUpdate({ dontForgetItems: updated });
   };
-
   const deleteItem = (id) => {
     if (isDemo) return;
     const updated = items.filter(it => it.id !== id);
@@ -753,7 +802,6 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
     const newNote = { id: generateId(), type: "question", content, timestamp: new Date().toLocaleDateString(), isResolved: false };
     onUpdateCtx("notes", [newNote, ...(project.notes || [])]);
   };
-
   const deleteNote = (id) => { if (!isDemo) onUpdateCtx("notes", (project.notes || []).filter(n => n.id !== id)); };
   const toggleNoteRes = (id) => { if (!isDemo) onUpdateCtx("notes", (project.notes || []).map(n => n.id === id ? { ...n, isResolved: !n.isResolved } : n)); };
   const startEditing = (note, e) => {
@@ -774,16 +822,13 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
         <WhereIAmCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
         <DontForgetCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
       </div>
-
       <div className="bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
-        {/* Questions header — amber icon, NOT grey */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
             <MessageCircle className="w-4 h-4 text-amber-600" />
           </div>
           <span className="text-xs font-bold text-amber-700 uppercase tracking-widest">Questions</span>
         </div>
-
         {!isDemo && (
           <div className="flex gap-3 mb-6">
             <Input id="new-question" placeholder="What do you need to ask?"
@@ -795,7 +840,6 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
             </Button>
           </div>
         )}
-
         {activeQuestions.length === 0 ? (
           <div className="text-center py-16 bg-slate-100/60 rounded-[32px] border-2 border-dashed border-slate-200">
             <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -854,7 +898,6 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
             ))}
           </div>
         )}
-
         <div className="pt-10 mt-10 border-t border-slate-200/60">
           <button onClick={() => setShowHistory(!showHistory)}
             className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-indigo-600 transition-colors mb-6">
@@ -1024,7 +1067,6 @@ export default function App() {
     <LoginScreen onGoogleLogin={handleGoogleLogin} onEmailAuth={handleEmailAuth} onMagicLink={handleMagicLink} onDemo={handleDemo} loading={loading} error={authError} />
   );
 
-  // Sidebar items
   const SidebarItemFull = ({ project }) => (
     <div onClick={() => selectProject(project.id)}
       className={`group flex items-center gap-3 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ease-apple mb-1 mr-4 min-h-[44px] ${selectedId === project.id ? "bg-indigo-50 text-indigo-900 font-semibold" : "hover:bg-slate-100 text-slate-600 hover:text-slate-900"}`}>
@@ -1048,7 +1090,6 @@ export default function App() {
     </div>
   );
 
-  // Shared sidebar content (full view)
   const SidebarContent = ({ onClose }) => (
     <>
       <div className="p-6 pb-4">
@@ -1107,18 +1148,13 @@ export default function App() {
       <div className="flex flex-col h-screen text-slate-900 overflow-hidden bg-[#F2F4F6]">
         {isDemo && <DemoBanner onSignIn={() => { setIsDemo(false); setProjects([]); setSelectedId(null); }} />}
         <div className="flex flex-1 overflow-hidden relative">
-
-          {/* Mobile backdrop */}
           {isSidebarOpen && (
             <div className="fixed inset-0 bg-slate-900/40 z-10 md:hidden" onClick={() => setSidebarOpen(false)} />
           )}
-
-          {/* Desktop sidebar — collapses to icon strip */}
           <div className={`hidden md:flex flex-col flex-shrink-0 bg-slate-50 border-r border-slate-200/80 shadow-sm transition-all duration-500 ease-apple overflow-hidden ${isSidebarOpen ? "w-80" : "w-16"}`}>
             {isSidebarOpen ? (
               <SidebarContent onClose={() => setSidebarOpen(false)} />
             ) : (
-              /* Icon strip */
               <div className="flex flex-col items-center py-5 h-full">
                 <button onClick={() => setSidebarOpen(true)}
                   className="p-2.5 mb-5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors ease-apple active:scale-95" title="Expand sidebar">
@@ -1145,16 +1181,11 @@ export default function App() {
               </div>
             )}
           </div>
-
-          {/* Mobile drawer */}
           <div className={`fixed md:hidden top-0 left-0 h-full z-20 w-80 bg-slate-50 flex flex-col shadow-2xl transition-transform duration-500 ease-apple ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
             <SidebarContent onClose={() => setSidebarOpen(false)} />
           </div>
 
-          {/* Main content */}
           <div className="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
-
-            {/* Sticky scroll header — z-30 */}
             <div className={`absolute top-0 left-0 right-0 bg-[#F2F4F6]/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
               <div className="max-w-6xl mx-auto px-6 md:px-12 py-3 flex items-center gap-3">
                 <button onClick={() => setSidebarOpen(true)}
@@ -1188,7 +1219,6 @@ export default function App() {
 
             {selectedProject ? (
               <div className="flex-1 overflow-y-auto pb-12 scroll-smooth" onScroll={handleScroll}>
-                {/* Mobile top bar */}
                 <div className="flex items-center gap-3 px-4 pt-5 pb-2 md:hidden">
                   <button onClick={() => setSidebarOpen(true)}
                     className="p-2.5 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center shadow-sm border border-slate-200">
@@ -1196,11 +1226,7 @@ export default function App() {
                   </button>
                   <p className="text-sm font-semibold text-slate-500 truncate">{selectedProject.title}</p>
                 </div>
-
-                {/* Single shared container — header + tabs + content all use the same max-w-6xl and padding */}
                 <div className="w-full max-w-6xl mx-auto px-6 md:px-12 pt-10 md:pt-16 pb-12">
-
-                  {/* Header */}
                   <div className="mb-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                       <div className="flex items-center gap-4">
@@ -1230,14 +1256,12 @@ export default function App() {
                         </div>
                       )}
                     </div>
-
                     <div className="flex items-start gap-4 mb-8">
                       {selectedProject.icon && <ProjectIcon icon={selectedProject.icon} size="lg" className="mt-1 shrink-0" />}
-                      <h1 className="text-3xl md:text-4xl lg:text-6xl font-semibold tracking-tight text-slate-900 break-words leading-[1.1]">
+                      <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 break-words leading-[1.1]">
                         {selectedProject.title}
                       </h1>
                     </div>
-
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-5 border-t border-slate-200/60 pt-8">
                       <div className="md:col-span-3 space-y-3">
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Start Date</p>
@@ -1252,129 +1276,124 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Tabs + content — same container, just 12px gap below header */}
                   <div className="mt-3">
-                  {/* Tab switcher — z-0 */}
-                  <div className="relative flex items-center bg-slate-50 p-1 rounded-full w-full max-w-md mx-auto md:mx-0 shadow-sm border border-slate-200 mb-10 z-0">
-                    <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${activeTab === "overview" ? "left-1 translate-x-0" : "translate-x-full left-0"}`} />
-                    <button onClick={() => setActiveTab("overview")}
-                      className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "overview" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
-                      Overview
-                    </button>
-                    <button onClick={() => setActiveTab("resources")}
-                      className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "resources" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
-                      Resources
-                    </button>
-                  </div>
-
-                  <div className="min-h-[400px]">
-                    <div key={activeTab} className="animate-in fade-in duration-500 ease-apple">
-                      {activeTab === "overview" ? (
-                        <OverviewTab project={selectedProject} onUpdate={handleBriefingUpdate} onUpdateCtx={updateCtx} isDemo={isDemo} />
-                      ) : (
-                        <div>
-                          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <p className="text-slate-500 text-sm font-semibold mr-2">Filter by:</p>
-                              <button onClick={() => setResourceFilter(null)}
-                                className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === null ? "bg-indigo-600 text-slate-50 border-indigo-600 shadow-md shadow-indigo-200" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
-                                All
-                              </button>
-                              {uniqueTags.map(tag => (
-                                <button key={tag} onClick={() => setResourceFilter(tag === resourceFilter ? null : tag)}
-                                  className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === tag ? "bg-indigo-600 text-slate-50 border-indigo-600 shadow-md shadow-indigo-200" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
-                                  {tag}
+                    <div className="relative flex items-center bg-slate-50 p-1 rounded-full w-full max-w-md mx-auto md:mx-0 shadow-sm border border-slate-200 mb-10 z-0">
+                      <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${activeTab === "overview" ? "left-1 translate-x-0" : "translate-x-full left-0"}`} />
+                      <button onClick={() => setActiveTab("overview")}
+                        className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "overview" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
+                        Overview
+                      </button>
+                      <button onClick={() => setActiveTab("resources")}
+                        className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "resources" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
+                        Resources
+                      </button>
+                    </div>
+                    <div className="min-h-[400px]">
+                      <div key={activeTab} className="animate-in fade-in duration-500 ease-apple">
+                        {activeTab === "overview" ? (
+                          <OverviewTab project={selectedProject} onUpdate={handleBriefingUpdate} onUpdateCtx={updateCtx} isDemo={isDemo} />
+                        ) : (
+                          <div>
+                            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <p className="text-slate-500 text-sm font-semibold mr-2">Filter by:</p>
+                                <button onClick={() => setResourceFilter(null)}
+                                  className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === null ? "bg-indigo-600 text-slate-50 border-indigo-600 shadow-md shadow-indigo-200" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
+                                  All
                                 </button>
-                              ))}
-                            </div>
-                            {!isDemo && (
-                              <Button variant="primary" onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }} className="pl-6 pr-8 w-full md:w-auto">
-                                <Plus className="w-5 h-5" /> Add Resource
-                              </Button>
-                            )}
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {filteredResources.map(resource => (
-                              <div key={resource.id} className="group bg-slate-50 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col h-full border border-slate-200">
-                                {resource.type === "image" && (
-                                  <div className="h-40 bg-slate-100 w-full relative cursor-pointer overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
-                                    <img src={resource.url} alt={resource.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                      onError={e => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/f1f5f9/94a3b8?text=No+Preview"; }} />
-                                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
-                                      <div className="bg-slate-50/90 p-3 rounded-full backdrop-blur-md shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                        <ExternalLink className="w-6 h-6 text-slate-900" />
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                                {resource.type === "document" && (
-                                  <div className="h-40 bg-indigo-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-indigo-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
-                                    <div className="w-20 h-20 bg-slate-50 rounded-3xl shadow-lg shadow-indigo-100 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300 ease-apple">
-                                      <FileIcon className="w-10 h-10 text-indigo-500" />
-                                    </div>
-                                    <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Document</span>
-                                  </div>
-                                )}
-                                {resource.type === "link" && (
-                                  <div className="h-40 bg-blue-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-blue-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
-                                    <div className="w-20 h-20 bg-slate-50 rounded-3xl shadow-lg shadow-blue-100 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300 ease-apple">
-                                      <LinkIcon className="w-10 h-10 text-blue-500" />
-                                    </div>
-                                    <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Web Link</span>
-                                  </div>
-                                )}
-                                <div className="p-8 flex-1 flex flex-col">
-                                  <div className="flex items-start justify-between mb-4">
-                                    <div className={`p-2.5 rounded-xl ${resource.type === "link" ? "bg-blue-50 text-blue-600" : resource.type === "image" ? "bg-purple-50 text-purple-600" : "bg-indigo-50 text-indigo-600"}`}>
-                                      {resource.type === "link" && <LinkIcon className="w-5 h-5" />}
-                                      {resource.type === "image" && <ImageIcon className="w-5 h-5" />}
-                                      {resource.type === "document" && <FileIcon className="w-5 h-5" />}
-                                    </div>
-                                    {!isDemo && (
-                                      <div className="flex gap-1 -mr-2">
-                                        <Button variant="icon" onClick={() => { setEditingResource(resource); setIsResourceModalOpen(true); }} className="opacity-0 group-hover:opacity-100 hover:bg-slate-100 hover:text-indigo-600">
-                                          <Edit2 className="w-4 h-4" />
-                                        </Button>
-                                        <Button variant="icon" onClick={() => deleteRes(resource.id)} className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500">
-                                          <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                      </div>
-                                    )}
-                                  </div>
-                                  <h3 className="font-bold text-xl text-slate-900 truncate mb-3 tracking-tight">{resource.title}</h3>
-                                  {resource.description && <p className="text-sm text-slate-500 mb-8 line-clamp-2 leading-relaxed flex-1 font-medium">{resource.description}</p>}
-                                  <div className="mt-auto pt-6 border-t border-slate-200 flex items-center justify-between">
-                                    <div className="flex flex-wrap gap-2">
-                                      {resource.tags?.slice(0, 2).map((tag, i) => (
-                                        <span key={i} className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 border border-slate-200">{tag}</span>
-                                      ))}
-                                      {resource.tags?.length > 2 && <span className="text-[10px] text-slate-400 self-center pl-1 font-bold">+{resource.tags.length - 2}</span>}
-                                    </div>
-                                    <a href={resource.url} target="_blank" rel="noopener noreferrer"
-                                      className="p-2.5 rounded-full hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors">
-                                      <ExternalLink className="w-5 h-5" />
-                                    </a>
-                                  </div>
-                                </div>
+                                {uniqueTags.map(tag => (
+                                  <button key={tag} onClick={() => setResourceFilter(tag === resourceFilter ? null : tag)}
+                                    className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === tag ? "bg-indigo-600 text-slate-50 border-indigo-600 shadow-md shadow-indigo-200" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
+                                    {tag}
+                                  </button>
+                                ))}
                               </div>
-                            ))}
-                            {!isDemo && (
-                              <button onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }}
-                                className="rounded-[28px] border-2 border-dashed border-slate-300/80 flex flex-col items-center justify-center h-full min-h-[260px] text-slate-400 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all duration-300 p-8 group ease-apple">
-                                <div className="w-20 h-20 rounded-[2rem] bg-slate-100 group-hover:bg-indigo-100 transition-colors mb-6 flex items-center justify-center duration-300">
-                                  <Plus className="w-10 h-10 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                              {!isDemo && (
+                                <Button variant="primary" onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }} className="pl-6 pr-8 w-full md:w-auto">
+                                  <Plus className="w-5 h-5" /> Add Resource
+                                </Button>
+                              )}
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                              {filteredResources.map(resource => (
+                                <div key={resource.id} className="group bg-slate-50 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col h-full border border-slate-200">
+                                  {resource.type === "image" && (
+                                    <div className="h-40 bg-slate-100 w-full relative cursor-pointer overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
+                                      <img src={resource.url} alt={resource.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                        onError={e => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/f1f5f9/94a3b8?text=No+Preview"; }} />
+                                      <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
+                                        <div className="bg-slate-50/90 p-3 rounded-full backdrop-blur-md shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                          <ExternalLink className="w-6 h-6 text-slate-900" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                  {resource.type === "document" && (
+                                    <div className="h-40 bg-indigo-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-indigo-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
+                                      <div className="w-20 h-20 bg-slate-50 rounded-3xl shadow-lg shadow-indigo-100 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300 ease-apple">
+                                        <FileIcon className="w-10 h-10 text-indigo-500" />
+                                      </div>
+                                      <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Document</span>
+                                    </div>
+                                  )}
+                                  {resource.type === "link" && (
+                                    <div className="h-40 bg-blue-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-blue-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
+                                      <div className="w-20 h-20 bg-slate-50 rounded-3xl shadow-lg shadow-blue-100 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300 ease-apple">
+                                        <LinkIcon className="w-10 h-10 text-blue-500" />
+                                      </div>
+                                      <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Web Link</span>
+                                    </div>
+                                  )}
+                                  <div className="p-8 flex-1 flex flex-col">
+                                    <div className="flex items-start justify-between mb-4">
+                                      <div className={`p-2.5 rounded-xl ${resource.type === "link" ? "bg-blue-50 text-blue-600" : resource.type === "image" ? "bg-purple-50 text-purple-600" : "bg-indigo-50 text-indigo-600"}`}>
+                                        {resource.type === "link" && <LinkIcon className="w-5 h-5" />}
+                                        {resource.type === "image" && <ImageIcon className="w-5 h-5" />}
+                                        {resource.type === "document" && <FileIcon className="w-5 h-5" />}
+                                      </div>
+                                      {!isDemo && (
+                                        <div className="flex gap-1 -mr-2">
+                                          <Button variant="icon" onClick={() => { setEditingResource(resource); setIsResourceModalOpen(true); }} className="opacity-0 group-hover:opacity-100 hover:bg-slate-100 hover:text-indigo-600">
+                                            <Edit2 className="w-4 h-4" />
+                                          </Button>
+                                          <Button variant="icon" onClick={() => deleteRes(resource.id)} className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500">
+                                            <Trash2 className="w-4 h-4" />
+                                          </Button>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <h3 className="font-bold text-xl text-slate-900 truncate mb-3 tracking-tight">{resource.title}</h3>
+                                    {resource.description && <p className="text-sm text-slate-500 mb-8 line-clamp-2 leading-relaxed flex-1 font-medium">{resource.description}</p>}
+                                    <div className="mt-auto pt-6 border-t border-slate-200 flex items-center justify-between">
+                                      <div className="flex flex-wrap gap-2">
+                                        {resource.tags?.slice(0, 2).map((tag, i) => (
+                                          <span key={i} className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 border border-slate-200">{tag}</span>
+                                        ))}
+                                        {resource.tags?.length > 2 && <span className="text-[10px] text-slate-400 self-center pl-1 font-bold">+{resource.tags.length - 2}</span>}
+                                      </div>
+                                      <a href={resource.url} target="_blank" rel="noopener noreferrer"
+                                        className="p-2.5 rounded-full hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors">
+                                        <ExternalLink className="w-5 h-5" />
+                                      </a>
+                                    </div>
+                                  </div>
                                 </div>
-                                <span className="font-bold text-xl tracking-tight">Add Resource</span>
-                              </button>
-                            )}
+                              ))}
+                              {!isDemo && (
+                                <button onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }}
+                                  className="rounded-[28px] border-2 border-dashed border-slate-300/80 flex flex-col items-center justify-center h-full min-h-[260px] text-slate-400 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all duration-300 p-8 group ease-apple">
+                                  <div className="w-20 h-20 rounded-[2rem] bg-slate-100 group-hover:bg-indigo-100 transition-colors mb-6 flex items-center justify-center duration-300">
+                                    <Plus className="w-10 h-10 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                                  </div>
+                                  <span className="font-bold text-xl tracking-tight">Add Resource</span>
+                                </button>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
                 </div>
               </div>
             ) : (
