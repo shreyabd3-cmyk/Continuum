@@ -1156,7 +1156,7 @@ export default function App() {
 
             {/* Sticky scroll header — z-30 */}
             <div className={`absolute top-0 left-0 right-0 bg-[#F2F4F6]/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
-              <div className="max-w-5xl mx-auto px-6 md:px-12 py-3 flex items-center gap-3">
+              <div className="max-w-6xl mx-auto px-6 md:px-12 py-3 flex items-center gap-3">
                 <button onClick={() => setSidebarOpen(true)}
                   className="md:hidden p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors shrink-0">
                   <Menu className="w-5 h-5" />
@@ -1197,8 +1197,8 @@ export default function App() {
                   <p className="text-sm font-semibold text-slate-500 truncate">{selectedProject.title}</p>
                 </div>
 
-                {/* Single shared container — header + tabs + content all use the same max-w-5xl and padding */}
-                <div className="w-full max-w-5xl mx-auto px-6 md:px-12 pt-10 md:pt-16 pb-12">
+                {/* Single shared container — header + tabs + content all use the same max-w-6xl and padding */}
+                <div className="w-full max-w-6xl mx-auto px-6 md:px-12 pt-10 md:pt-16 pb-12">
 
                   {/* Header */}
                   <div className="mb-6">
@@ -1233,7 +1233,7 @@ export default function App() {
 
                     <div className="flex items-start gap-4 mb-8">
                       {selectedProject.icon && <ProjectIcon icon={selectedProject.icon} size="lg" className="mt-1 shrink-0" />}
-                      <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 break-words leading-[1.1]">
+                      <h1 className="text-3xl md:text-4xl lg:text-6xl font-semibold tracking-tight text-slate-900 break-words leading-[1.1]">
                         {selectedProject.title}
                       </h1>
                     </div>
