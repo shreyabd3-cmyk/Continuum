@@ -331,19 +331,20 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   return (
     <div className="flex h-screen w-full overflow-hidden">
 
-      {/* ── Left panel — centered ── */}
-      <div className="hidden md:flex flex-col flex-1 bg-indigo-600 px-14 py-12">
-        {/* Logo — top left */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="w-10 h-10 bg-white/15 rounded-2xl flex items-center justify-center">
-            <InfinityIcon className="w-6 h-6 text-white" />
+      {/* ── Left panel — 40% — top-anchored, left-aligned ── */}
+      <div className="hidden md:flex flex-col bg-indigo-600 px-12 py-12" style={{ width: "40%" }}>
+
+        {/* Logo — large, centered horizontally */}
+        <div className="flex flex-col items-center gap-3 mb-14 shrink-0">
+          <div className="w-16 h-16 bg-white/15 rounded-3xl flex items-center justify-center">
+            <InfinityIcon className="w-9 h-9 text-white" />
           </div>
-          <span className="text-white font-extrabold text-xl tracking-tight">Continuum</span>
+          <span className="text-white font-extrabold text-2xl tracking-tight">Continuum</span>
         </div>
 
-        {/* Slide content — vertically centered */}
-        <div className="flex-1 flex items-center justify-center">
-          <div key={slide} className="animate-in fade-in slide-in-from-bottom-3 duration-500 w-full max-w-sm">
+        {/* Slide content — top-anchored, left-aligned */}
+        <div className="flex-1">
+          <div key={slide} className="animate-in fade-in slide-in-from-bottom-3 duration-500">
             <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-4">{currentSlide.tag}</p>
             <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-4">{currentSlide.title}</h2>
             <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
@@ -357,24 +358,24 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
         </div>
       </div>
 
-      {/* ── Right panel — centered ── */}
-      <div className="flex flex-col items-center justify-center flex-1 bg-[#F2F4F6] px-8 md:px-16 py-12 overflow-y-auto">
+      {/* ── Right panel — 60% — top-anchored, left-aligned ── */}
+      <div className="flex flex-col flex-1 bg-[#F2F4F6] px-12 md:px-20 py-12 overflow-y-auto">
 
         {/* Mobile logo */}
-        <div className="flex items-center gap-3 mb-10 md:hidden self-start">
+        <div className="flex items-center gap-3 mb-10 md:hidden">
           <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
             <InfinityIcon className="w-5 h-5 text-white" />
           </div>
           <span className="text-slate-900 font-extrabold text-lg tracking-tight">Continuum</span>
         </div>
 
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-md pt-4">
           {step === "main" ? (
             <>
-              {/* Heading */}
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 text-center">Your creative second brain</p>
-              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2 text-center">Get started</h1>
-              <p className="text-sm text-slate-500 leading-relaxed mb-8 text-center">
+              {/* Heading — left-aligned */}
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
+              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
+              <p className="text-sm text-slate-500 leading-relaxed mb-8">
                 New here? We'll create your account automatically.
               </p>
 
@@ -469,11 +470,11 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
                 <ArrowLeft className="w-3.5 h-3.5" /> Back
               </button>
-              <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+              <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
                 <Mail className="w-7 h-7 text-indigo-600" />
               </div>
-              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3 text-center">Check your inbox</h2>
-              <p className="text-sm text-slate-500 leading-relaxed mb-6 text-center">
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">Check your inbox</h2>
+              <p className="text-sm text-slate-500 leading-relaxed mb-6">
                 We sent a sign-in link to <strong className="text-slate-800">{email}</strong>. Click it and you're in — no password needed.
               </p>
               <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
