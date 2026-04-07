@@ -251,21 +251,40 @@ const SLIDES = [
     title: "Pick up exactly where you left off",
     desc: "Stop wasting time figuring out where you were. Continuum keeps your project context front and centre every time you return.",
     preview: (
-      <div className="flex gap-3 mt-8">
-        <div className="flex-1 bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-300 inline-block" />
-            <span className="text-[9px] font-bold text-indigo-200 uppercase tracking-widest">Where I am</span>
-          </div>
-          <p className="text-xs text-white/70 leading-relaxed">Sitemap v2 approved. Moving into content audit.</p>
-        </div>
-        <div className="flex-1 bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-300 inline-block" />
-            <span className="text-[9px] font-bold text-amber-200 uppercase tracking-widest">Don't forget</span>
-          </div>
-          <p className="text-xs text-white/70 leading-relaxed">Max 6 nav items. Blog retired.</p>
-        </div>
+      <div className="mt-8 flex justify-start">
+        <svg viewBox="0 0 420 260" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-sm opacity-95">
+          {/* desk */}
+          <rect x="40" y="200" width="340" height="14" rx="7" fill="#FCD34D" opacity="0.25"/>
+          {/* monitor stand */}
+          <rect x="195" y="155" width="30" height="48" rx="4" fill="#FCD34D" opacity="0.3"/>
+          <rect x="170" y="198" width="80" height="8" rx="4" fill="#FCD34D" opacity="0.3"/>
+          {/* monitor */}
+          <rect x="90" y="60" width="240" height="150" rx="12" fill="white" opacity="0.12"/>
+          <rect x="90" y="60" width="240" height="150" rx="12" stroke="#FCD34D" strokeWidth="2.5" opacity="0.5"/>
+          {/* screen glow */}
+          <rect x="104" y="74" width="212" height="122" rx="7" fill="#FCD34D" opacity="0.08"/>
+          {/* screen content lines */}
+          <rect x="118" y="90" width="80" height="8" rx="4" fill="#FCD34D" opacity="0.7"/>
+          <rect x="118" y="108" width="140" height="5" rx="2.5" fill="white" opacity="0.35"/>
+          <rect x="118" y="120" width="120" height="5" rx="2.5" fill="white" opacity="0.25"/>
+          <rect x="118" y="132" width="100" height="5" rx="2.5" fill="white" opacity="0.2"/>
+          {/* checkmark badge */}
+          <circle cx="272" cy="100" r="22" fill="#FCD34D" opacity="0.2"/>
+          <circle cx="272" cy="100" r="22" stroke="#FCD34D" strokeWidth="2" opacity="0.6"/>
+          <path d="M262 100 l7 7 l12-14" stroke="#FCD34D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"/>
+          {/* cursor */}
+          <path d="M200 160 l0 16 l4-5 l5 10 l3-1 l-5-10 l7 0 z" fill="#FCD34D" opacity="0.8"/>
+          {/* floating note card */}
+          <rect x="310" y="30" width="95" height="60" rx="10" fill="white" opacity="0.1"/>
+          <rect x="310" y="30" width="95" height="60" rx="10" stroke="#FCD34D" strokeWidth="1.5" opacity="0.4"/>
+          <rect x="322" y="44" width="50" height="5" rx="2.5" fill="#FCD34D" opacity="0.6"/>
+          <rect x="322" y="56" width="35" height="4" rx="2" fill="white" opacity="0.3"/>
+          <rect x="322" y="66" width="42" height="4" rx="2" fill="white" opacity="0.2"/>
+          {/* person silhouette */}
+          <circle cx="64" cy="148" r="18" fill="#FCD34D" opacity="0.25"/>
+          <path d="M40 200 q24-36 48 0" fill="#FCD34D" opacity="0.2"/>
+          <circle cx="64" cy="148" r="18" stroke="#FCD34D" strokeWidth="1.5" opacity="0.5"/>
+        </svg>
       </div>
     ),
   },
@@ -274,13 +293,40 @@ const SLIDES = [
     title: "Never lose track of a blocker",
     desc: "Log questions the moment they come up. Resolve them when you get answers. Full history always there.",
     preview: (
-      <div className="flex flex-col gap-2 mt-8">
-        {["Has the client confirmed the new sitemap?", "Are we handling the CMS migration?"].map((q, i) => (
-          <div key={i} className="flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3 border border-white/10 backdrop-blur-sm">
-            <div className="w-4 h-4 rounded-full border-2 border-amber-300 shrink-0" />
-            <p className="text-xs text-white/75">{q}</p>
-          </div>
-        ))}
+      <div className="mt-8 flex justify-start">
+        <svg viewBox="0 0 420 260" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-sm opacity-95">
+          {/* main chat bubble */}
+          <rect x="60" y="30" width="240" height="110" rx="18" fill="white" opacity="0.1"/>
+          <rect x="60" y="30" width="240" height="110" rx="18" stroke="#FCD34D" strokeWidth="2.5" opacity="0.55"/>
+          <path d="M100 140 l-20 28 l36-18" fill="white" opacity="0.08"/>
+          <path d="M100 140 l-20 28 l36-18" stroke="#FCD34D" strokeWidth="2" opacity="0.4"/>
+          {/* question mark in bubble */}
+          <text x="150" y="108" fontFamily="Georgia, serif" fontSize="72" fill="#FCD34D" opacity="0.8" textAnchor="middle">?</text>
+          {/* small reply bubble */}
+          <rect x="230" y="140" width="140" height="70" rx="14" fill="white" opacity="0.08"/>
+          <rect x="230" y="140" width="140" height="70" rx="14" stroke="#FCD34D" strokeWidth="1.5" opacity="0.35"/>
+          <path d="M260 140 l-14-20 l28 8" fill="white" opacity="0.05"/>
+          <path d="M260 140 l-14-20 l28 8" stroke="#FCD34D" strokeWidth="1.5" opacity="0.3"/>
+          {/* lines in reply */}
+          <rect x="248" y="160" width="70" height="5" rx="2.5" fill="#FCD34D" opacity="0.5"/>
+          <rect x="248" y="172" width="50" height="4" rx="2" fill="white" opacity="0.25"/>
+          <rect x="248" y="183" width="60" height="4" rx="2" fill="white" opacity="0.2"/>
+          {/* resolved checkmark */}
+          <circle cx="360" cy="55" r="26" fill="#FCD34D" opacity="0.18"/>
+          <circle cx="360" cy="55" r="26" stroke="#FCD34D" strokeWidth="2" opacity="0.6"/>
+          <path d="M348 55 l8 9 l16-18" stroke="#FCD34D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"/>
+          {/* dots — unresolved */}
+          <circle cx="360" cy="185" r="8" fill="#FCD34D" opacity="0.2"/>
+          <circle cx="360" cy="185" r="8" stroke="#FCD34D" strokeWidth="1.5" opacity="0.4"/>
+          <circle cx="380" cy="185" r="8" fill="white" opacity="0.08"/>
+          <circle cx="380" cy="185" r="8" stroke="white" strokeWidth="1.5" opacity="0.2"/>
+          <circle cx="400" cy="185" r="8" fill="white" opacity="0.08"/>
+          <circle cx="400" cy="185" r="8" stroke="white" strokeWidth="1.5" opacity="0.2"/>
+          {/* person */}
+          <circle cx="50" cy="190" r="20" fill="#FCD34D" opacity="0.2"/>
+          <circle cx="50" cy="190" r="20" stroke="#FCD34D" strokeWidth="1.5" opacity="0.45"/>
+          <path d="M24 230 q26-32 52 0" fill="#FCD34D" opacity="0.15"/>
+        </svg>
       </div>
     ),
   },
@@ -289,13 +335,39 @@ const SLIDES = [
     title: "Stop hunting through folders",
     desc: "Links, docs, and images — tagged and filterable, all in one place per project.",
     preview: (
-      <div className="grid grid-cols-2 gap-2 mt-8">
-        {[["Sitemap v2", "Project Doc"], ["Content Audit", "UX"], ["Moodboard", "UI Inspiration"], ["Client Brief", "Project Doc"]].map(([title, tag], i) => (
-          <div key={i} className="bg-white/10 rounded-xl p-3 border border-white/10 backdrop-blur-sm">
-            <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-1">{tag}</p>
-            <p className="text-xs font-semibold text-white/80">{title}</p>
-          </div>
-        ))}
+      <div className="mt-8 flex justify-start">
+        <svg viewBox="0 0 420 260" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-sm opacity-95">
+          {/* back folder */}
+          <rect x="200" y="60" width="170" height="130" rx="12" fill="#FCD34D" opacity="0.12"/>
+          <rect x="200" y="60" width="170" height="130" rx="12" stroke="#FCD34D" strokeWidth="2" opacity="0.3"/>
+          <path d="M200 80 l170 0" stroke="#FCD34D" strokeWidth="1.5" opacity="0.3"/>
+          <path d="M200 73 q0-13 13-13 l40 0 q6 0 8 6 l4 7 l105 0" stroke="#FCD34D" strokeWidth="2" opacity="0.35" fill="none"/>
+          {/* middle folder */}
+          <rect x="80" y="80" width="170" height="130" rx="12" fill="white" opacity="0.08"/>
+          <rect x="80" y="80" width="170" height="130" rx="12" stroke="#FCD34D" strokeWidth="2" opacity="0.45"/>
+          <path d="M80 100 l170 0" stroke="#FCD34D" strokeWidth="1.5" opacity="0.4"/>
+          <path d="M80 93 q0-13 13-13 l40 0 q6 0 8 6 l4 7 l105 0" stroke="#FCD34D" strokeWidth="2" opacity="0.5" fill="none"/>
+          {/* doc lines in middle folder */}
+          <rect x="100" y="115" width="90" height="5" rx="2.5" fill="#FCD34D" opacity="0.55"/>
+          <rect x="100" y="128" width="70" height="4" rx="2" fill="white" opacity="0.3"/>
+          <rect x="100" y="140" width="80" height="4" rx="2" fill="white" opacity="0.22"/>
+          <rect x="100" y="152" width="60" height="4" rx="2" fill="white" opacity="0.18"/>
+          {/* link icon */}
+          <circle cx="210" cy="145" r="18" fill="#FCD34D" opacity="0.15"/>
+          <circle cx="210" cy="145" r="18" stroke="#FCD34D" strokeWidth="1.5" opacity="0.5"/>
+          <path d="M204 145 q0-6 6-6 l8 0 q6 0 6 6 q0 6-6 6 l-8 0 q-6 0-6-6z" stroke="#FCD34D" strokeWidth="1.5" fill="none" opacity="0.8"/>
+          <line x1="207" y1="145" x2="213" y2="145" stroke="#FCD34D" strokeWidth="1.5" opacity="0.8"/>
+          {/* tag badges */}
+          <rect x="94" y="168" width="40" height="16" rx="8" fill="#FCD34D" opacity="0.25"/>
+          <rect x="140" y="168" width="48" height="16" rx="8" fill="white" opacity="0.1"/>
+          {/* person */}
+          <circle cx="360" cy="185" r="22" fill="#FCD34D" opacity="0.2"/>
+          <circle cx="360" cy="185" r="22" stroke="#FCD34D" strokeWidth="1.5" opacity="0.5"/>
+          <path d="M330 230 q30-36 60 0" fill="#FCD34D" opacity="0.15"/>
+          {/* arm reaching to folder */}
+          <path d="M342 185 q-30-20-60-40" stroke="#FCD34D" strokeWidth="2.5" strokeLinecap="round" opacity="0.4"/>
+          <circle cx="282" cy="145" r="5" fill="#FCD34D" opacity="0.6"/>
+        </svg>
       </div>
     ),
   },
