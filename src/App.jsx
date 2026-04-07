@@ -42,7 +42,7 @@ const DEFAULT_TAGS = [
 ];
 const generateId = () => Math.random().toString(36).substr(2, 9);
 const EMOJI_SUGGESTIONS = ["🎨", "📐", "🗺️", "📊", "💡", "🏗️", "🌿", "⚡", "🔬", "📱", "🛒", "🏥", "✈️", "🎯", "🌊", "🔧"];
-const SLIDE_DURATION = 3800;
+const SLIDE_DURATION = 4600;
 
 // --- Demo Data ---
 const DEMO_PROJECTS = [
@@ -401,61 +401,29 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   const currentSlide = SLIDES[slide];
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    /* Full-screen light bg */
+    <div className="min-h-screen w-full bg-[#F2F4F6] flex flex-col items-center justify-center px-6 py-10">
 
-      {/* ── Left panel — 40% — top-anchored, left-aligned ── */}
-      <div className="hidden md:flex flex-col bg-indigo-600 flex-1">
-
-        {/* Logo — centered in full column */}
-        <div className="flex flex-col items-center gap-3 shrink-0 pt-16 mb-12">
-          <div className="w-16 h-16 bg-white/15 rounded-3xl flex items-center justify-center">
-            <InfinityIcon className="w-9 h-9 text-white" />
-          </div>
-          <span className="text-white font-extrabold text-2xl tracking-tight">Continuum</span>
+      {/* Logo — above the card */}
+      <div className="flex flex-col items-center gap-3 mb-8">
+        <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+          <InfinityIcon className="w-8 h-8 text-white" />
         </div>
-
-        {/* Outer shell: vertically centers the 450px slide block, matching the right form */}
-        <div className="flex-1 flex flex-col items-center justify-center pb-16">
-          {/* Fixed-height 450px container prevents resize on slide change */}
-          <div style={{ width: 450, height: 420 }} className="flex flex-col">
-            <div key={slide} className="animate-in fade-in slide-in-from-bottom-3 duration-500 flex-1">
-              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-4">{currentSlide.tag}</p>
-              <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-4">{currentSlide.title}</h2>
-              <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
-              {currentSlide.preview}
-            </div>
-            {/* Progress pill dots — 80px below slide text */}
-            <div className="mt-20 shrink-0">
-              <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
-            </div>
-          </div>
-        </div>
+        <span className="text-slate-900 font-extrabold text-2xl tracking-tight">Continuum</span>
       </div>
 
-      {/* Right panel — form vertically + horizontally centered in the column */}
-      <div className="flex flex-col flex-1 bg-[#F2F4F6] overflow-y-auto">
+      {/* Floating card */}
+      <div className="w-full max-w-4xl bg-white rounded-[32px] shadow-2xl shadow-slate-200/80 overflow-hidden flex" style={{ minHeight: 560 }}>
 
-        {/* Mobile logo */}
-        <div className="flex items-center gap-3 px-8 pt-8 mb-8 md:hidden">
-          <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
-            <InfinityIcon className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-slate-900 font-extrabold text-lg tracking-tight">Continuum</span>
-        </div>
+        {/* ── Left: form panel ── */}
+        <div className="flex flex-col justify-center px-12 py-12" style={{ width: "45%" }}>
 
-        {/* Vertically + horizontally centered; 450px form width matches left container */}
-        <div className="flex flex-1 items-center justify-center py-16">
-          <div style={{ width: 450 }}>
           {step === "main" ? (
-            <>
-              {/* Heading — left-aligned */}
+            <div style={{ width: 340 }} className="mx-auto">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
               <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
-              <p className="text-sm text-slate-500 leading-relaxed mb-8">
-                New here? We'll create your account automatically.
-              </p>
+              <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
 
-              {/* Error */}
               {(error || localError) && (
                 <div className="bg-red-50 text-red-600 p-3 rounded-2xl text-xs flex items-center gap-2 mb-5">
                   <AlertCircle className="w-4 h-4 shrink-0" /><p>{error || localError}</p>
@@ -463,64 +431,48 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               )}
 
               {/* Auth mode tabs */}
-              <div className="flex gap-2 p-1 bg-slate-200/60 rounded-full border border-slate-200 mb-4">
+              <div className="flex gap-2 p-1 bg-slate-100 rounded-full border border-slate-200 mb-4">
                 {[["magic", "Magic link", "No password"], ["password", "Password", "Traditional"]].map(([mode, label, sub]) => (
                   <button key={mode} onClick={() => setAuthMode(mode)}
-                    className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all duration-200 ease-apple ${authMode === mode ? "bg-slate-50 shadow-sm text-indigo-900 ring-1 ring-slate-900/5" : "text-slate-500 hover:text-slate-700"}`}>
+                    className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all duration-200 ease-apple ${authMode === mode ? "bg-white shadow-sm text-indigo-900 ring-1 ring-slate-900/5" : "text-slate-500 hover:text-slate-700"}`}>
                     {label}<span className="block text-[10px] font-medium mt-0.5 opacity-60">{sub}</span>
                   </button>
                 ))}
               </div>
 
-              {/* Context note */}
-              <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
                 {authMode === "magic"
                   ? "We'll send a sign-in link to your email. Click it and you're in — no password ever."
                   : "Enter your email and password. New here? We'll create your account automatically."}
               </div>
 
-              {/* Email input */}
-              <Input
-                type="email"
-                placeholder="Your email address"
-                value={email}
+              <Input type="email" placeholder="Your email address" value={email}
                 onChange={e => setEmail(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
-                className="mb-3"
-              />
+                className="mb-3" />
 
-              {/* Password input — only in password mode */}
               {authMode === "password" && (
                 <div className="mb-5">
-                  <Input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
+                  <Input type="password" placeholder="Password" value={password}
                     onChange={e => setPassword(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
-                    className="mb-2"
-                  />
+                    className="mb-2" />
                   <p className="text-xs text-slate-400 text-right cursor-pointer hover:text-indigo-600 transition-colors">Forgot password?</p>
                 </div>
               )}
 
-              {/* Primary CTA */}
               <Button variant="primary" className="w-full py-3.5 mb-4" onClick={handleEmailSubmit} disabled={localLoading || loading}>
                 {localLoading
                   ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
-                  : authMode === "magic"
-                    ? <><Send className="w-4 h-4" /> Send magic link</>
-                    : "Continue"}
+                  : authMode === "magic" ? <><Send className="w-4 h-4" /> Send magic link</> : "Continue"}
               </Button>
 
-              {/* Divider */}
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex-1 h-px bg-slate-200" />
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">or</span>
                 <div className="flex-1 h-px bg-slate-200" />
               </div>
 
-              {/* Google */}
               <Button variant="google" className="w-full py-3.5 mb-3" onClick={onGoogleLogin} disabled={loading}>
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Connecting...</> : (
                   <><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -532,17 +484,15 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 )}
               </Button>
 
-              {/* Demo */}
               <button onClick={onDemo}
                 className="w-full py-3.5 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-bold hover:bg-indigo-100 transition-all ease-apple active:scale-95 flex items-center justify-center gap-2">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 Explore with demo data
               </button>
               <p className="text-[11px] text-slate-400 text-center mt-2">No account needed · Data won't be saved</p>
-            </>
+            </div>
           ) : (
-            /* ── Email sent step ── */
-            <>
+            <div style={{ width: 340 }} className="mx-auto">
               <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
                 <ArrowLeft className="w-3.5 h-3.5" /> Back
               </button>
@@ -551,19 +501,41 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               </div>
               <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">Check your inbox</h2>
               <p className="text-sm text-slate-500 leading-relaxed mb-6">
-                We sent a sign-in link to <strong className="text-slate-800">{email}</strong>. Click it and you're in — no password needed.
+                We sent a sign-in link to <strong className="text-slate-800">{email}</strong>. Click it and you're in.
               </p>
-              <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
                 Didn't get it? Check your spam, or{" "}
                 <button onClick={handleEmailSubmit} className="text-indigo-600 font-semibold hover:underline">resend the link.</button>
               </div>
-            </>
+            </div>
           )}
+        </div>
+
+        {/* ── Right: indigo illustration panel ── */}
+        <div className="flex-1 bg-indigo-600 flex flex-col relative overflow-hidden" style={{ borderRadius: "0 32px 32px 0" }}>
+
+          {/* Subtle top-right decoration */}
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+
+          {/* Slide content */}
+          <div className="flex-1 flex flex-col justify-center px-10 py-12 relative z-10">
+            <div key={slide} className="animate-in fade-in slide-in-from-bottom-3 duration-500" style={{ height: 380, display: "flex", flexDirection: "column" }}>
+              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
+              <h2 className="text-2xl font-bold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
+              <p className="text-sm text-indigo-200 leading-relaxed mb-0">{currentSlide.desc}</p>
+              <div className="flex-1">{currentSlide.preview}</div>
+            </div>
+          </div>
+
+          {/* Progress dots */}
+          <div className="px-10 pb-10 relative z-10">
+            <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 };
 
 const DemoBanner = ({ onSignIn }) => (
