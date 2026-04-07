@@ -332,17 +332,17 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
     <div className="flex h-screen w-full overflow-hidden">
 
       {/* ── Left panel — 40% — top-anchored, left-aligned ── */}
-      <div className="hidden md:flex flex-col bg-indigo-600 px-12 py-12" style={{ width: "40%" }}>
+      <div className="hidden md:flex flex-col bg-indigo-600 px-12 py-14" style={{ width: "40%" }}>
 
-        {/* Logo — large, centered horizontally */}
-        <div className="flex flex-col items-center gap-3 mb-14 shrink-0">
+        {/* Logo — centered horizontally, top */}
+        <div className="flex flex-col items-center gap-3 mb-12 shrink-0">
           <div className="w-16 h-16 bg-white/15 rounded-3xl flex items-center justify-center">
             <InfinityIcon className="w-9 h-9 text-white" />
           </div>
           <span className="text-white font-extrabold text-2xl tracking-tight">Continuum</span>
         </div>
 
-        {/* Slide content — top-anchored, left-aligned */}
+        {/* Slide content — left-aligned */}
         <div className="flex-1">
           <div key={slide} className="animate-in fade-in slide-in-from-bottom-3 duration-500">
             <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-4">{currentSlide.tag}</p>
@@ -358,18 +358,20 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
         </div>
       </div>
 
-      {/* ── Right panel — 60% — top-anchored, left-aligned ── */}
-      <div className="flex flex-col flex-1 bg-[#F2F4F6] px-12 md:px-20 py-12 overflow-y-auto">
+      {/* Right panel — 60% — form centered horizontally, top-aligned to match left */}
+      <div className="flex flex-col flex-1 bg-[#F2F4F6] overflow-y-auto">
 
         {/* Mobile logo */}
-        <div className="flex items-center gap-3 mb-10 md:hidden">
+        <div className="flex items-center gap-3 px-8 pt-8 mb-8 md:hidden">
           <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
             <InfinityIcon className="w-5 h-5 text-white" />
           </div>
           <span className="text-slate-900 font-extrabold text-lg tracking-tight">Continuum</span>
         </div>
 
-        <div className="w-full max-w-md pt-4">
+        {/* Centers the form block horizontally; py-14 matches left panel so tops align */}
+        <div className="flex justify-center px-10 py-14">
+          <div className="w-full max-w-sm">
           {step === "main" ? (
             <>
               {/* Heading — left-aligned */}
@@ -483,6 +485,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               </div>
             </>
           )}
+          </div>
         </div>
       </div>
     </div>
