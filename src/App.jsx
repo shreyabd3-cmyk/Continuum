@@ -332,32 +332,32 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
     <div className="flex h-screen w-full overflow-hidden">
 
       {/* ── Left panel — 40% — top-anchored, left-aligned ── */}
-      <div className="hidden md:flex flex-col bg-indigo-600 px-16 pt-16 pb-16" style={{ width: "40%" }}>
+      <div className="hidden md:flex flex-col bg-indigo-600" style={{ width: "40%", padding: "0 80px" }}>
 
-        {/* Logo — centered horizontally, top */}
-        <div className="flex flex-col items-center gap-3 mb-12 shrink-0">
+        {/* Logo — centered horizontally, sits above the vertically-centered slide block */}
+        <div className="flex flex-col items-center gap-3 shrink-0 pt-16 mb-12">
           <div className="w-16 h-16 bg-white/15 rounded-3xl flex items-center justify-center">
             <InfinityIcon className="w-9 h-9 text-white" />
           </div>
           <span className="text-white font-extrabold text-2xl tracking-tight">Continuum</span>
         </div>
 
-        {/* Slide content + dots — left-aligned, dots sit 80px below text */}
-        <div className="flex-1 flex flex-col">
+        {/* Slide content — vertically centered in remaining space to align with right form */}
+        <div className="flex-1 flex flex-col justify-center">
           <div key={slide} className="animate-in fade-in slide-in-from-bottom-3 duration-500">
             <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-4">{currentSlide.tag}</p>
             <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-4">{currentSlide.title}</h2>
             <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
             {currentSlide.preview}
           </div>
-          {/* Progress pill dots — 80px below the slide text, left-aligned */}
-          <div className="mt-20">
+          {/* Progress pill dots — 80px below slide text, left-aligned */}
+          <div className="mt-20 pb-16">
             <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
           </div>
         </div>
       </div>
 
-      {/* Right panel — 60% — identical padding to left, form centered within column */}
+      {/* Right panel — 60% — form vertically + horizontally centered in the column */}
       <div className="flex flex-col flex-1 bg-[#F2F4F6] overflow-y-auto">
 
         {/* Mobile logo */}
@@ -368,8 +368,8 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           <span className="text-slate-900 font-extrabold text-lg tracking-tight">Continuum</span>
         </div>
 
-        {/* Same px-16 pt-16 as left panel; form centered horizontally within the 60% column */}
-        <div className="flex justify-center px-16 pt-16 pb-16">
+        {/* Vertically + horizontally centered; 80px horizontal padding matches left panel */}
+        <div className="flex flex-1 items-center justify-center" style={{ padding: "60px 80px" }}>
           <div className="w-full max-w-sm">
           {step === "main" ? (
             <>
