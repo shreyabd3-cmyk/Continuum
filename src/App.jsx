@@ -401,25 +401,23 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   const currentSlide = SLIDES[slide];
 
   return (
-    /* Full-screen light bg */
-    <div className="min-h-screen w-full bg-[#F2F4F6] flex flex-col items-center justify-center px-6 py-10">
+    <div className="flex h-screen w-full bg-[#F2F4F6] overflow-hidden">
 
-      {/* Logo — above the card */}
-      <div className="flex flex-col items-center gap-3 mb-8">
-        <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
-          <InfinityIcon className="w-8 h-8 text-white" />
+      {/* ── Left column: plain light bg, form centered ── */}
+      <div className="flex flex-col items-center justify-center flex-1 px-12 py-12">
+
+        {/* Logo above form */}
+        <div className="flex flex-col items-center gap-3 mb-10">
+          <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+            <InfinityIcon className="w-8 h-8 text-white" />
+          </div>
+          <span className="text-slate-900 font-extrabold text-2xl tracking-tight">Continuum</span>
         </div>
-        <span className="text-slate-900 font-extrabold text-2xl tracking-tight">Continuum</span>
-      </div>
 
-      {/* Floating card */}
-      <div className="w-full max-w-4xl bg-white rounded-[32px] shadow-2xl shadow-slate-200/80 overflow-hidden flex" style={{ minHeight: 560 }}>
-
-        {/* ── Left: form panel ── */}
-        <div className="flex flex-col justify-center px-12 py-12" style={{ width: "45%" }}>
-
+        {/* Form block */}
+        <div style={{ width: 360 }}>
           {step === "main" ? (
-            <div style={{ width: 340 }} className="mx-auto">
+            <>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
               <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
               <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
@@ -430,7 +428,6 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 </div>
               )}
 
-              {/* Auth mode tabs */}
               <div className="flex gap-2 p-1 bg-slate-100 rounded-full border border-slate-200 mb-4">
                 {[["magic", "Magic link", "No password"], ["password", "Password", "Traditional"]].map(([mode, label, sub]) => (
                   <button key={mode} onClick={() => setAuthMode(mode)}
@@ -440,7 +437,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 ))}
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
+              <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
                 {authMode === "magic"
                   ? "We'll send a sign-in link to your email. Click it and you're in — no password ever."
                   : "Enter your email and password. New here? We'll create your account automatically."}
@@ -490,9 +487,9 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 Explore with demo data
               </button>
               <p className="text-[11px] text-slate-400 text-center mt-2">No account needed · Data won't be saved</p>
-            </div>
+            </>
           ) : (
-            <div style={{ width: 340 }} className="mx-auto">
+            <>
               <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
                 <ArrowLeft className="w-3.5 h-3.5" /> Back
               </button>
@@ -503,34 +500,42 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               <p className="text-sm text-slate-500 leading-relaxed mb-6">
                 We sent a sign-in link to <strong className="text-slate-800">{email}</strong>. Click it and you're in.
               </p>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
+              <div className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
                 Didn't get it? Check your spam, or{" "}
                 <button onClick={handleEmailSubmit} className="text-indigo-600 font-semibold hover:underline">resend the link.</button>
               </div>
-            </div>
+            </>
           )}
         </div>
+      </div>
 
-        {/* ── Right: indigo illustration panel ── */}
-        <div className="flex-1 bg-indigo-600 flex flex-col relative overflow-hidden" style={{ borderRadius: "0 32px 32px 0" }}>
+      {/* ── Right column: light bg with inset rounded indigo card ── */}
+      <div className="flex-1 flex items-center justify-center p-8">
 
-          {/* Subtle top-right decoration */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+        {/* The inset card — fills most of the column with padding all around */}
+        <div className="w-full h-full bg-indigo-600 rounded-[28px] flex flex-col overflow-hidden relative shadow-2xl shadow-indigo-400/30">
 
-          {/* Slide content */}
-          <div className="flex-1 flex flex-col justify-center px-10 py-12 relative z-10">
-            <div key={slide} className="animate-in fade-in slide-in-from-bottom-3 duration-500" style={{ height: 380, display: "flex", flexDirection: "column" }}>
-              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
-              <h2 className="text-2xl font-bold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
-              <p className="text-sm text-indigo-200 leading-relaxed mb-0">{currentSlide.desc}</p>
-              <div className="flex-1">{currentSlide.preview}</div>
+          {/* Subtle decorations */}
+          <div className="absolute top-0 right-0 w-56 h-56 bg-white/5 rounded-full -translate-y-1/3 translate-x-1/3 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full translate-y-1/3 -translate-x-1/3 pointer-events-none" />
+
+          {/* Slide content — fills card, text overlaid at bottom like reference */}
+          <div className="flex-1 flex flex-col justify-end relative z-10 p-10">
+
+            {/* Illustration — top portion of card */}
+            <div className="absolute inset-0 flex items-center justify-center p-8 pb-48">
+              <div key={slide + "-art"} className="animate-in fade-in duration-500 w-full">
+                {currentSlide.preview}
+              </div>
             </div>
-          </div>
 
-          {/* Progress dots */}
-          <div className="px-10 pb-10 relative z-10">
-            <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
+            {/* Text overlay — bottom of card, like reference */}
+            <div key={slide} className="animate-in fade-in slide-in-from-bottom-2 duration-500 relative">
+              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-2">{currentSlide.tag}</p>
+              <h2 className="text-2xl font-bold text-white leading-tight tracking-tight mb-2">{currentSlide.title}</h2>
+              <p className="text-sm text-indigo-200 leading-relaxed mb-6">{currentSlide.desc}</p>
+              <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
+            </div>
           </div>
         </div>
       </div>
