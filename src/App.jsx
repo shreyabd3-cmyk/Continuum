@@ -14,7 +14,7 @@ import {
   getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged,
   signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
-  fetchSignInMethodsForEmail,
+  fetchSignInMethodsForEmail, sendPasswordResetEmail,
 } from "firebase/auth";
 import {
   getFirestore, collection, addDoc, updateDoc, deleteDoc,
@@ -403,23 +403,23 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   return (
     <div className="flex h-screen w-full overflow-hidden">
 
-      {/* ══ LEFT COLUMN — white, logo 80px from top ══ */}
-      <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, paddingTop: 80, paddingLeft: 48, paddingRight: 48, paddingBottom: 48 }}>
+      {/* ══ LEFT COLUMN — white ══ */}
+      <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, paddingTop: 80, paddingLeft: 64, paddingRight: 64, paddingBottom: 48 }}>
 
-        {/* Logo — 80px from top */}
-        <div className="flex flex-col items-center gap-3 mb-10 shrink-0">
+        {/* Logo — 80px from top, left-aligned */}
+        <div className="flex flex-col items-start gap-2 mb-12 shrink-0">
           <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
             <InfinityIcon className="w-8 h-8 text-white" />
           </div>
-          <span className="text-slate-900 font-extrabold text-2xl tracking-tight">Continuum</span>
+          <span className="text-slate-900 font-extrabold text-xl tracking-tight">Continuum</span>
         </div>
 
-        {/* Form — fluid, max 440, min 280 */}
-        <div className="w-full mx-auto" style={{ maxWidth: 440, minWidth: 280 }}>
+        {/* Form */}
+        <div className="w-full" style={{ maxWidth: 440, minWidth: 280 }}>
           {step === "main" ? (
             <>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Your creative second brain</p>
-              <h1 className="text-[2rem] font-extrabold text-slate-900 tracking-tight leading-tight mb-2">Get started</h1>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
+              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
               <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
 
               {(error || localError) && (
@@ -437,7 +437,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 ))}
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-5 leading-relaxed">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-4 leading-relaxed">
                 {authMode === "magic"
                   ? "We'll send a sign-in link to your email. Click it and you're in — no password ever."
                   : "Enter your email and password. New here? We'll create your account automatically."}
@@ -449,16 +449,31 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 className="mb-3" />
 
               {authMode === "password" && (
-                <div className="mb-2">
+                <div className="mb-1">
                   <Input type="password" placeholder="Password" value={password}
                     onChange={e => setPassword(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
                     className="mb-2" />
-                  <p className="text-xs text-slate-400 text-right cursor-pointer hover:text-indigo-600 transition-colors mb-3">Forgot password?</p>
+                  <div className="flex justify-end mb-4">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!email.trim()) { setLocalError("Enter your email address first."); return; }
+                        try {
+                          await sendPasswordResetEmail(auth, email);
+                          setStep("resetSent");
+                        } catch (err) {
+                          setLocalError(err.code === "auth/user-not-found" ? "No account found with that email." : "Failed to send reset email. Try again.");
+                        }
+                      }}
+                      className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold transition-colors">
+                      Forgot password?
+                    </button>
+                  </div>
                 </div>
               )}
 
-              <Button variant="primary" className="w-full py-3.5 mb-4 mt-1" onClick={handleEmailSubmit} disabled={localLoading || loading}>
+              <Button variant="primary" className="w-full py-3.5 mb-4" onClick={handleEmailSubmit} disabled={localLoading || loading}>
                 {localLoading
                   ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
                   : authMode === "magic" ? <><Send className="w-4 h-4" /> Send magic link</> : "Continue"}
@@ -488,7 +503,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               </button>
               <p className="text-[11px] text-slate-400 text-center mt-3">No account needed · Data won't be saved</p>
             </>
-          ) : (
+          ) : step === "sent" ? (
             <>
               <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
                 <ArrowLeft className="w-3.5 h-3.5" /> Back
@@ -505,40 +520,57 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 <button onClick={handleEmailSubmit} className="text-indigo-600 font-semibold hover:underline">resend the link.</button>
               </div>
             </>
+          ) : (
+            /* resetSent step */
+            <>
+              <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
+                <ArrowLeft className="w-3.5 h-3.5" /> Back
+              </button>
+              <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
+                <CheckSquare className="w-7 h-7 text-emerald-600" />
+              </div>
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">Password reset sent</h2>
+              <p className="text-sm text-slate-500 leading-relaxed mb-6">
+                We sent a password reset link to <strong className="text-slate-800">{email}</strong>. Check your inbox and follow the instructions.
+              </p>
+              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
+                Didn't get it? Check your spam, or{" "}
+                <button
+                  onClick={async () => { try { await sendPasswordResetEmail(auth, email); } catch(e) {} }}
+                  className="text-indigo-600 font-semibold hover:underline">resend the email.</button>
+              </div>
+            </>
           )}
         </div>
       </div>
 
-      {/* ══ RIGHT COLUMN — full-bleed indigo, content top-aligned to form label ══ */}
-      {/*
-        Left side offset to "Your creative second brain":
-          paddingTop(80) + logo icon(56) + gap(12) + logo text(~32) + mb-10(40) = ~220px
-        Right side matches with paddingTop: 220
-      */}
-      <div className="flex-1 flex flex-col bg-indigo-600 overflow-hidden" style={{ minWidth: 280 }}>
+      {/* ══ RIGHT COLUMN — full-bleed indigo ══ */}
+      <div className="flex-1 flex flex-col bg-indigo-600 overflow-hidden relative" style={{ minWidth: 280 }}>
 
         {/* Subtle radial glows */}
-        <div className="absolute pointer-events-none" style={{ top: 0, right: 0, width: 320, height: 320, background: "radial-gradient(circle at top right, rgba(255,255,255,0.07) 0%, transparent 65%)" }} />
-        <div className="absolute pointer-events-none" style={{ bottom: 0, left: "50%", width: 280, height: 280, background: "radial-gradient(circle at bottom center, rgba(99,102,241,0.4) 0%, transparent 70%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
 
-        {/* Content container — top-aligned at 220px, same as "Your creative second brain" */}
-        <div className="flex flex-col relative z-10" style={{ paddingTop: 220, paddingLeft: 48, paddingRight: 48, paddingBottom: 48, maxWidth: 500, minWidth: 280, gap: 40 }}>
+        {/* Content — left-aligned, starts at same y as "Your creative second brain" label */}
+        <div className="relative z-10 flex flex-col" style={{ paddingTop: 222, paddingLeft: 64, paddingRight: 64, paddingBottom: 64, maxWidth: 560 }}>
 
-          {/* 1 — Illustration */}
-          <div key={slide + "-art"} className="animate-in fade-in duration-700 shrink-0">
-            {currentSlide.preview}
-          </div>
+          {/* Tag */}
+          <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
 
-          {/* 2 — Text */}
-          <div key={slide} className="animate-in fade-in slide-in-from-bottom-2 duration-500 shrink-0">
-            <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-2">{currentSlide.tag}</p>
-            <h2 className="text-2xl font-bold text-white leading-tight tracking-tight mb-2">{currentSlide.title}</h2>
-            <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
-          </div>
+          {/* Title */}
+          <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
 
-          {/* 3 — Dots */}
-          <div className="shrink-0">
+          {/* Description */}
+          <p className="text-sm text-indigo-200 leading-relaxed mb-8">{currentSlide.desc}</p>
+
+          {/* Slider dots */}
+          <div className="mb-12">
             <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
+          </div>
+
+          {/* Illustration — below the text */}
+          <div key={slide + "-art"} className="animate-in fade-in duration-700">
+            {currentSlide.preview}
           </div>
 
         </div>
