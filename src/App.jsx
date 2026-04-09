@@ -401,12 +401,12 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   const currentSlide = SLIDES[slide];
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-white">
+    <div className="flex h-screen w-full overflow-hidden">
 
-      {/* ── Left column: white, logo 80px from top, form below ── */}
-      <div className="flex flex-col overflow-y-auto bg-white" style={{ width: "50%", minWidth: 340, paddingTop: 80, paddingLeft: 48, paddingRight: 48, paddingBottom: 48 }}>
+      {/* ══ LEFT COLUMN — white, logo 80px from top ══ */}
+      <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, paddingTop: 80, paddingLeft: 48, paddingRight: 48, paddingBottom: 48 }}>
 
-        {/* Logo — fixed 80px from top */}
+        {/* Logo — 80px from top */}
         <div className="flex flex-col items-center gap-3 mb-10 shrink-0">
           <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
             <InfinityIcon className="w-8 h-8 text-white" />
@@ -414,7 +414,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           <span className="text-slate-900 font-extrabold text-2xl tracking-tight">Continuum</span>
         </div>
 
-        {/* Form block — fluid, max 440 */}
+        {/* Form — fluid, max 440, min 280 */}
         <div className="w-full mx-auto" style={{ maxWidth: 440, minWidth: 280 }}>
           {step === "main" ? (
             <>
@@ -509,42 +509,38 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
         </div>
       </div>
 
-      {/* ── Right column: white bg, indigo card top-aligned to "Your creative second brain" ── */}
+      {/* ══ RIGHT COLUMN — full-bleed indigo, content top-aligned to form label ══ */}
       {/*
-          Logo block = 80px paddingTop + 56px icon + 12px gap + 32px text + 40px mb-10 = ~220px
-          "Your creative second brain" label is right after that.
-          So right card starts at paddingTop: 220 to match.
+        Left side offset to "Your creative second brain":
+          paddingTop(80) + logo icon(56) + gap(12) + logo text(~32) + mb-10(40) = ~220px
+        Right side matches with paddingTop: 220
       */}
-      <div className="flex-1 flex flex-col bg-white overflow-y-auto" style={{ paddingTop: 220, paddingRight: 48, paddingBottom: 48, paddingLeft: 24 }}>
+      <div className="flex-1 flex flex-col bg-indigo-600 overflow-hidden" style={{ minWidth: 280 }}>
 
-        {/* Inset card — max 500, min 280, top-aligned */}
-        <div className="w-full flex-1 bg-indigo-600 rounded-[28px] flex flex-col overflow-hidden relative shadow-2xl shadow-indigo-300/30" style={{ maxWidth: 500, minWidth: 280 }}>
+        {/* Subtle radial glows */}
+        <div className="absolute pointer-events-none" style={{ top: 0, right: 0, width: 320, height: 320, background: "radial-gradient(circle at top right, rgba(255,255,255,0.07) 0%, transparent 65%)" }} />
+        <div className="absolute pointer-events-none" style={{ bottom: 0, left: "50%", width: 280, height: 280, background: "radial-gradient(circle at bottom center, rgba(99,102,241,0.4) 0%, transparent 70%)" }} />
 
-          {/* Radial glow decorations */}
-          <div className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)", transform: "translate(30%, -30%)" }} />
-          <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)", transform: "translate(-30%, 30%)" }} />
+        {/* Content container — top-aligned at 220px, same as "Your creative second brain" */}
+        <div className="flex flex-col relative z-10" style={{ paddingTop: 220, paddingLeft: 48, paddingRight: 48, paddingBottom: 48, maxWidth: 500, minWidth: 280, gap: 40 }}>
 
-          {/* Single container: illustration → text → dots, equal gutters, no absolute positioning */}
-          <div className="flex flex-col h-full p-10" style={{ gap: 32 }}>
-
-            {/* 1. Illustration — takes remaining space */}
-            <div key={slide + "-art"} className="flex-1 flex items-center justify-center animate-in fade-in duration-700" style={{ minHeight: 0 }}>
-              {currentSlide.preview}
-            </div>
-
-            {/* 2. Text block */}
-            <div key={slide} className="shrink-0 animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-2">{currentSlide.tag}</p>
-              <h2 className="text-2xl font-bold text-white leading-tight tracking-tight mb-2">{currentSlide.title}</h2>
-              <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
-            </div>
-
-            {/* 3. Slider dots */}
-            <div className="shrink-0">
-              <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
-            </div>
-
+          {/* 1 — Illustration */}
+          <div key={slide + "-art"} className="animate-in fade-in duration-700 shrink-0">
+            {currentSlide.preview}
           </div>
+
+          {/* 2 — Text */}
+          <div key={slide} className="animate-in fade-in slide-in-from-bottom-2 duration-500 shrink-0">
+            <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-2">{currentSlide.tag}</p>
+            <h2 className="text-2xl font-bold text-white leading-tight tracking-tight mb-2">{currentSlide.title}</h2>
+            <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
+          </div>
+
+          {/* 3 — Dots */}
+          <div className="shrink-0">
+            <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
+          </div>
+
         </div>
       </div>
     </div>
