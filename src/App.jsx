@@ -564,7 +564,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
       </div>
 
       {/* ══ RIGHT COLUMN — full-bleed indigo ══ */}
-      <div className="flex-1 flex flex-col bg-indigo-600 overflow-hidden relative justify-center" style={{ minWidth: 280 }}>
+      <div className="flex-1 flex flex-col bg-indigo-600 overflow-hidden relative justify-center rounded-[24px]" style={{ minWidth: 280, margin: "10px 10px 10px 0" }}>
 
         {/* Subtle radial glows */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
