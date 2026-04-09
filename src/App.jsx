@@ -375,7 +375,10 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
     <div className="flex h-screen w-full overflow-hidden bg-white">
 
       {/* ══ LEFT COLUMN ══ */}
-      <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, padding: "48px 64px" }}>
+      <div className="flex flex-col bg-white overflow-y-auto items-center" style={{ width: "50%", minWidth: 340, padding: "48px 32px" }}>
+
+        {/* Inner container — logo + form, left-aligned, max width constrained */}
+        <div className="flex flex-col flex-1 w-full" style={{ maxWidth: 440 }}>
 
         {/* Logo — anchored top */}
         <div className="flex flex-col items-start gap-2 shrink-0 mb-0">
@@ -387,7 +390,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
 
         {/* Form — vertically centered in remaining space */}
         <div className="flex-1 flex flex-col justify-center">
-          <div className="w-full" style={{ maxWidth: 440, minWidth: 280 }}>
+          <div className="w-full">
             {step === "main" ? (
               <>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
@@ -514,6 +517,8 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
             )}
           </div>
         </div>
+
+        </div>{/* end inner container */}
       </div>
 
       {/* ══ RIGHT COLUMN — floating indigo panel ══ */}
