@@ -414,7 +414,6 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           </div>
           <span className="text-slate-900 font-extrabold text-xl tracking-tight">Continuum</span>
         </div>
-         // Left column outer div
        <div className="flex flex-col bg-white" style={{ width: "50%", minWidth: 340, padding: "48px 64px" }}>
 
   {/* Logo — top */}
