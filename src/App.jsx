@@ -404,10 +404,10 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
     <div className="flex h-screen w-full overflow-hidden">
 
       {/* ══ LEFT COLUMN — white ══ */}
-      <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, paddingTop: 80, paddingLeft: 64, paddingRight: 64, paddingBottom: 48 }}>
+    <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, paddingTop: 56, paddingLeft: 64, paddingRight: 64, paddingBottom: 48 }}>
 
         {/* Logo — 80px from top, left-aligned */}
-        <div className="flex flex-col items-start gap-2 mb-12 shrink-0">
+        <div className="flex flex-col items-start gap-2 mb-10 shrink-0">
           <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
             <InfinityIcon className="w-8 h-8 text-white" />
           </div>
@@ -552,7 +552,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
 
         {/* Content — left-aligned, starts at same y as "Your creative second brain" label */}
-        <div className="relative z-10 flex flex-col" style={{ paddingTop: 222, paddingLeft: 64, paddingRight: 64, paddingBottom: 64, maxWidth: 560 }}>
+       <div className="relative z-10 flex flex-col" style={{ paddingTop: 180, paddingLeft: 64, paddingRight: 64, paddingBottom: 64, maxWidth: 560 }}>
 
           {/* Tag */}
           <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
