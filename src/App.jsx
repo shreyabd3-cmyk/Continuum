@@ -218,7 +218,7 @@ const SliderDots = ({ total, current, onSelect, duration }) => {
   }, [current, duration]);
 
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex gap-2 items-center justify-center">
       {Array.from({ length: total }).map((_, i) => (
         <button
           key={i}
@@ -227,14 +227,9 @@ const SliderDots = ({ total, current, onSelect, duration }) => {
           style={{ width: i === current ? 40 : 8, height: 6, background: "rgba(255,255,255,0.25)" }}
           aria-label={`Go to slide ${i + 1}`}
         >
-          {/* Current — animated fill */}
           {i === current && (
-            <div
-              className="absolute inset-y-0 left-0 rounded-full bg-white"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="absolute inset-y-0 left-0 rounded-full bg-white" style={{ width: `${progress}%` }} />
           )}
-          {/* Past — fully filled */}
           {i < current && (
             <div className="absolute inset-0 rounded-full bg-white/70" />
           )}
@@ -251,36 +246,27 @@ const SLIDES = [
     title: "Pick up exactly where you left off",
     desc: "Stop wasting time figuring out where you were. Continuum keeps your project context front and centre every time you return.",
     preview: (
-      <div className="mt-8 flex justify-start">
+      <div className="flex justify-center">
         <svg viewBox="0 0 420 260" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-sm opacity-95">
-          {/* desk */}
           <rect x="40" y="200" width="340" height="14" rx="7" fill="#FCD34D" opacity="0.25"/>
-          {/* monitor stand */}
           <rect x="195" y="155" width="30" height="48" rx="4" fill="#FCD34D" opacity="0.3"/>
           <rect x="170" y="198" width="80" height="8" rx="4" fill="#FCD34D" opacity="0.3"/>
-          {/* monitor */}
           <rect x="90" y="60" width="240" height="150" rx="12" fill="white" opacity="0.12"/>
           <rect x="90" y="60" width="240" height="150" rx="12" stroke="#FCD34D" strokeWidth="2.5" opacity="0.5"/>
-          {/* screen glow */}
           <rect x="104" y="74" width="212" height="122" rx="7" fill="#FCD34D" opacity="0.08"/>
-          {/* screen content lines */}
           <rect x="118" y="90" width="80" height="8" rx="4" fill="#FCD34D" opacity="0.7"/>
           <rect x="118" y="108" width="140" height="5" rx="2.5" fill="white" opacity="0.35"/>
           <rect x="118" y="120" width="120" height="5" rx="2.5" fill="white" opacity="0.25"/>
           <rect x="118" y="132" width="100" height="5" rx="2.5" fill="white" opacity="0.2"/>
-          {/* checkmark badge */}
           <circle cx="272" cy="100" r="22" fill="#FCD34D" opacity="0.2"/>
           <circle cx="272" cy="100" r="22" stroke="#FCD34D" strokeWidth="2" opacity="0.6"/>
           <path d="M262 100 l7 7 l12-14" stroke="#FCD34D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"/>
-          {/* cursor */}
           <path d="M200 160 l0 16 l4-5 l5 10 l3-1 l-5-10 l7 0 z" fill="#FCD34D" opacity="0.8"/>
-          {/* floating note card */}
           <rect x="310" y="30" width="95" height="60" rx="10" fill="white" opacity="0.1"/>
           <rect x="310" y="30" width="95" height="60" rx="10" stroke="#FCD34D" strokeWidth="1.5" opacity="0.4"/>
           <rect x="322" y="44" width="50" height="5" rx="2.5" fill="#FCD34D" opacity="0.6"/>
           <rect x="322" y="56" width="35" height="4" rx="2" fill="white" opacity="0.3"/>
           <rect x="322" y="66" width="42" height="4" rx="2" fill="white" opacity="0.2"/>
-          {/* person silhouette */}
           <circle cx="64" cy="148" r="18" fill="#FCD34D" opacity="0.25"/>
           <path d="M40 200 q24-36 48 0" fill="#FCD34D" opacity="0.2"/>
           <circle cx="64" cy="148" r="18" stroke="#FCD34D" strokeWidth="1.5" opacity="0.5"/>
@@ -293,36 +279,29 @@ const SLIDES = [
     title: "Never lose track of a blocker",
     desc: "Log questions the moment they come up. Resolve them when you get answers. Full history always there.",
     preview: (
-      <div className="mt-8 flex justify-start">
+      <div className="flex justify-center">
         <svg viewBox="0 0 420 260" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-sm opacity-95">
-          {/* main chat bubble */}
           <rect x="60" y="30" width="240" height="110" rx="18" fill="white" opacity="0.1"/>
           <rect x="60" y="30" width="240" height="110" rx="18" stroke="#FCD34D" strokeWidth="2.5" opacity="0.55"/>
           <path d="M100 140 l-20 28 l36-18" fill="white" opacity="0.08"/>
           <path d="M100 140 l-20 28 l36-18" stroke="#FCD34D" strokeWidth="2" opacity="0.4"/>
-          {/* question mark in bubble */}
           <text x="150" y="108" fontFamily="Georgia, serif" fontSize="72" fill="#FCD34D" opacity="0.8" textAnchor="middle">?</text>
-          {/* small reply bubble */}
           <rect x="230" y="140" width="140" height="70" rx="14" fill="white" opacity="0.08"/>
           <rect x="230" y="140" width="140" height="70" rx="14" stroke="#FCD34D" strokeWidth="1.5" opacity="0.35"/>
           <path d="M260 140 l-14-20 l28 8" fill="white" opacity="0.05"/>
           <path d="M260 140 l-14-20 l28 8" stroke="#FCD34D" strokeWidth="1.5" opacity="0.3"/>
-          {/* lines in reply */}
           <rect x="248" y="160" width="70" height="5" rx="2.5" fill="#FCD34D" opacity="0.5"/>
           <rect x="248" y="172" width="50" height="4" rx="2" fill="white" opacity="0.25"/>
           <rect x="248" y="183" width="60" height="4" rx="2" fill="white" opacity="0.2"/>
-          {/* resolved checkmark */}
           <circle cx="360" cy="55" r="26" fill="#FCD34D" opacity="0.18"/>
           <circle cx="360" cy="55" r="26" stroke="#FCD34D" strokeWidth="2" opacity="0.6"/>
           <path d="M348 55 l8 9 l16-18" stroke="#FCD34D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"/>
-          {/* dots — unresolved */}
           <circle cx="360" cy="185" r="8" fill="#FCD34D" opacity="0.2"/>
           <circle cx="360" cy="185" r="8" stroke="#FCD34D" strokeWidth="1.5" opacity="0.4"/>
           <circle cx="380" cy="185" r="8" fill="white" opacity="0.08"/>
           <circle cx="380" cy="185" r="8" stroke="white" strokeWidth="1.5" opacity="0.2"/>
           <circle cx="400" cy="185" r="8" fill="white" opacity="0.08"/>
           <circle cx="400" cy="185" r="8" stroke="white" strokeWidth="1.5" opacity="0.2"/>
-          {/* person */}
           <circle cx="50" cy="190" r="20" fill="#FCD34D" opacity="0.2"/>
           <circle cx="50" cy="190" r="20" stroke="#FCD34D" strokeWidth="1.5" opacity="0.45"/>
           <path d="M24 230 q26-32 52 0" fill="#FCD34D" opacity="0.15"/>
@@ -335,36 +314,29 @@ const SLIDES = [
     title: "Stop hunting through folders",
     desc: "Links, docs, and images — tagged and filterable, all in one place per project.",
     preview: (
-      <div className="mt-8 flex justify-start">
+      <div className="flex justify-center">
         <svg viewBox="0 0 420 260" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-sm opacity-95">
-          {/* back folder */}
           <rect x="200" y="60" width="170" height="130" rx="12" fill="#FCD34D" opacity="0.12"/>
           <rect x="200" y="60" width="170" height="130" rx="12" stroke="#FCD34D" strokeWidth="2" opacity="0.3"/>
           <path d="M200 80 l170 0" stroke="#FCD34D" strokeWidth="1.5" opacity="0.3"/>
           <path d="M200 73 q0-13 13-13 l40 0 q6 0 8 6 l4 7 l105 0" stroke="#FCD34D" strokeWidth="2" opacity="0.35" fill="none"/>
-          {/* middle folder */}
           <rect x="80" y="80" width="170" height="130" rx="12" fill="white" opacity="0.08"/>
           <rect x="80" y="80" width="170" height="130" rx="12" stroke="#FCD34D" strokeWidth="2" opacity="0.45"/>
           <path d="M80 100 l170 0" stroke="#FCD34D" strokeWidth="1.5" opacity="0.4"/>
           <path d="M80 93 q0-13 13-13 l40 0 q6 0 8 6 l4 7 l105 0" stroke="#FCD34D" strokeWidth="2" opacity="0.5" fill="none"/>
-          {/* doc lines in middle folder */}
           <rect x="100" y="115" width="90" height="5" rx="2.5" fill="#FCD34D" opacity="0.55"/>
           <rect x="100" y="128" width="70" height="4" rx="2" fill="white" opacity="0.3"/>
           <rect x="100" y="140" width="80" height="4" rx="2" fill="white" opacity="0.22"/>
           <rect x="100" y="152" width="60" height="4" rx="2" fill="white" opacity="0.18"/>
-          {/* link icon */}
           <circle cx="210" cy="145" r="18" fill="#FCD34D" opacity="0.15"/>
           <circle cx="210" cy="145" r="18" stroke="#FCD34D" strokeWidth="1.5" opacity="0.5"/>
           <path d="M204 145 q0-6 6-6 l8 0 q6 0 6 6 q0 6-6 6 l-8 0 q-6 0-6-6z" stroke="#FCD34D" strokeWidth="1.5" fill="none" opacity="0.8"/>
           <line x1="207" y1="145" x2="213" y2="145" stroke="#FCD34D" strokeWidth="1.5" opacity="0.8"/>
-          {/* tag badges */}
           <rect x="94" y="168" width="40" height="16" rx="8" fill="#FCD34D" opacity="0.25"/>
           <rect x="140" y="168" width="48" height="16" rx="8" fill="white" opacity="0.1"/>
-          {/* person */}
           <circle cx="360" cy="185" r="22" fill="#FCD34D" opacity="0.2"/>
           <circle cx="360" cy="185" r="22" stroke="#FCD34D" strokeWidth="1.5" opacity="0.5"/>
           <path d="M330 230 q30-36 60 0" fill="#FCD34D" opacity="0.15"/>
-          {/* arm reaching to folder */}
           <path d="M342 185 q-30-20-60-40" stroke="#FCD34D" strokeWidth="2.5" strokeLinecap="round" opacity="0.4"/>
           <circle cx="282" cy="145" r="5" fill="#FCD34D" opacity="0.6"/>
         </svg>
@@ -382,7 +354,6 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   const [localLoading, setLocalLoading] = useState(false);
   const [localError, setLocalError] = useState("");
 
-  // Auto-advance slide
   useEffect(() => {
     const timer = setTimeout(() => setSlide(s => (s + 1) % SLIDES.length), SLIDE_DURATION);
     return () => clearTimeout(timer);
@@ -401,200 +372,181 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   const currentSlide = SLIDES[slide];
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="flex h-screen w-full overflow-hidden bg-white">
 
-      {/* ══ LEFT COLUMN — white ══ */}
-       <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, padding: "48px 64px" }}>
+      {/* ══ LEFT COLUMN ══ */}
+      <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, padding: "48px 64px" }}>
 
-
-        {/* Logo — 80px from top, left-aligned */}
-        <div className="flex flex-col items-start gap-2 mb-auto shrink-0">
+        {/* Logo — anchored top */}
+        <div className="flex flex-col items-start gap-2 shrink-0 mb-0">
           <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
             <InfinityIcon className="w-8 h-8 text-white" />
           </div>
           <span className="text-slate-900 font-extrabold text-xl tracking-tight">Continuum</span>
         </div>
-       <div className="flex flex-col bg-white" style={{ width: "50%", minWidth: 340, padding: "48px 64px" }}>
 
-  {/* Logo — top */}
-  <div className="flex flex-col items-start gap-2 shrink-0">
-    <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
-      <InfinityIcon className="w-8 h-8 text-white" />
-    </div>
-    <span className="text-slate-900 font-extrabold text-xl tracking-tight">Continuum</span>
-  </div>
+        {/* Form — vertically centered in remaining space */}
+        <div className="flex-1 flex flex-col justify-center">
+          <div className="w-full" style={{ maxWidth: 440, minWidth: 280 }}>
+            {step === "main" ? (
+              <>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
+                <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
+                <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
 
-  {/* Spacer pushes form to vertical center */}
-  <div className="flex-1 flex flex-col justify-center">
-    <div className="w-full" style={{ maxWidth: 440, minWidth: 280 }}>
-      {/* ... all the form content stays exactly as-is ... */}
-    </div>
-  </div>
-
-</div>
-        {/* Form */}
-        <div className="w-full" style={{ maxWidth: 440, minWidth: 280 }}>
-          {step === "main" ? (
-            <>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
-              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
-              <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
-
-              {(error || localError) && (
-                <div className="bg-red-50 text-red-600 p-3 rounded-2xl text-xs flex items-center gap-2 mb-5">
-                  <AlertCircle className="w-4 h-4 shrink-0" /><p>{error || localError}</p>
-                </div>
-              )}
-
-              <div className="flex gap-1.5 p-1 bg-slate-100 rounded-full border border-slate-200 mb-4">
-                {[["magic", "Magic link", "No password"], ["password", "Password", "Traditional"]].map(([mode, label, sub]) => (
-                  <button key={mode} onClick={() => setAuthMode(mode)}
-                    className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all duration-200 ease-apple ${authMode === mode ? "bg-white shadow-sm text-indigo-900 ring-1 ring-slate-900/5" : "text-slate-500 hover:text-slate-700"}`}>
-                    {label}<span className="block text-[10px] font-medium mt-0.5 opacity-60">{sub}</span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-4 leading-relaxed">
-                {authMode === "magic"
-                  ? "We'll send a sign-in link to your email. Click it and you're in — no password ever."
-                  : "Enter your email and password. New here? We'll create your account automatically."}
-              </div>
-
-              <Input type="email" placeholder="Your email address" value={email}
-                onChange={e => setEmail(e.target.value)}
-                onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
-                className="mb-3" />
-
-              {authMode === "password" && (
-                <div className="mb-1">
-                  <Input type="password" placeholder="Password" value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
-                    className="mb-2" />
-                  <div className="flex justify-end mb-4">
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        if (!email.trim()) { setLocalError("Enter your email address first."); return; }
-                        try {
-                          await sendPasswordResetEmail(auth, email);
-                          setStep("resetSent");
-                        } catch (err) {
-                          setLocalError(err.code === "auth/user-not-found" ? "No account found with that email." : "Failed to send reset email. Try again.");
-                        }
-                      }}
-                      className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold transition-colors">
-                      Forgot password?
-                    </button>
+                {(error || localError) && (
+                  <div className="bg-red-50 text-red-600 p-3 rounded-2xl text-xs flex items-center gap-2 mb-5">
+                    <AlertCircle className="w-4 h-4 shrink-0" /><p>{error || localError}</p>
                   </div>
-                </div>
-              )}
-
-              <Button variant="primary" className="w-full py-3.5 mb-4" onClick={handleEmailSubmit} disabled={localLoading || loading}>
-                {localLoading
-                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
-                  : authMode === "magic" ? <><Send className="w-4 h-4" /> Send magic link</> : "Continue"}
-              </Button>
-
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex-1 h-px bg-slate-200" />
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">or</span>
-                <div className="flex-1 h-px bg-slate-200" />
-              </div>
-
-              <Button variant="google" className="w-full py-3.5 mb-3" onClick={onGoogleLogin} disabled={loading}>
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Connecting...</> : (
-                  <><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                  </svg>Continue with Google</>
                 )}
-              </Button>
 
-              <button onClick={onDemo}
-                className="w-full py-3.5 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-bold hover:bg-indigo-100 transition-all ease-apple active:scale-95 flex items-center justify-center gap-2">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                Explore with demo data
-              </button>
-              <p className="text-[11px] text-slate-400 text-center mt-3">No account needed · Data won't be saved</p>
-            </>
-          ) : step === "sent" ? (
-            <>
-              <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
-                <ArrowLeft className="w-3.5 h-3.5" /> Back
-              </button>
-              <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
-                <Mail className="w-7 h-7 text-indigo-600" />
-              </div>
-              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">Check your inbox</h2>
-              <p className="text-sm text-slate-500 leading-relaxed mb-6">
-                We sent a sign-in link to <strong className="text-slate-800">{email}</strong>. Click it and you're in.
-              </p>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
-                Didn't get it? Check your spam, or{" "}
-                <button onClick={handleEmailSubmit} className="text-indigo-600 font-semibold hover:underline">resend the link.</button>
-              </div>
-            </>
-          ) : (
-            /* resetSent step */
-            <>
-              <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
-                <ArrowLeft className="w-3.5 h-3.5" /> Back
-              </button>
-              <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
-                <CheckSquare className="w-7 h-7 text-emerald-600" />
-              </div>
-              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">Password reset sent</h2>
-              <p className="text-sm text-slate-500 leading-relaxed mb-6">
-                We sent a password reset link to <strong className="text-slate-800">{email}</strong>. Check your inbox and follow the instructions.
-              </p>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
-                Didn't get it? Check your spam, or{" "}
-                <button
-                  onClick={async () => { try { await sendPasswordResetEmail(auth, email); } catch(e) {} }}
-                  className="text-indigo-600 font-semibold hover:underline">resend the email.</button>
-              </div>
-            </>
-          )}
+                <div className="flex gap-1.5 p-1 bg-slate-100 rounded-full border border-slate-200 mb-4">
+                  {[["magic", "Magic link", "No password"], ["password", "Password", "Traditional"]].map(([mode, label, sub]) => (
+                    <button key={mode} onClick={() => setAuthMode(mode)}
+                      className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all duration-200 ease-apple ${authMode === mode ? "bg-white shadow-sm text-indigo-900 ring-1 ring-slate-900/5" : "text-slate-500 hover:text-slate-700"}`}>
+                      {label}<span className="block text-[10px] font-medium mt-0.5 opacity-60">{sub}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-4 leading-relaxed">
+                  {authMode === "magic"
+                    ? "We'll send a sign-in link to your email. Click it and you're in — no password ever."
+                    : "Enter your email and password. New here? We'll create your account automatically."}
+                </div>
+
+                <Input type="email" placeholder="Your email address" value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
+                  className="mb-3" />
+
+                {authMode === "password" && (
+                  <div className="mb-1">
+                    <Input type="password" placeholder="Password" value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
+                      className="mb-2" />
+                    <div className="flex justify-end mb-4">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (!email.trim()) { setLocalError("Enter your email address first."); return; }
+                          try {
+                            await sendPasswordResetEmail(auth, email);
+                            setStep("resetSent");
+                          } catch (err) {
+                            setLocalError(err.code === "auth/user-not-found" ? "No account found with that email." : "Failed to send reset email. Try again.");
+                          }
+                        }}
+                        className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold transition-colors">
+                        Forgot password?
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <Button variant="primary" className="w-full py-3.5 mb-4" onClick={handleEmailSubmit} disabled={localLoading || loading}>
+                  {localLoading
+                    ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
+                    : authMode === "magic" ? <><Send className="w-4 h-4" /> Send magic link</> : "Continue"}
+                </Button>
+
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-1 h-px bg-slate-200" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">or</span>
+                  <div className="flex-1 h-px bg-slate-200" />
+                </div>
+
+                <Button variant="google" className="w-full py-3.5 mb-3" onClick={onGoogleLogin} disabled={loading}>
+                  {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Connecting...</> : (
+                    <><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>Continue with Google</>
+                  )}
+                </Button>
+
+                <button onClick={onDemo}
+                  className="w-full py-3.5 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-bold hover:bg-indigo-100 transition-all ease-apple active:scale-95 flex items-center justify-center gap-2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Explore with demo data
+                </button>
+                <p className="text-[11px] text-slate-400 text-center mt-3">No account needed · Data won't be saved</p>
+              </>
+            ) : step === "sent" ? (
+              <>
+                <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
+                  <ArrowLeft className="w-3.5 h-3.5" /> Back
+                </button>
+                <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
+                  <Mail className="w-7 h-7 text-indigo-600" />
+                </div>
+                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">Check your inbox</h2>
+                <p className="text-sm text-slate-500 leading-relaxed mb-6">
+                  We sent a sign-in link to <strong className="text-slate-800">{email}</strong>. Click it and you're in.
+                </p>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
+                  Didn't get it? Check your spam, or{" "}
+                  <button onClick={handleEmailSubmit} className="text-indigo-600 font-semibold hover:underline">resend the link.</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <button onClick={() => setStep("main")} className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-600 transition-colors mb-10 min-h-[44px]">
+                  <ArrowLeft className="w-3.5 h-3.5" /> Back
+                </button>
+                <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
+                  <CheckSquare className="w-7 h-7 text-emerald-600" />
+                </div>
+                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">Password reset sent</h2>
+                <p className="text-sm text-slate-500 leading-relaxed mb-6">
+                  We sent a password reset link to <strong className="text-slate-800">{email}</strong>. Check your inbox and follow the instructions.
+                </p>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 leading-relaxed">
+                  Didn't get it? Check your spam, or{" "}
+                  <button
+                    onClick={async () => { try { await sendPasswordResetEmail(auth, email); } catch(e) {} }}
+                    className="text-indigo-600 font-semibold hover:underline">resend the email.</button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* ══ RIGHT COLUMN — full-bleed indigo ══ */}
-      <div className="flex-1 flex flex-col bg-indigo-600 overflow-hidden relative justify-center rounded-[24px]" style={{ minWidth: 280, margin: "10px 10px 10px 0" }}>
+      {/* ══ RIGHT COLUMN — floating indigo panel ══ */}
+      <div className="flex-1 overflow-hidden" style={{ padding: "10px 10px 10px 0", minWidth: 280 }}>
+        <div className="h-full bg-indigo-600 rounded-[40px] overflow-hidden relative flex flex-col justify-center">
 
-        {/* Subtle radial glows */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
+          {/* Subtle radial glows */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
 
-        {/* Content — left-aligned, starts at same y as "Your creative second brain" label */}
-       <div className="relative z-10 flex flex-col" style={{ paddingTop: 64, paddingLeft: 64, paddingRight: 64, paddingBottom: 64, maxWidth: 560 }}>
+          {/* Content */}
+          <div className="relative z-10 flex flex-col items-center text-center px-16 py-16" style={{ maxWidth: 560, margin: "0 auto", width: "100%" }}>
 
-          {/* Tag */}
-          <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
+            <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3 w-full text-left">{currentSlide.tag}</p>
+            <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-3 w-full text-left">{currentSlide.title}</h2>
+            <p className="text-sm text-indigo-200 leading-relaxed mb-8 w-full text-left">{currentSlide.desc}</p>
 
-          {/* Title */}
-          <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
+            {/* Slider dots — centered */}
+            <div className="mb-10 w-full flex justify-center">
+              <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
+            </div>
 
-          {/* Description */}
-          <p className="text-sm text-indigo-200 leading-relaxed mb-8">{currentSlide.desc}</p>
+            {/* Illustration — centered */}
+            <div key={slide + "-art"} className="animate-in fade-in duration-700 w-full">
+              {currentSlide.preview}
+            </div>
 
-          {/* Slider dots */}
-          <div className="mb-12">
-            <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
           </div>
-
-          {/* Illustration — below the text */}
-          <div key={slide + "-art"} className="animate-in fade-in duration-700">
-            {currentSlide.preview}
-          </div>
-
         </div>
       </div>
+
     </div>
-  )
+  );
 };
 
 const DemoBanner = ({ onSignIn }) => (
