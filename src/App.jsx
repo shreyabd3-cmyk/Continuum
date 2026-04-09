@@ -533,17 +533,17 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           <div className="relative z-10 flex flex-col items-center text-center px-16 py-16" style={{ maxWidth: 560, margin: "0 auto", width: "100%" }}>
 
             <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3 w-full text-left">{currentSlide.tag}</p>
-            <h2 className="text-3xl font-bold text-white leading-tight tracking-tight mb-3 w-full text-left">{currentSlide.title}</h2>
+            <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3 w-full text-left">{currentSlide.title}</h2>
             <p className="text-sm text-indigo-200 leading-relaxed mb-8 w-full text-left">{currentSlide.desc}</p>
 
-            {/* Slider dots — centered */}
-            <div className="mb-10 w-full flex justify-center">
-              <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
+            {/* Illustration — centered */}
+            <div key={slide + "-art"} className="animate-in fade-in duration-700 w-full mb-8">
+              {currentSlide.preview}
             </div>
 
-            {/* Illustration — centered */}
-            <div key={slide + "-art"} className="animate-in fade-in duration-700 w-full">
-              {currentSlide.preview}
+            {/* Slider dots — below illustration, centered */}
+            <div className="w-full flex justify-center">
+              <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
             </div>
 
           </div>
