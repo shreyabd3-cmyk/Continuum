@@ -404,16 +404,35 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
     <div className="flex h-screen w-full overflow-hidden">
 
       {/* ══ LEFT COLUMN — white ══ */}
-    <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, paddingTop: 56, paddingLeft: 64, paddingRight: 64, paddingBottom: 48 }}>
+       <div className="flex flex-col bg-white overflow-y-auto" style={{ width: "50%", minWidth: 340, padding: "48px 64px" }}>
+
 
         {/* Logo — 80px from top, left-aligned */}
-        <div className="flex flex-col items-start gap-2 mb-10 shrink-0">
+        <div className="flex flex-col items-start gap-2 mb-auto shrink-0">
           <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
             <InfinityIcon className="w-8 h-8 text-white" />
           </div>
           <span className="text-slate-900 font-extrabold text-xl tracking-tight">Continuum</span>
         </div>
+         // Left column outer div
+       <div className="flex flex-col bg-white" style={{ width: "50%", minWidth: 340, padding: "48px 64px" }}>
 
+  {/* Logo — top */}
+  <div className="flex flex-col items-start gap-2 shrink-0">
+    <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+      <InfinityIcon className="w-8 h-8 text-white" />
+    </div>
+    <span className="text-slate-900 font-extrabold text-xl tracking-tight">Continuum</span>
+  </div>
+
+  {/* Spacer pushes form to vertical center */}
+  <div className="flex-1 flex flex-col justify-center">
+    <div className="w-full" style={{ maxWidth: 440, minWidth: 280 }}>
+      {/* ... all the form content stays exactly as-is ... */}
+    </div>
+  </div>
+
+</div>
         {/* Form */}
         <div className="w-full" style={{ maxWidth: 440, minWidth: 280 }}>
           {step === "main" ? (
@@ -545,14 +564,14 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
       </div>
 
       {/* ══ RIGHT COLUMN — full-bleed indigo ══ */}
-      <div className="flex-1 flex flex-col bg-indigo-600 overflow-hidden relative" style={{ minWidth: 280 }}>
+      <div className="flex-1 flex flex-col bg-indigo-600 overflow-hidden relative justify-center" style={{ minWidth: 280 }}>
 
         {/* Subtle radial glows */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
 
         {/* Content — left-aligned, starts at same y as "Your creative second brain" label */}
-       <div className="relative z-10 flex flex-col" style={{ paddingTop: 180, paddingLeft: 64, paddingRight: 64, paddingBottom: 64, maxWidth: 560 }}>
+       <div className="relative z-10 flex flex-col" style={{ paddingTop: 64, paddingLeft: 64, paddingRight: 64, paddingBottom: 64, maxWidth: 560 }}>
 
           {/* Tag */}
           <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
