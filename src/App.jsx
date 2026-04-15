@@ -530,7 +530,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
 
           {/* Content */}
-          <div className="relative z-10 flex flex-col items-center text-center px-16 py-16" style={{ maxWidth: 500, margin: "0 auto", width: "100%" }}>
+          <div className="relative z-10 flex flex-col items-center text-center px-16 py-16" style={{ maxWidth: 600, margin: "0 auto", width: "100%" }}>
 
             {/* Fixed height text block prevents illustration from jumping between slides */}
             <div style={{ minHeight: 180 }} className="w-full">
