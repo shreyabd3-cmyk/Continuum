@@ -530,11 +530,14 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
 
           {/* Content */}
-          <div className="relative z-10 flex flex-col items-center text-center px-16 py-16" style={{ maxWidth: 560, margin: "0 auto", width: "100%" }}>
+          <div className="relative z-10 flex flex-col items-center text-center px-16 py-16" style={{ maxWidth: 500, margin: "0 auto", width: "100%" }}>
 
-            <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3 w-full text-left">{currentSlide.tag}</p>
-            <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3 w-full text-left">{currentSlide.title}</h2>
-            <p className="text-sm text-indigo-200 leading-relaxed mb-8 w-full text-left">{currentSlide.desc}</p>
+            {/* Fixed height text block prevents illustration from jumping between slides */}
+            <div style={{ minHeight: 180 }} className="w-full">
+              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3 w-full text-left">{currentSlide.tag}</p>
+              <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3 w-full text-left">{currentSlide.title}</h2>
+              <p className="text-sm text-indigo-200 leading-relaxed w-full text-left">{currentSlide.desc}</p>
+            </div>
 
             {/* Illustration — centered */}
             <div key={slide + "-art"} className="animate-in fade-in duration-700 w-full mb-8">
