@@ -443,7 +443,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
 
         {/* Mobile: fixed-height indigo pill — sits above form, no sticky */}
         <div className="md:hidden" style={{ padding: "10px 10px 0 10px" }}>
-          <div className="bg-indigo-600 rounded-[40px] px-8 py-7 flex flex-col gap-4" style={{ height: 220 }}>
+          <div className="bg-indigo-600 rounded-[20px] px-8 py-7 flex flex-col gap-4" style={{ height: 220 }}>
             {/* Logo — horizontal, mobile only */}
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
@@ -466,7 +466,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           <div className="h-full bg-indigo-600 rounded-[40px] overflow-hidden relative flex flex-col justify-center">
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
-            <div className="relative z-10 flex flex-col px-16 py-16" style={{ maxWidth: 500, margin: "0 auto", width: "100%" }}>
+            <div className="relative z-10 flex flex-col px-16 py-16" style={{ maxWidth: 600, margin: "0 auto", width: "100%" }}>
               <div style={{ minHeight: 180 }} className="w-full">
                 <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
                 <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
