@@ -392,46 +392,37 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   const currentSlide = SLIDES[slide];
 
   return (
-    <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden bg-white">
+    <div className="md:flex md:flex-row md:h-screen md:overflow-hidden bg-white min-h-screen w-full">
 
       {/* ══ BOTTOM (mobile) / RIGHT (desktop) — floating indigo panel ══ */}
-      {/* On mobile this renders first (top), on desktop it's the right column */}
-      <div className="shrink-0 md:flex-1 md:overflow-hidden order-first md:order-last">
+      <div className="md:flex-1 md:overflow-hidden">
 
-        {/* Mobile: compact indigo pill — sits above form */}
+        {/* Mobile: fixed-height indigo pill — sits above form, no sticky */}
         <div className="md:hidden" style={{ padding: "10px 10px 0 10px" }}>
-          <div className="bg-indigo-600 rounded-[20px] px-8 py-7 flex flex-col gap-5">
-            {/* Logo — horizontal, inside panel */}
+          <div className="bg-indigo-600 rounded-[20px] px-8 py-7 flex flex-col gap-4" style={{ height: 220 }}>
+            {/* Logo — horizontal, mobile only */}
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
                 <InfinityIcon className="w-5 h-5 text-white" />
               </div>
               <span className="text-white font-extrabold text-lg tracking-tight">Continuum</span>
             </div>
-            {/* Slide text */}
-            <div className="w-full" style={{ minHeight: 80 }}>
+            {/* Slide text — fixed height so dots don't jump */}
+            <div style={{ height: 100 }} className="w-full overflow-hidden">
               <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">{currentSlide.tag}</p>
-              <h2 className="text-lg font-extrabold text-white leading-tight tracking-tight mb-1">{currentSlide.title}</h2>
-              <p className="text-xs text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
+              <h2 className="text-base font-extrabold text-white leading-tight tracking-tight mb-1">{currentSlide.title}</h2>
+              <p className="text-xs text-indigo-200 leading-relaxed line-clamp-2">{currentSlide.desc}</p>
             </div>
             <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
           </div>
         </div>
 
-        {/* Desktop: full panel with illustration */}
+        {/* Desktop: full panel with illustration — no logo here */}
         <div className="hidden md:block h-full" style={{ padding: "10px 10px 10px 0" }}>
           <div className="h-full bg-indigo-600 rounded-[40px] overflow-hidden relative flex flex-col justify-center">
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
             <div className="relative z-10 flex flex-col px-16 py-16" style={{ maxWidth: 600, margin: "0 auto", width: "100%" }}>
-              {/* Logo — horizontal, inside panel */}
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
-                  <InfinityIcon className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-white font-extrabold text-xl tracking-tight">Continuum</span>
-              </div>
-              {/* Slide text — fixed height */}
               <div style={{ minHeight: 180 }} className="w-full">
                 <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
                 <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
@@ -448,13 +439,13 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
         </div>
       </div>
 
-      {/* ══ BOTTOM (mobile) / LEFT (desktop) — white form ══ */}
-      <div className="flex flex-col bg-white overflow-y-auto items-center flex-1 md:flex-none md:w-1/2 order-last md:order-first" style={{ padding: "40px 32px 32px" }}>
+      {/* ══ FORM — scrollable on mobile, right side on desktop ══ */}
+      <div className="flex flex-col bg-white items-center md:overflow-y-auto md:flex-none md:w-1/2" style={{ padding: "40px 32px 48px" }}>
 
         {/* Inner container — logo + form, left-aligned, max width constrained */}
         <div className="flex flex-col flex-1 w-full" style={{ maxWidth: 440 }}>
 
-          {/* Logo — desktop only (hidden on mobile since it's inside the indigo panel) */}
+          {/* Logo — desktop only (on mobile it lives inside the indigo panel above) */}
           <div className="hidden md:flex flex-col items-start gap-2 shrink-0">
             <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
               <InfinityIcon className="w-8 h-8 text-white" />
@@ -462,9 +453,9 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
             <span className="text-slate-900 font-extrabold text-xl tracking-tight">Continuum</span>
           </div>
 
-          {/* Form — vertically centered in remaining space */}
-          <div className="flex-1 flex flex-col justify-center">
-            <div className="w-full">
+          {/* Form — vertically centered on desktop, flows naturally on mobile */}
+          <div className="md:flex-1 md:flex md:flex-col md:justify-center">
+            <div className="w-full pt-10 md:pt-0">
             {step === "main" ? (
               <>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
