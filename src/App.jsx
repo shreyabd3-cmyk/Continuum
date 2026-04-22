@@ -41,7 +41,6 @@ const DEFAULT_TAGS = [
   "UX", "Frontend", "Backend", "Design System",
 ];
 const generateId = () => Math.random().toString(36).substr(2, 9);
-const EMOJI_SUGGESTIONS = ["🎨", "📐", "🗺️", "📊", "💡", "🏗️", "🌿", "⚡", "🔬", "📱", "🛒", "🏥", "✈️", "🎯", "🌊", "🔧"];
 const SLIDE_DURATION = 4600;
 
 // --- Demo Data ---
@@ -132,49 +131,70 @@ const Badge = ({ children, color = "slate", className = "" }) => {
 };
 
 const ProjectIcon = ({ icon, size = "sm", className = "" }) => {
-  const sizes = { sm: "w-7 h-7 text-base", md: "w-10 h-10 text-xl", lg: "w-14 h-14 text-3xl" };
+  const sizes = { sm: "w-7 h-7", md: "w-10 h-10", lg: "w-14 h-14" };
+  const fontSizes = { sm: 11, md: 14, lg: 20 };
   if (!icon) return null;
-  const isEmoji = !icon.startsWith("data:");
+  const isImage = icon.startsWith("data:");
+  // Text avatar — 1–3 chars
+  const isText = !isImage && icon.length <= 3;
   return (
-    <div className={`${sizes[size]} rounded-xl flex items-center justify-center shrink-0 bg-slate-100 ${className}`}>
-      {isEmoji
-        ? <span style={{ fontSize: size === "lg" ? 28 : size === "md" ? 20 : 14 }}>{icon}</span>
-        : <img src={icon} alt="project icon" className="w-full h-full object-cover rounded-xl" />}
+    <div className={`${sizes[size]} rounded-xl flex items-center justify-center shrink-0 ${isText ? "bg-indigo-600" : "bg-slate-100"} ${className}`}>
+      {isImage
+        ? <img src={icon} alt="project icon" className="w-full h-full object-cover rounded-xl" />
+        : <span style={{ fontSize: fontSizes[size], fontWeight: 700, color: "white", letterSpacing: "0.02em", lineHeight: 1 }}>{icon.toUpperCase()}</span>}
     </div>
   );
 };
 
 const IconPicker = ({ value, onChange }) => {
-  const [mode, setMode] = useState("emoji");
-  const [emojiInput, setEmojiInput] = useState(value && !value.startsWith("data:") ? value : "");
+  const [mode, setMode] = useState("text");
+  const [textInput, setTextInput] = useState(value && !value.startsWith("data:") ? value : "");
   const fileRef = useRef(null);
-  const handleEmojiInput = (val) => { setEmojiInput(val); if (val.trim()) onChange(val.trim()); };
+
+  const handleTextInput = (val) => {
+    const cleaned = val.slice(0, 3);
+    setTextInput(cleaned);
+    if (cleaned.trim()) onChange(cleaned.trim());
+    else onChange("");
+  };
+
   const handleFile = (e) => {
     const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => onChange(ev.target.result);
+    reader.onload = (ev) => { onChange(ev.target.result); setTextInput(""); };
     reader.readAsDataURL(file);
   };
+
+  const previewText = textInput.trim().toUpperCase();
+
   return (
     <div className="space-y-3">
       <div className="flex gap-2 p-1 bg-slate-100 rounded-full border border-slate-200 w-fit">
-        {[["emoji", "Emoji"], ["upload", "Upload image"]].map(([m, label]) => (
+        {[["text", "Short name"], ["upload", "Upload image"]].map(([m, label]) => (
           <button key={m} type="button" onClick={() => setMode(m)}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ease-apple ${mode === m ? "bg-slate-50 shadow-sm text-indigo-900 ring-1 ring-slate-900/5" : "text-slate-500 hover:text-slate-700"}`}>
             {label}
           </button>
         ))}
       </div>
-      {mode === "emoji" ? (
-        <div className="space-y-3">
-          <Input placeholder="Type or paste an emoji, e.g. 🎨" value={emojiInput} onChange={e => handleEmojiInput(e.target.value)} className="text-lg" />
-          <div className="flex flex-wrap gap-2">
-            {EMOJI_SUGGESTIONS.map(e => (
-              <button key={e} type="button" onClick={() => { setEmojiInput(e); onChange(e); }}
-                className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all ease-apple active:scale-95 ${value === e ? "bg-indigo-100 ring-2 ring-indigo-400" : "bg-slate-100 hover:bg-slate-200"}`}>
-                {e}
-              </button>
-            ))}
+
+      {mode === "text" ? (
+        <div className="flex items-center gap-4">
+          {/* Live preview tile */}
+          <div className="w-14 h-14 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0 shadow-md shadow-indigo-200">
+            {previewText
+              ? <span style={{ fontSize: 18, fontWeight: 800, color: "white", letterSpacing: "0.02em" }}>{previewText}</span>
+              : <span style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.4)", textAlign: "center", lineHeight: 1.3 }}>{"AB"}</span>}
+          </div>
+          <div className="flex-1">
+            <Input
+              placeholder="e.g. HC, VLT, MH"
+              value={textInput}
+              onChange={e => handleTextInput(e.target.value)}
+              className="font-bold tracking-widest uppercase text-base"
+              maxLength={3}
+            />
+            <p className="text-[10px] text-slate-400 mt-1.5 ml-1">2–3 letters max — shown as a colour tile in the sidebar</p>
           </div>
         </div>
       ) : (
@@ -372,10 +392,10 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
   const currentSlide = SLIDES[slide];
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-white">
+    <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden bg-white">
 
-      {/* ══ LEFT COLUMN ══ */}
-      <div className="flex flex-col bg-white overflow-y-auto items-center" style={{ width: "50%", minWidth: 340, padding: "48px 32px" }}>
+      {/* ══ TOP (mobile) / LEFT (desktop) — white form ══ */}
+      <div className="flex flex-col bg-white overflow-y-auto items-center flex-1 md:flex-none md:w-1/2" style={{ padding: "40px 32px 32px" }}>
 
         {/* Inner container — logo + form, left-aligned, max width constrained */}
         <div className="flex flex-col flex-1 w-full" style={{ maxWidth: 440 }}>
@@ -521,34 +541,37 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
         </div>{/* end inner container */}
       </div>
 
-      {/* ══ RIGHT COLUMN — floating indigo panel ══ */}
-      <div className="flex-1 overflow-hidden" style={{ padding: "10px 10px 10px 0", minWidth: 280 }}>
-        <div className="h-full bg-indigo-600 rounded-[40px] overflow-hidden relative flex flex-col justify-center">
-
-          {/* Subtle radial glows */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
-
-          {/* Content */}
-          <div className="relative z-10 flex flex-col items-center text-center px-16 py-16" style={{ maxWidth: 600, margin: "0 auto", width: "100%" }}>
-
-            {/* Fixed height text block prevents illustration from jumping between slides */}
-            <div style={{ minHeight: 180 }} className="w-full">
-              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3 w-full text-left">{currentSlide.tag}</p>
-              <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3 w-full text-left">{currentSlide.title}</h2>
-              <p className="text-sm text-indigo-200 leading-relaxed w-full text-left">{currentSlide.desc}</p>
+      {/* ══ BOTTOM (mobile) / RIGHT (desktop) — floating indigo panel ══ */}
+      <div className="shrink-0 md:flex-1 md:overflow-hidden">
+        {/* Mobile: compact indigo pill, no illustration */}
+        <div className="md:hidden" style={{ padding: "0 10px 10px 10px" }}>
+          <div className="bg-indigo-600 rounded-[40px] px-8 py-6 flex flex-col items-center gap-4">
+            <div className="w-full max-w-sm" style={{ minHeight: 80 }}>
+              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">{currentSlide.tag}</p>
+              <h2 className="text-lg font-extrabold text-white leading-tight tracking-tight mb-1">{currentSlide.title}</h2>
+              <p className="text-xs text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
             </div>
-
-            {/* Illustration — centered */}
-            <div key={slide + "-art"} className="animate-in fade-in duration-700 w-full mb-8">
-              {currentSlide.preview}
+            <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
+          </div>
+        </div>
+        {/* Desktop: full panel with illustration */}
+        <div className="hidden md:block h-full" style={{ padding: "10px 10px 10px 0" }}>
+          <div className="h-full bg-indigo-600 rounded-[40px] overflow-hidden relative flex flex-col justify-center">
+            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
+            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
+            <div className="relative z-10 flex flex-col items-center text-center px-16 py-16" style={{ maxWidth: 500, margin: "0 auto", width: "100%" }}>
+              <div style={{ minHeight: 180 }} className="w-full">
+                <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3 w-full text-left">{currentSlide.tag}</p>
+                <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3 w-full text-left">{currentSlide.title}</h2>
+                <p className="text-sm text-indigo-200 leading-relaxed w-full text-left">{currentSlide.desc}</p>
+              </div>
+              <div key={slide + "-art"} className="animate-in fade-in duration-700 w-full mb-8">
+                {currentSlide.preview}
+              </div>
+              <div className="w-full flex justify-center">
+                <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
+              </div>
             </div>
-
-            {/* Slider dots — below illustration, centered */}
-            <div className="w-full flex justify-center">
-              <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
-            </div>
-
           </div>
         </div>
       </div>
@@ -685,11 +708,11 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
                 <label className="block text-xs font-medium text-slate-500 ml-1">Project Icon <span className="text-slate-400 font-normal">(optional)</span></label>
                 <div className="flex items-center gap-4 mb-3">
                   {icon ? <ProjectIcon icon={icon} size="md" /> : (
-                    <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center">
-                      <Smile className="w-5 h-5 text-slate-400" />
+                    <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#6366f1" }}>AB</span>
                     </div>
                   )}
-                  <span className="text-xs text-slate-400">Pick an emoji or upload an image to identify this project in the sidebar</span>
+                  <span className="text-xs text-slate-400">Add a short name or upload an image to identify this project in the sidebar</span>
                 </div>
                 <IconPicker value={icon} onChange={setIcon} />
               </div>
