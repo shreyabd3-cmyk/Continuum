@@ -130,32 +130,63 @@ const Badge = ({ children, color = "slate", className = "" }) => {
   return <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${colors[color]} ${className}`}>{children}</span>;
 };
 
+const ICON_COLORS = [
+  { hex: "#6366f1", label: "Indigo" },
+  { hex: "#10b981", label: "Emerald" },
+  { hex: "#f59e0b", label: "Amber" },
+  { hex: "#3b82f6", label: "Blue" },
+  { hex: "#ec4899", label: "Pink" },
+  { hex: "#ef4444", label: "Red" },
+  { hex: "#8b5cf6", label: "Violet" },
+  { hex: "#14b8a6", label: "Teal" },
+  { hex: "#f97316", label: "Orange" },
+  { hex: "#64748b", label: "Slate" },
+];
+
+const parseIcon = (icon) => {
+  if (!icon) return { text: "", color: ICON_COLORS[0].hex, isImage: false };
+  if (icon.startsWith("data:")) return { text: "", color: "", isImage: true };
+  const parts = icon.split("|");
+  return { text: parts[0] || "", color: parts[1] || ICON_COLORS[0].hex, isImage: false };
+};
+
 const ProjectIcon = ({ icon, size = "sm", className = "" }) => {
   const sizes = { sm: "w-7 h-7", md: "w-10 h-10", lg: "w-14 h-14" };
   const fontSizes = { sm: 11, md: 14, lg: 20 };
   if (!icon) return null;
-  const isImage = icon.startsWith("data:");
-  // Text avatar — 1–3 chars
-  const isText = !isImage && icon.length <= 3;
+  const { text, color, isImage } = parseIcon(icon);
   return (
-    <div className={`${sizes[size]} rounded-xl flex items-center justify-center shrink-0 ${isText ? "bg-indigo-600" : "bg-slate-100"} ${className}`}>
+    <div className={`${sizes[size]} rounded-xl flex items-center justify-center shrink-0 ${className}`}
+      style={{ backgroundColor: isImage ? "#f1f5f9" : color }}>
       {isImage
         ? <img src={icon} alt="project icon" className="w-full h-full object-cover rounded-xl" />
-        : <span style={{ fontSize: fontSizes[size], fontWeight: 700, color: "white", letterSpacing: "0.02em", lineHeight: 1 }}>{icon.toUpperCase()}</span>}
+        : <span style={{ fontSize: fontSizes[size], fontWeight: 800, color: "white", letterSpacing: "0.03em", lineHeight: 1 }}>{text.toUpperCase()}</span>}
     </div>
   );
 };
 
 const IconPicker = ({ value, onChange }) => {
   const [mode, setMode] = useState("text");
-  const [textInput, setTextInput] = useState(value && !value.startsWith("data:") ? value : "");
+  const { text: initText, color: initColor } = parseIcon(value);
+  const [textInput, setTextInput] = useState(initText);
+  const [selectedColor, setSelectedColor] = useState(initColor || ICON_COLORS[0].hex);
   const fileRef = useRef(null);
+
+  const emitValue = (t, c) => {
+    const txt = t.trim();
+    if (txt) onChange(`${txt}|${c}`);
+    else onChange("");
+  };
 
   const handleTextInput = (val) => {
     const cleaned = val.slice(0, 3);
     setTextInput(cleaned);
-    if (cleaned.trim()) onChange(cleaned.trim());
-    else onChange("");
+    emitValue(cleaned, selectedColor);
+  };
+
+  const handleColorSelect = (hex) => {
+    setSelectedColor(hex);
+    emitValue(textInput, hex);
   };
 
   const handleFile = (e) => {
@@ -179,22 +210,35 @@ const IconPicker = ({ value, onChange }) => {
       </div>
 
       {mode === "text" ? (
-        <div className="flex items-center gap-4">
-          {/* Live preview tile */}
-          <div className="w-14 h-14 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0 shadow-md shadow-indigo-200">
-            {previewText
-              ? <span style={{ fontSize: 18, fontWeight: 800, color: "white", letterSpacing: "0.02em" }}>{previewText}</span>
-              : <span style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.4)", textAlign: "center", lineHeight: 1.3 }}>{"AB"}</span>}
+        <div className="space-y-3">
+          <div className="flex items-center gap-4">
+            {/* Live preview tile — 56px */}
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ease-apple"
+              style={{ backgroundColor: selectedColor, boxShadow: `0 4px 12px ${selectedColor}40` }}>
+              {previewText
+                ? <span style={{ fontSize: 18, fontWeight: 800, color: "white", letterSpacing: "0.03em" }}>{previewText}</span>
+                : <span style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.45)" }}>AB</span>}
+            </div>
+            <div className="flex-1">
+              <Input
+                placeholder="e.g. HC, VLT, MH"
+                value={textInput}
+                onChange={e => handleTextInput(e.target.value)}
+                className="font-bold tracking-widest uppercase text-base"
+                maxLength={3}
+              />
+              <p className="text-[10px] text-slate-400 mt-1.5 ml-1">2–3 letters · pick a colour below</p>
+            </div>
           </div>
-          <div className="flex-1">
-            <Input
-              placeholder="e.g. HC, VLT, MH"
-              value={textInput}
-              onChange={e => handleTextInput(e.target.value)}
-              className="font-bold tracking-widest uppercase text-base"
-              maxLength={3}
-            />
-            <p className="text-[10px] text-slate-400 mt-1.5 ml-1">2–3 letters max — shown as a colour tile in the sidebar</p>
+          {/* Color swatches */}
+          <div className="flex flex-wrap gap-2 pt-1">
+            {ICON_COLORS.map(({ hex, label }) => (
+              <button key={hex} type="button" title={label} onClick={() => handleColorSelect(hex)}
+                className="w-7 h-7 rounded-lg transition-all duration-150 ease-apple active:scale-95 flex items-center justify-center"
+                style={{ backgroundColor: hex, boxShadow: selectedColor === hex ? `0 0 0 2px white, 0 0 0 4px ${hex}` : "none" }}>
+                {selectedColor === hex && <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              </button>
+            ))}
           </div>
         </div>
       ) : (
@@ -399,7 +443,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
 
         {/* Mobile: fixed-height indigo pill — sits above form, no sticky */}
         <div className="md:hidden" style={{ padding: "10px 10px 0 10px" }}>
-          <div className="bg-indigo-600 rounded-[20px] px-8 py-7 flex flex-col gap-4" style={{ height: 220 }}>
+          <div className="bg-indigo-600 rounded-[40px] px-8 py-7 flex flex-col gap-4" style={{ height: 220 }}>
             {/* Logo — horizontal, mobile only */}
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
@@ -422,7 +466,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           <div className="h-full bg-indigo-600 rounded-[40px] overflow-hidden relative flex flex-col justify-center">
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
-            <div className="relative z-10 flex flex-col px-16 py-16" style={{ maxWidth: 600, margin: "0 auto", width: "100%" }}>
+            <div className="relative z-10 flex flex-col px-16 py-16" style={{ maxWidth: 500, margin: "0 auto", width: "100%" }}>
               <div style={{ minHeight: 180 }} className="w-full">
                 <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
                 <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
@@ -1216,16 +1260,16 @@ export default function App() {
       </div>
       <div className="flex-1 overflow-y-auto px-2">
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">Active</h3>
+          <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-3 px-4">Active</h3>
           {activeProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
         </div>
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4">On Hold</h3>
+          <h3 className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-3 px-4">On Hold</h3>
           {pausedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
         </div>
         <div className="mb-8">
           <button onClick={() => setIsCompletedExpanded(!isCompletedExpanded)}
-            className="flex items-center justify-between w-full text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-4 hover:text-indigo-600 transition-colors">
+            className="flex items-center justify-between w-full text-xs font-bold text-blue-600 uppercase tracking-wider mb-3 px-4 hover:text-blue-700 transition-colors">
             Completed {isCompletedExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
           </button>
           {isCompletedExpanded && completedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
