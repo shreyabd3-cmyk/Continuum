@@ -534,7 +534,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
         <div className="flex flex-col flex-1 w-full" style={{ maxWidth: 440 }}>
 
           {/* Logo — desktop only (on mobile it lives inside the indigo panel above) */}
-          <div className="hidden md:flex flex-col items-start gap-2 shrink-0">
+          <div className="hidden md:flex items-center gap-3 shrink-0">
             <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
               <ContinuumLogo className="w-8 h-8 text-white" />
             </div>
