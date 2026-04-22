@@ -4,7 +4,7 @@ import {
   Link as LinkIcon, Image as ImageIcon, ExternalLink, Trash2,
   X, CheckCircle2, Circle, ChevronDown, ChevronUp, Edit2,
   File as FileIcon, Calendar, Settings, PanelLeft, PanelRight,
-  Infinity as InfinityIcon, LogOut, Loader2, AlertCircle,
+  LogOut, Loader2, AlertCircle,
   CheckSquare, RotateCcw, List, MessageCircle, Mail, ArrowLeft,
   Send, Menu, Smile, Upload, Clock, AlertTriangle,
 } from "lucide-react";
@@ -36,12 +36,56 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const appId = "continuum-v1";
 
+// Inline SVG logo component — works at any size, always white
+const ContinuumLogo = ({ className = "", style = {} }) => (
+  <svg viewBox="0 0 893 430" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
+    <g clipPath="url(#clogo)">
+      <path d="M0.779776 221.18C-4.71022 122.98 71.0198 24.1098 166.16 5.2798C202.69 -1.9502 240.42 -0.960201 275.26 8.1398C305.41 16.0098 333.2 29.9698 353.5 47.4298C369.2 60.9398 398.18 90.9098 420.15 114.13C435.87 130.74 434.91 156.95 418.04 172.4L418.01 172.43C401.44 187.61 375.7 186.7 360.26 170.38C338.5 147.4 312.15 120.19 299.73 109.5C283.21 95.2898 239.86 74.2898 182.19 85.6998C156.11 90.8598 130.14 108.32 110.93 133.61C91.6098 159.04 81.4098 189.29 82.9398 216.61C83.8698 233.14 88.2598 265.1 107.27 293.39C126.61 322.15 155.53 339.01 195.69 344.93C269.06 355.74 314.71 311.49 318.2 307.98L318.51 307.63L318.43 307.74C325.38 300.51 489.24 130.09 548.29 73.9198C575.79 47.7598 606.34 29.1098 639.1 18.4898C649.16 15.2298 652.27 13.4998 662.75 11.7498C688.91 7.3798 713.97 12.6298 719.71 39.5698C724.13 70.0398 703.37 85.8598 684.39 89.0198C656.02 93.7498 629.28 110.24 605.11 133.23C547.38 188.14 379.55 362.7 377.86 364.46C372.32 370.23 313.79 428.64 218.66 428.64C207.48 428.64 195.81 427.83 183.65 426.04C56.2298 407.27 5.62978 307.91 0.779776 221.18Z" fill="currentColor"/>
+      <path d="M565.729 258.818C549.887 242.64 523.928 242.368 507.75 258.211C491.572 274.054 491.3 300.013 507.143 316.191L515.525 324.75C531.368 340.929 557.326 341.2 573.504 325.357C589.683 309.514 589.954 283.556 574.111 267.378L565.729 258.818Z" fill="currentColor"/>
+      <path d="M615.71 403.73C635.338 403.73 651.25 387.818 651.25 368.19C651.25 348.562 635.338 332.65 615.71 332.65C596.082 332.65 580.17 348.562 580.17 368.19C580.17 387.818 596.082 403.73 615.71 403.73Z" fill="currentColor"/>
+      <path d="M708.35 421.84C726.266 421.84 740.79 407.316 740.79 389.4C740.79 371.484 726.266 356.96 708.35 356.96C690.434 356.96 675.91 371.484 675.91 389.4C675.91 407.316 690.434 421.84 708.35 421.84Z" fill="currentColor"/>
+      <path d="M798.08 388.41C814.389 388.41 827.61 375.189 827.61 358.88C827.61 342.571 814.389 329.35 798.08 329.35C781.771 329.35 768.55 342.571 768.55 358.88C768.55 375.189 781.771 388.41 798.08 388.41Z" fill="currentColor"/>
+      <path d="M854.73 317.93C870.144 317.93 882.64 305.434 882.64 290.02C882.64 274.606 870.144 262.11 854.73 262.11C839.316 262.11 826.82 274.606 826.82 290.02C826.82 305.434 839.316 317.93 854.73 317.93Z" fill="currentColor"/>
+      <path d="M866.63 230.54C880.796 230.54 892.28 219.056 892.28 204.89C892.28 190.724 880.796 179.24 866.63 179.24C852.464 179.24 840.98 190.724 840.98 204.89C840.98 219.056 852.464 230.54 866.63 230.54Z" fill="currentColor"/>
+      <path d="M835.53 149.04C849.072 149.04 860.05 138.062 860.05 124.52C860.05 110.978 849.072 100 835.53 100C821.988 100 811.01 110.978 811.01 124.52C811.01 138.062 821.988 149.04 835.53 149.04Z" fill="currentColor"/>
+      <path d="M769.5 92.3502C782.451 92.3502 792.95 81.8513 792.95 68.9002C792.95 55.9491 782.451 45.4502 769.5 45.4502C756.549 45.4502 746.05 55.9491 746.05 68.9002C746.05 81.8513 756.549 92.3502 769.5 92.3502Z" fill="currentColor"/>
+    </g>
+    <defs>
+      <clipPath id="clogo">
+        <rect width="892.78" height="429.15" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+);
+
 const DEFAULT_TAGS = [
   "UI Inspiration", "Interaction", "Article", "Project Doc",
   "UX", "Frontend", "Backend", "Design System",
 ];
 const generateId = () => Math.random().toString(36).substr(2, 9);
 const SLIDE_DURATION = 4600;
+
+// Fetch Open Graph preview metadata for a URL
+const fetchOGPreview = async (url) => {
+  try {
+    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const html = data.contents || "";
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const getMeta = (prop) =>
+      doc.querySelector(`meta[property="${prop}"]`)?.getAttribute("content") ||
+      doc.querySelector(`meta[name="${prop}"]`)?.getAttribute("content") || "";
+    const image = getMeta("og:image") || getMeta("twitter:image");
+    const title = getMeta("og:title") || getMeta("twitter:title") || doc.querySelector("title")?.textContent || "";
+    const description = getMeta("og:description") || getMeta("twitter:description") || getMeta("description") || "";
+    const hostname = new URL(url).hostname;
+    const favicon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
+    return { image, title, description, favicon, hostname };
+  } catch {
+    return null;
+  }
+};
 
 // --- Demo Data ---
 const DEMO_PROJECTS = [
@@ -443,11 +487,11 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
 
         {/* Mobile: fixed-height indigo pill — sits above form, no sticky */}
         <div className="md:hidden" style={{ padding: "10px 10px 0 10px" }}>
-          <div className="bg-indigo-600 rounded-[20px] px-8 py-7 flex flex-col gap-4" style={{ height: 220 }}>
+          <div className="bg-indigo-600 rounded-[40px] px-8 py-7 flex flex-col gap-4" style={{ height: 220 }}>
             {/* Logo — horizontal, mobile only */}
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
-                <InfinityIcon className="w-5 h-5 text-white" />
+                <ContinuumLogo className="w-5 h-5 text-white" />
               </div>
               <span className="text-white font-extrabold text-lg tracking-tight">Continuum</span>
             </div>
@@ -466,7 +510,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           <div className="h-full bg-indigo-600 rounded-[40px] overflow-hidden relative flex flex-col justify-center">
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
-            <div className="relative z-10 flex flex-col px-16 py-16" style={{ maxWidth: 600, margin: "0 auto", width: "100%" }}>
+            <div className="relative z-10 flex flex-col px-16 py-16" style={{ maxWidth: 500, margin: "0 auto", width: "100%" }}>
               <div style={{ minHeight: 180 }} className="w-full">
                 <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
                 <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
@@ -492,7 +536,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
           {/* Logo — desktop only (on mobile it lives inside the indigo panel above) */}
           <div className="hidden md:flex flex-col items-start gap-2 shrink-0">
             <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
-              <InfinityIcon className="w-8 h-8 text-white" />
+              <ContinuumLogo className="w-8 h-8 text-white" />
             </div>
             <span className="text-slate-900 font-extrabold text-xl tracking-tight">Continuum</span>
           </div>
@@ -1187,10 +1231,25 @@ export default function App() {
   const markCompleted = (id) => { if (!isDemo) updateProject(id, { status: "completed" }); };
   const reopenProject = (id) => { if (!isDemo) updateProject(id, { status: "active" }); };
 
-  const handleSaveResource = (data) => {
+  const handleSaveResource = async (data) => {
     if (!selectedProject || isDemo) return;
-    if (data.id) updateCtx("resources", selectedProject.resources.map(r => r.id === data.id ? { ...r, ...data } : r));
-    else { const { id: _, ...rest } = data; updateCtx("resources", [{ id: generateId(), ...rest }, ...(selectedProject.resources || [])]); }
+    if (data.id) {
+      // Editing — re-fetch preview if URL changed
+      const existing = selectedProject.resources.find(r => r.id === data.id);
+      const urlChanged = existing?.url !== data.url;
+      let preview = existing?.preview || null;
+      if (urlChanged && (data.type === "link" || data.type === "document")) {
+        preview = await fetchOGPreview(data.url);
+      }
+      updateCtx("resources", selectedProject.resources.map(r => r.id === data.id ? { ...r, ...data, preview } : r));
+    } else {
+      const { id: _, ...rest } = data;
+      let preview = null;
+      if (rest.type === "link" || rest.type === "document") {
+        preview = await fetchOGPreview(rest.url);
+      }
+      updateCtx("resources", [{ id: generateId(), ...rest, preview }, ...(selectedProject.resources || [])]);
+    }
   };
 
   const deleteRes = (id) => { if (selectedProject && !isDemo) updateCtx("resources", selectedProject.resources.filter(r => r.id !== id)); };
@@ -1242,7 +1301,7 @@ export default function App() {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3 text-slate-800 font-extrabold text-xl tracking-tight">
             <div className="p-2.5 bg-indigo-600 rounded-2xl text-slate-50 shadow-lg shadow-indigo-200/50 shrink-0">
-              <InfinityIcon className="w-5 h-5" />
+              <ContinuumLogo className="w-5 h-5 text-white" />
             </div>
             <span>Continuum</span>
           </div>
@@ -1307,7 +1366,7 @@ export default function App() {
                   <PanelRight className="w-5 h-5" />
                 </button>
                 <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center mb-5 shrink-0">
-                  <InfinityIcon className="w-5 h-5 text-slate-50" />
+                  <ContinuumLogo className="w-5 h-5 text-white" />
                 </div>
                 {!isDemo && (
                   <button onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
@@ -1463,7 +1522,8 @@ export default function App() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                               {filteredResources.map(resource => (
                                 <div key={resource.id} className="group bg-slate-50 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col h-full border border-slate-200">
-                                  {resource.type === "image" && (
+                                  {/* ── Card header ── */}
+                                  {resource.type === "image" ? (
                                     <div className="h-40 bg-slate-100 w-full relative cursor-pointer overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
                                       <img src={resource.url} alt={resource.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         onError={e => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/f1f5f9/94a3b8?text=No+Preview"; }} />
@@ -1473,21 +1533,52 @@ export default function App() {
                                         </div>
                                       </div>
                                     </div>
-                                  )}
-                                  {resource.type === "document" && (
-                                    <div className="h-40 bg-indigo-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-indigo-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
-                                      <div className="w-20 h-20 bg-slate-50 rounded-3xl shadow-lg shadow-indigo-100 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300 ease-apple">
-                                        <FileIcon className="w-10 h-10 text-indigo-500" />
+                                  ) : resource.preview?.image ? (
+                                    /* OG image preview */
+                                    <div className="h-40 w-full relative cursor-pointer overflow-hidden bg-slate-100" onClick={() => window.open(resource.url, "_blank")}>
+                                      <img src={resource.preview.image} alt={resource.title}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                        onError={e => { e.target.onerror = null; e.target.style.display = "none"; }} />
+                                      {/* Favicon + hostname overlay */}
+                                      <div className="absolute bottom-0 left-0 right-0 px-4 py-2.5 flex items-center gap-2"
+                                        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55), transparent)" }}>
+                                        <img src={resource.preview.favicon} alt="" className="w-4 h-4 rounded-sm shrink-0"
+                                          onError={e => { e.target.style.display = "none"; }} />
+                                        <span className="text-white text-[11px] font-semibold truncate opacity-90">{resource.preview.hostname}</span>
                                       </div>
-                                      <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Document</span>
+                                      <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
+                                        <div className="bg-slate-50/90 p-3 rounded-full backdrop-blur-md shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                          <ExternalLink className="w-6 h-6 text-slate-900" />
+                                        </div>
+                                      </div>
                                     </div>
-                                  )}
-                                  {resource.type === "link" && (
-                                    <div className="h-40 bg-blue-50 w-full cursor-pointer flex flex-col items-center justify-center border-b border-blue-100 overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
-                                      <div className="w-20 h-20 bg-slate-50 rounded-3xl shadow-lg shadow-blue-100 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300 ease-apple">
-                                        <LinkIcon className="w-10 h-10 text-blue-500" />
-                                      </div>
-                                      <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Web Link</span>
+                                  ) : (
+                                    /* Favicon fallback — no OG image */
+                                    <div className={`h-40 w-full cursor-pointer flex flex-col items-center justify-center border-b overflow-hidden transition-all duration-300 ${resource.type === "document" ? "bg-indigo-50 border-indigo-100" : "bg-blue-50 border-blue-100"}`}
+                                      onClick={() => window.open(resource.url, "_blank")}>
+                                      {resource.preview?.favicon ? (
+                                        <div className="flex flex-col items-center gap-3">
+                                          <div className={`w-16 h-16 bg-slate-50 rounded-2xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 ease-apple ${resource.type === "document" ? "shadow-indigo-100" : "shadow-blue-100"}`}>
+                                            <img src={resource.preview.favicon} alt="" className="w-9 h-9 rounded-md"
+                                              onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
+                                            <div style={{ display: "none" }} className="w-9 h-9 items-center justify-center">
+                                              {resource.type === "document" ? <FileIcon className="w-8 h-8 text-indigo-400" /> : <LinkIcon className="w-8 h-8 text-blue-400" />}
+                                            </div>
+                                          </div>
+                                          <span className={`text-xs font-bold uppercase tracking-widest ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
+                                            {resource.preview.hostname?.replace("www.", "")}
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        <div className="flex flex-col items-center gap-3">
+                                          <div className={`w-20 h-20 bg-slate-50 rounded-3xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 ease-apple ${resource.type === "document" ? "shadow-indigo-100" : "shadow-blue-100"}`}>
+                                            {resource.type === "document" ? <FileIcon className="w-10 h-10 text-indigo-500" /> : <LinkIcon className="w-10 h-10 text-blue-500" />}
+                                          </div>
+                                          <span className={`text-xs font-bold uppercase tracking-widest ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
+                                            {resource.type === "document" ? "Document" : "Web Link"}
+                                          </span>
+                                        </div>
+                                      )}
                                     </div>
                                   )}
                                   <div className="p-8 flex-1 flex flex-col">
