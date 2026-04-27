@@ -1159,12 +1159,13 @@ export default function App() {
       });
     }
   } else {
-    if (typeof chrome !== "undefined" && chrome.storage) {
+  if (typeof chrome !== "undefined" && chrome.storage) {
       chrome.storage.local.remove("continuumUser");
     }
   }
 });
 return () => unsub();
+  }, []);
 
   useEffect(() => {
     if (!user || isDemo) return;
