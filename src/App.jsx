@@ -1144,12 +1144,28 @@ export default function App() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, currentUser => {
-      if (currentUser && currentUser.isAnonymous) { signOut(auth); return; }
-      setUser(currentUser); setLoading(false);
-      if (currentUser) { setAuthError(null); setIsDemo(false); }
-    });
-    return () => unsub();
-  }, []);
+  if (currentUser && currentUser.isAnonymous) { signOut(auth); return; }
+  setUser(currentUser); setLoading(false);
+  if (currentUser) {
+    setAuthError(null); setIsDemo(false);
+    // Save user info for the Chrome extension to read
+    if (typeof chrome !== "undefined" && chrome.storage) {
+      chrome.storage.local.set({
+        continuumUser: {
+          uid: currentUser.uid,
+          email: currentUser.email,
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL,
+        }
+      });
+    }
+  } else {
+    // Clear it on sign out
+    if (typeof chrome !== "undefined" && chrome.storage) {
+      chrome.storage.local.remove("continuumUser");
+    }
+  }
+});
 
   useEffect(() => {
     if (!user || isDemo) return;
