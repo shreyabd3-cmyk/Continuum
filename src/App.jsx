@@ -1178,16 +1178,31 @@ return () => unsub();
     return () => unsub();
   }, [user, isDemo]);
 
-  const handleGoogleLogin = async () => {
-    setLoading(true); setAuthError(null);
-    try { await signInWithPopup(auth, new GoogleAuthProvider()); }
-    catch (err) {
-      if (err.code === "auth/unauthorized-domain") setAuthError("Domain not authorized in Firebase.");
-      else if (err.code === "auth/popup-closed-by-user") setAuthError("Sign-in cancelled.");
-      else setAuthError("Failed to sign in. Please try again.");
-      setLoading(false);
+const handleGoogleLogin = async () => {
+  setLoading(true); setAuthError(null);
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+
+    // Send token to extension
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    const EXTENSION_ID = "epmmpemgjknjdogfbdclgjfnmiedlmap";
+
+    if (token && window.chrome?.runtime) {
+      chrome.runtime.sendMessage(
+        EXTENSION_ID,
+        { type: 'LOGIN_SUCCESS', token },
+        () => { if (chrome.runtime.lastError) {} }
+      )
     }
-  };
+  } catch (err) {
+    if (err.code === "auth/unauthorized-domain") setAuthError("Domain not authorized in Firebase.");
+    else if (err.code === "auth/popup-closed-by-user") setAuthError("Sign-in cancelled.");
+    else setAuthError("Failed to sign in. Please try again.");
+    setLoading(false);
+  }
+};
 
   const handleEmailAuth = async (email, password) => {
     try {
