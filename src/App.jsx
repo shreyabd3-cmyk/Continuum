@@ -36,7 +36,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const appId = "continuum-v1";
 
-// Inline SVG logo component — works at any size, always white
 const ContinuumLogo = ({ className = "", style = {} }) => (
   <svg viewBox="0 0 912 428" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
     <g clipPath="url(#clogo)">
@@ -65,7 +64,6 @@ const DEFAULT_TAGS = [
 const generateId = () => Math.random().toString(36).substr(2, 9);
 const SLIDE_DURATION = 4600;
 
-// Fetch Open Graph preview metadata for a URL
 const fetchOGPreview = async (url) => {
   try {
     const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
@@ -87,7 +85,6 @@ const fetchOGPreview = async (url) => {
   }
 };
 
-// --- Demo Data ---
 const DEMO_PROJECTS = [
   {
     id: "demo-1", title: "Harlow & Co. Redesign", client: "Harlow & Co.",
@@ -133,7 +130,6 @@ const DEMO_PROJECTS = [
   },
 ];
 
-// --- UI Components ---
 const Button = ({ variant = "primary", className = "", children, ...props }) => {
   const styles = {
     primary: "bg-indigo-600 text-slate-50 hover:bg-indigo-700 shadow-sm hover:shadow-md border border-transparent",
@@ -256,7 +252,6 @@ const IconPicker = ({ value, onChange }) => {
       {mode === "text" ? (
         <div className="space-y-3">
           <div className="flex items-center gap-4">
-            {/* Live preview tile — 56px */}
             <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ease-apple"
               style={{ backgroundColor: selectedColor, boxShadow: `0 4px 12px ${selectedColor}40` }}>
               {previewText
@@ -274,7 +269,6 @@ const IconPicker = ({ value, onChange }) => {
               <p className="text-[10px] text-slate-400 mt-1.5 ml-1">2–3 letters · pick a colour below</p>
             </div>
           </div>
-          {/* Color swatches */}
           <div className="flex flex-wrap gap-2 pt-1">
             {ICON_COLORS.map(({ hex, label }) => (
               <button key={hex} type="button" title={label} onClick={() => handleColorSelect(hex)}
@@ -305,7 +299,6 @@ const IconPicker = ({ value, onChange }) => {
   );
 };
 
-// ── Progress-pill slider indicator ──
 const SliderDots = ({ total, current, onSelect, duration }) => {
   const [progress, setProgress] = useState(0);
   const animRef = useRef(null);
@@ -347,7 +340,6 @@ const SliderDots = ({ total, current, onSelect, duration }) => {
   );
 };
 
-// --- Login Screen ---
 const SLIDES = [
   {
     tag: "Context switching",
@@ -481,21 +473,15 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
 
   return (
     <div className="md:flex md:flex-row md:h-screen md:overflow-hidden bg-white min-h-screen w-full">
-
-      {/* ══ BOTTOM (mobile) / RIGHT (desktop) — floating indigo panel ══ */}
       <div className="md:flex-1 md:overflow-hidden">
-
-        {/* Mobile: fixed-height indigo pill — sits above form, no sticky */}
         <div className="md:hidden" style={{ padding: "10px 10px 0 10px" }}>
           <div className="bg-indigo-600 rounded-[16x] px-8 py-7 flex flex-col gap-4" style={{ height: 220 }}>
-            {/* Logo — horizontal, mobile only */}
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
                 <ContinuumLogo className="w-5 h-5 text-white" />
               </div>
               <span className="text-white font-extrabold text-lg tracking-tight">Continuum</span>
             </div>
-            {/* Slide text — fixed height so dots don't jump */}
             <div style={{ height: 100 }} className="w-full overflow-hidden">
               <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">{currentSlide.tag}</p>
               <h2 className="text-base font-extrabold text-white leading-tight tracking-tight mb-1">{currentSlide.title}</h2>
@@ -504,8 +490,6 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
             <SliderDots total={SLIDES.length} current={slide} onSelect={setSlide} duration={SLIDE_DURATION} />
           </div>
         </div>
-
-        {/* Desktop: full panel with illustration — no logo here */}
         <div className="hidden md:block h-full" style={{ padding: "10px 10px 10px 0" }}>
           <div className="h-full bg-indigo-600 rounded-[40px] overflow-hidden relative flex flex-col justify-center">
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 10%, rgba(255,255,255,0.07) 0%, transparent 50%)" }} />
@@ -527,21 +511,14 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
         </div>
       </div>
 
-      {/* ══ FORM — scrollable on mobile, right side on desktop ══ */}
       <div className="flex flex-col bg-white items-center md:overflow-y-auto md:flex-none md:w-1/2" style={{ padding: "40px 32px 48px" }}>
-
-        {/* Inner container — logo + form, left-aligned, max width constrained */}
         <div className="flex flex-col flex-1 w-full" style={{ maxWidth: 440 }}>
-
-          {/* Logo — desktop only (on mobile it lives inside the indigo panel above) */}
           <div className="hidden md:flex items-center gap-3 shrink-0">
             <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
               <ContinuumLogo className="w-8 h-8 text-white" />
             </div>
             <span className="text-slate-900 font-extrabold text-xl tracking-tight">Continuum</span>
           </div>
-
-          {/* Form — vertically centered on desktop, flows naturally on mobile */}
           <div className="md:flex-1 md:flex md:flex-col md:justify-center">
             <div className="w-full pt-10 md:pt-0">
             {step === "main" ? (
@@ -549,13 +526,11 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
                 <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
                 <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
-
                 {(error || localError) && (
                   <div className="bg-red-50 text-red-600 p-3 rounded-2xl text-xs flex items-center gap-2 mb-5">
                     <AlertCircle className="w-4 h-4 shrink-0" /><p>{error || localError}</p>
                   </div>
                 )}
-
                 <div className="flex gap-1.5 p-1 bg-slate-100 rounded-full border border-slate-200 mb-4">
                   {[["magic", "Magic link", "No password"], ["password", "Password", "Traditional"]].map(([mode, label, sub]) => (
                     <button key={mode} onClick={() => setAuthMode(mode)}
@@ -564,18 +539,15 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                     </button>
                   ))}
                 </div>
-
                 <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500 mb-4 leading-relaxed">
                   {authMode === "magic"
                     ? "We'll send a sign-in link to your email. Click it and you're in — no password ever."
                     : "Enter your email and password. New here? We'll create your account automatically."}
                 </div>
-
                 <Input type="email" placeholder="Your email address" value={email}
                   onChange={e => setEmail(e.target.value)}
                   onKeyDown={e => { if (e.key === "Enter") handleEmailSubmit(); }}
                   className="mb-3" />
-
                 {authMode === "password" && (
                   <div className="mb-1">
                     <Input type="password" placeholder="Password" value={password}
@@ -600,19 +572,16 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                     </div>
                   </div>
                 )}
-
                 <Button variant="primary" className="w-full py-3.5 mb-4" onClick={handleEmailSubmit} disabled={localLoading || loading}>
                   {localLoading
                     ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
                     : authMode === "magic" ? <><Send className="w-4 h-4" /> Send magic link</> : "Continue"}
                 </Button>
-
                 <div className="flex items-center gap-3 mb-4">
                   <div className="flex-1 h-px bg-slate-200" />
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">or</span>
                   <div className="flex-1 h-px bg-slate-200" />
                 </div>
-
                 <Button variant="google" className="w-full py-3.5 mb-3" onClick={onGoogleLogin} disabled={loading}>
                   {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Connecting...</> : (
                     <><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -623,7 +592,6 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                     </svg>Continue with Google</>
                   )}
                 </Button>
-
                 <button onClick={onDemo}
                   className="w-full py-3.5 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-bold hover:bg-indigo-100 transition-all ease-apple active:scale-95 flex items-center justify-center gap-2">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -670,10 +638,8 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
             )}
             </div>
           </div>
-
-        </div>{/* end inner container */}
+        </div>
       </div>
-
     </div>
   );
 };
@@ -687,15 +653,14 @@ const DemoBanner = ({ onSignIn }) => (
   </div>
 );
 
-// --- Resource Modal ---
+// FIX 2: Resource Type selector removed. Existing resources keep their type.
+// New resources default to "link". No data is lost.
 const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
   const [selectedTags, setSelectedTags] = useState(resource?.tags || []);
   const [customTag, setCustomTag] = useState("");
-  const [resourceType, setResourceType] = useState(resource?.type || "link");
 
   useEffect(() => {
     setSelectedTags(resource?.tags || []);
-    setResourceType(resource?.type || "link");
     setCustomTag("");
   }, [resource, isOpen]);
 
@@ -709,7 +674,9 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    onSubmit({ id: resource?.id || null, type: resourceType, title: fd.get("title"), url: fd.get("url"), description: fd.get("description"), tags: selectedTags });
+    // Preserve existing type when editing, default to "link" for new
+    const type = resource?.type || "link";
+    onSubmit({ id: resource?.id || null, type, title: fd.get("title"), url: fd.get("url"), description: fd.get("description"), tags: selectedTags });
     onClose();
   };
 
@@ -723,17 +690,6 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
         <div className="p-8 overflow-y-auto">
           <form onSubmit={handleSubmit}>
             <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">Resource Type</label>
-                <div className="flex gap-2 p-1 bg-slate-200/60 rounded-full border border-slate-200">
-                  {["link", "image", "document"].map(type => (
-                    <button key={type} type="button" onClick={() => setResourceType(type)}
-                      className={`flex-1 py-2 rounded-full text-sm font-medium capitalize transition-all duration-200 ease-apple ${resourceType === type ? "bg-slate-50 shadow-sm text-indigo-900 ring-1 ring-slate-900/5" : "text-slate-500 hover:text-slate-700"}`}>
-                      {type}
-                    </button>
-                  ))}
-                </div>
-              </div>
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-slate-500 ml-1">Title</label>
                 <Input name="title" defaultValue={resource?.title || ""} autoFocus placeholder="e.g., Competitor Analysis" required />
@@ -780,7 +736,6 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
   );
 };
 
-// --- Project Modal ---
 const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
   const [icon, setIcon] = useState(project?.icon || "");
   useEffect(() => { setIcon(project?.icon || ""); }, [project?.id, isOpen]);
@@ -849,7 +804,6 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
   );
 };
 
-// --- Where I Am Card ---
 const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
   const [local, setLocal] = useState(project?.whereIAm || "");
   const textareaRef = useRef(null);
@@ -879,7 +833,6 @@ const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
   );
 };
 
-// --- Don't Forget Card ---
 const DontForgetCard = ({ project, onUpdate, isDemo }) => {
   const [mode, setMode] = useState(project?.dontForgetMode || "text");
   const [localText, setLocalText] = useState(project?.dontForget || "");
@@ -974,7 +927,6 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
   );
 };
 
-// --- Overview Tab ---
 const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
   const [showHistory, setShowHistory] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState(null);
@@ -1113,7 +1065,6 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
   );
 };
 
-// --- Main App ---
 export default function App() {
   const [user, setUser] = useState(null);
   const [isDemo, setIsDemo] = useState(false);
@@ -1143,28 +1094,28 @@ export default function App() {
   }, []);
 
   useEffect(() => {
- const unsub = onAuthStateChanged(auth, currentUser => {
-  if (currentUser && currentUser.isAnonymous) { signOut(auth); return; }
-  setUser(currentUser); setLoading(false);
-  if (currentUser) {
-    setAuthError(null); setIsDemo(false);
-    if (typeof chrome !== "undefined" && chrome.storage) {
-      chrome.storage.local.set({
-        continuumUser: {
-          uid: currentUser.uid,
-          email: currentUser.email,
-          displayName: currentUser.displayName,
-          photoURL: currentUser.photoURL,
+    const unsub = onAuthStateChanged(auth, currentUser => {
+      if (currentUser && currentUser.isAnonymous) { signOut(auth); return; }
+      setUser(currentUser); setLoading(false);
+      if (currentUser) {
+        setAuthError(null); setIsDemo(false);
+        if (typeof chrome !== "undefined" && chrome.storage) {
+          chrome.storage.local.set({
+            continuumUser: {
+              uid: currentUser.uid,
+              email: currentUser.email,
+              displayName: currentUser.displayName,
+              photoURL: currentUser.photoURL,
+            }
+          });
         }
-      });
-    }
-  } else {
-  if (typeof chrome !== "undefined" && chrome.storage) {
-      chrome.storage.local.remove("continuumUser");
-    }
-  }
-});
-return () => unsub();
+      } else {
+        if (typeof chrome !== "undefined" && chrome.storage) {
+          chrome.storage.local.remove("continuumUser");
+        }
+      }
+    });
+    return () => unsub();
   }, []);
 
   useEffect(() => {
@@ -1178,31 +1129,28 @@ return () => unsub();
     return () => unsub();
   }, [user, isDemo]);
 
-const handleGoogleLogin = async () => {
-  setLoading(true); setAuthError(null);
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-
-    // Send token to extension
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    const EXTENSION_ID = "epmmpemgjknjdogfbdclgjfnmiedlmap";
-
-    if (token && window.chrome?.runtime) {
-      chrome.runtime.sendMessage(
-        EXTENSION_ID,
-        { type: 'LOGIN_SUCCESS', token },
-        () => { if (chrome.runtime.lastError) {} }
-      )
+  const handleGoogleLogin = async () => {
+    setLoading(true); setAuthError(null);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      const EXTENSION_ID = "epmmpemgjknjdogfbdclgjfnmiedlmap";
+      if (token && window.chrome?.runtime) {
+        chrome.runtime.sendMessage(
+          EXTENSION_ID,
+          { type: 'LOGIN_SUCCESS', token },
+          () => { if (chrome.runtime.lastError) {} }
+        )
+      }
+    } catch (err) {
+      if (err.code === "auth/unauthorized-domain") setAuthError("Domain not authorized in Firebase.");
+      else if (err.code === "auth/popup-closed-by-user") setAuthError("Sign-in cancelled.");
+      else setAuthError("Failed to sign in. Please try again.");
+      setLoading(false);
     }
-  } catch (err) {
-    if (err.code === "auth/unauthorized-domain") setAuthError("Domain not authorized in Firebase.");
-    else if (err.code === "auth/popup-closed-by-user") setAuthError("Sign-in cancelled.");
-    else setAuthError("Failed to sign in. Please try again.");
-    setLoading(false);
-  }
-};
+  };
 
   const handleEmailAuth = async (email, password) => {
     try {
@@ -1262,28 +1210,61 @@ const handleGoogleLogin = async () => {
   const markCompleted = (id) => { if (!isDemo) updateProject(id, { status: "completed" }); };
   const reopenProject = (id) => { if (!isDemo) updateProject(id, { status: "active" }); };
 
-  const handleSaveResource = async (data) => {
+  // FIX 4: Optimistic resource add — card appears immediately, OG preview loads in background
+  const handleSaveResource = (data) => {
     if (!selectedProject || isDemo) return;
     if (data.id) {
-      // Editing — re-fetch preview if URL changed
+      // Editing existing
       const existing = selectedProject.resources.find(r => r.id === data.id);
       const urlChanged = existing?.url !== data.url;
-      let preview = existing?.preview || null;
+      const updated = selectedProject.resources.map(r =>
+        r.id === data.id ? { ...r, ...data, preview: urlChanged ? null : (existing?.preview || null) } : r
+      );
+      // Update UI immediately
+      setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, resources: updated } : p));
+      updateCtx("resources", updated);
+      // Fetch preview in background if URL changed
       if (urlChanged && (data.type === "link" || data.type === "document")) {
-        preview = await fetchOGPreview(data.url);
+        fetchOGPreview(data.url).then(preview => {
+          if (!preview) return;
+          setProjects(prev => prev.map(p => {
+            if (p.id !== selectedProject.id) return p;
+            const withPreview = p.resources.map(r => r.id === data.id ? { ...r, preview } : r);
+            updateCtx("resources", withPreview);
+            return { ...p, resources: withPreview };
+          }));
+        });
       }
-      updateCtx("resources", selectedProject.resources.map(r => r.id === data.id ? { ...r, ...data, preview } : r));
     } else {
+      // Adding new — show immediately with no preview
       const { id: _, ...rest } = data;
-      let preview = null;
+      const newResource = { id: generateId(), ...rest, preview: null };
+      const newList = [newResource, ...(selectedProject.resources || [])];
+      // Update UI immediately
+      setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, resources: newList } : p));
+      updateCtx("resources", newList);
+      // Fetch OG preview in background
       if (rest.type === "link" || rest.type === "document") {
-        preview = await fetchOGPreview(rest.url);
+        fetchOGPreview(rest.url).then(preview => {
+          if (!preview) return;
+          setProjects(prev => prev.map(p => {
+            if (p.id !== selectedProject.id) return p;
+            const withPreview = p.resources.map(r => r.id === newResource.id ? { ...r, preview } : r);
+            updateCtx("resources", withPreview);
+            return { ...p, resources: withPreview };
+          }));
+        });
       }
-      updateCtx("resources", [{ id: generateId(), ...rest, preview }, ...(selectedProject.resources || [])]);
     }
   };
 
-  const deleteRes = (id) => { if (selectedProject && !isDemo) updateCtx("resources", selectedProject.resources.filter(r => r.id !== id)); };
+  const deleteRes = (id) => {
+    if (!selectedProject || isDemo) return;
+    const updated = selectedProject.resources.filter(r => r.id !== id);
+    setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, resources: updated } : p));
+    updateCtx("resources", updated);
+  };
+
   const uniqueTags = selectedProject ? [...new Set(selectedProject.resources.flatMap(r => r.tags || []))] : [];
   const filteredResources = selectedProject ? selectedProject.resources.filter(r => !resourceFilter || (r.tags && r.tags.includes(resourceFilter))) : [];
   const handleScroll = e => setIsScrolled(e.target.scrollTop > 60);
@@ -1315,17 +1296,19 @@ const handleGoogleLogin = async () => {
     </div>
   );
 
+  // FIX 3: Removed className="!bg-transparent" which was overriding the icon's background colour
   const SidebarItemIcon = ({ project }) => (
     <div onClick={() => selectProject(project.id)} title={project.title}
       className={`flex items-center justify-center w-10 h-10 rounded-xl cursor-pointer transition-all duration-200 ease-apple mb-1 mx-auto ${selectedId === project.id ? "bg-indigo-50 ring-2 ring-indigo-200" : "hover:bg-slate-100"}`}>
       {project.icon ? (
-        <ProjectIcon icon={project.icon} size="sm" className="!bg-transparent" />
+        <ProjectIcon icon={project.icon} size="sm" />
       ) : (
         <div className={`w-3 h-3 rounded-full transition-transform duration-300 ease-apple hover:scale-125 ${selectedId === project.id ? "bg-indigo-500" : project.status === "active" ? "bg-slate-400" : project.status === "completed" ? "bg-emerald-400" : "bg-amber-300"}`} />
       )}
     </div>
   );
 
+  // FIX 1: Section labels changed to grey (text-slate-400)
   const SidebarContent = ({ onClose }) => (
     <>
       <div className="p-6 pb-4">
@@ -1350,16 +1333,16 @@ const handleGoogleLogin = async () => {
       </div>
       <div className="flex-1 overflow-y-auto px-2">
         <div className="mb-8">
-          <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-3 px-4">Active</h3>
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-4">Active</h3>
           {activeProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
         </div>
         <div className="mb-8">
-          <h3 className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-3 px-4">On Hold</h3>
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-4">On Hold</h3>
           {pausedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
         </div>
         <div className="mb-8">
           <button onClick={() => setIsCompletedExpanded(!isCompletedExpanded)}
-            className="flex items-center justify-between w-full text-xs font-bold text-blue-600 uppercase tracking-wider mb-3 px-4 hover:text-blue-700 transition-colors">
+            className="flex items-center justify-between w-full text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-4 hover:text-slate-600 transition-colors">
             Completed {isCompletedExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
           </button>
           {isCompletedExpanded && completedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
@@ -1553,7 +1536,6 @@ const handleGoogleLogin = async () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                               {filteredResources.map(resource => (
                                 <div key={resource.id} className="group bg-slate-50 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col h-full border border-slate-200">
-                                  {/* ── Card header ── */}
                                   {resource.type === "image" ? (
                                     <div className="h-40 bg-slate-100 w-full relative cursor-pointer overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
                                       <img src={resource.url} alt={resource.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -1565,12 +1547,10 @@ const handleGoogleLogin = async () => {
                                       </div>
                                     </div>
                                   ) : resource.preview?.image ? (
-                                    /* OG image preview */
                                     <div className="h-40 w-full relative cursor-pointer overflow-hidden bg-slate-100" onClick={() => window.open(resource.url, "_blank")}>
                                       <img src={resource.preview.image} alt={resource.title}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         onError={e => { e.target.onerror = null; e.target.style.display = "none"; }} />
-                                      {/* Favicon + hostname overlay */}
                                       <div className="absolute bottom-0 left-0 right-0 px-4 py-2.5 flex items-center gap-2"
                                         style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55), transparent)" }}>
                                         <img src={resource.preview.favicon} alt="" className="w-4 h-4 rounded-sm shrink-0"
@@ -1584,7 +1564,6 @@ const handleGoogleLogin = async () => {
                                       </div>
                                     </div>
                                   ) : (
-                                    /* Favicon fallback — no OG image */
                                     <div className={`h-40 w-full cursor-pointer flex flex-col items-center justify-center border-b overflow-hidden transition-all duration-300 ${resource.type === "document" ? "bg-indigo-50 border-indigo-100" : "bg-blue-50 border-blue-100"}`}
                                       onClick={() => window.open(resource.url, "_blank")}>
                                       {resource.preview?.favicon ? (
