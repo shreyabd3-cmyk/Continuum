@@ -1,3 +1,229 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* =============================================================
+   CONTINUUM Â· COLORS & TYPE
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* -------- BRAND ---------------------------------------------- */
+  --brand-indigo-50:   #EEF2FF;
+  --brand-indigo-100:  #E0E7FF;
+  --brand-indigo-200:  #C7D2FE;
+  --brand-indigo-300:  #A5B4FC;
+  --brand-indigo-500:  #6366F1;
+  --brand-indigo-600:  #4F46E5;   /* primary */
+  --brand-indigo-700:  #4338CA;
+  --brand-indigo-900:  #312E81;
+
+  /* Marketing accent (used on the indigo login slide art) */
+  --accent-amber-300:  #FCD34D;
+  --accent-amber-50:   #FEF3C7;
+
+  /* -------- NEUTRALS (Tailwind slate) -------------------------- */
+  --slate-50:  #F8FAFC;
+  --slate-100: #F1F5F9;
+  --slate-200: #E2E8F0;
+  --slate-300: #CBD5E1;
+  --slate-400: #94A3B8;
+  --slate-500: #64748B;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1E293B;
+  --slate-900: #0F172A;
+
+  /* App canvas (the body background) â€” updated from refined design system */
+  --app-bg:    #F1F5F9;
+
+  /* -------- SEMANTIC ------------------------------------------ */
+  --success-50:  #ECFDF5;
+  --success-200: #A7F3D0;
+  --success-600: #059669;
+  --success-700: #047857;
+
+  --warn-50:   #FFFBEB;
+  --warn-200:  #FDE68A;
+  --warn-600:  #D97706;
+  --warn-700:  #B45309;
+
+  --info-50:   #EFF6FF;
+  --info-200:  #BFDBFE;
+  --info-600:  #2563EB;
+  --info-700:  #1D4ED8;
+
+  --danger-50:  #FEF2F2;
+  --danger-500: #EF4444;
+  --danger-600: #DC2626;
+
+  /* -------- FG / BG TOKENS ------------------------------------ */
+  --bg-app:        var(--app-bg);
+  --bg-surface:    var(--slate-50);     /* cards, sheets */
+  --bg-elev:       #FFFFFF;
+  --bg-muted:      var(--slate-100);
+  --bg-muted-hover:#E2E8F099;
+  --bg-on-brand:   var(--brand-indigo-600);
+
+  --fg-1: var(--slate-900);              /* headings */
+  --fg-2: var(--slate-700);              /* body */
+  --fg-3: var(--slate-500);              /* secondary */
+  --fg-4: var(--slate-400);              /* tertiary / placeholder */
+  --fg-on-brand:  #F8FAFC;
+  --fg-link:      var(--brand-indigo-600);
+
+  --border-1: var(--slate-200);
+  --border-2: #E2E8F0CC;
+  --ring-brand: #6366F133;     /* focus ring (indigo/20) */
+
+  /* -------- ELEVATION ----------------------------------------- */
+  --shadow-xs:   0 1px 2px rgba(15,23,42,0.04);
+  --shadow-sm:   0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md:   0 4px 12px rgba(15,23,42,0.06), 0 2px 4px rgba(15,23,42,0.04);
+  --shadow-lg:   0 12px 32px rgba(15,23,42,0.08), 0 4px 8px rgba(15,23,42,0.04);
+  --shadow-xl:   0 24px 48px rgba(15,23,42,0.12);
+  --shadow-brand-glow: 0 8px 24px rgba(99,102,241,0.25);
+
+  /* -------- RADII --------------------------------------------- */
+  --r-xs: 8px;
+  --r-sm: 12px;     /* inputs */
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 24px;     /* hero cards */
+  --r-2xl: 28px;    /* modal sheets */
+  --r-3xl: 40px;    /* large hero panels */
+  --r-pill: 999px;  /* buttons, badges, tabs */
+
+  /* -------- SPACING (4px grid) -------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* -------- MOTION -------------------------------------------- */
+  --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast:   150ms;
+  --dur-base:   200ms;
+  --dur-slow:   300ms;
+  --dur-page:   500ms;
+
+  /* -------- TYPE ROLE TOKENS ---------------------------------- */
+  --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Weights (Manrope ships 300/400/500/600/700/800) */
+  --w-light:    300;
+  --w-regular:  400;
+  --w-medium:   500;
+  --w-semi:     600;
+  --w-bold:     700;
+  --w-xbold:    800;
+
+  /* Fluid type scale â€” modular (1.25 ratio min, ~1.28 ratio max).
+     Lifted from live site. rem for accessibility.
+     1rem = 16px. clamp(min, preferred, max). */
+  --t-eyebrow:    0.6875rem;                                        /* 11 Â· fixed UI label */
+  --t-caption:    clamp(0.8rem,    0.785rem + 0.075vw, 0.83rem);    /* 12.8  â†’ 13.28 */
+  --t-meta:       clamp(0.8rem,    0.785rem + 0.075vw, 0.83rem);    /* 12.8  â†’ 13.28 */
+  --t-sm:         0.8125rem;                                        /* 13    Â· fixed */
+  --t-body:       clamp(1rem,      0.97rem  + 0.15vw,  1.0625rem);  /* 16    â†’ 17    */
+  --t-base:       clamp(1rem,      0.97rem  + 0.15vw,  1.0625rem);  /* alias for body */
+  --t-lg:         clamp(1.25rem,   1.205rem + 0.22vw,  1.36rem);    /* 20    â†’ 21.76 (H4) */
+  --t-xl:         clamp(1.25rem,   1.205rem + 0.22vw,  1.36rem);    /* H4 alias */
+  --t-2xl:        clamp(1.5625rem, 1.49rem  + 0.36vw,  1.74rem);    /* 25    â†’ 27.85 (H3) */
+  --t-3xl:        clamp(1.5625rem, 1.49rem  + 0.36vw,  1.74rem);    /* H3 alias */
+  --t-4xl:        clamp(1.953rem,  1.84rem  + 0.55vw,  2.228rem);   /* 31.25 â†’ 35.65 (H2) */
+  --t-5xl:        clamp(2.44rem,   2.28rem  + 0.82vw,  2.852rem);   /* 39.06 â†’ 45.63 (H1) */
+  --t-6xl:        clamp(2.44rem,   2.28rem  + 0.82vw,  2.852rem);   /* H1 alias */
+
+  --tight: -0.02em;
+  --normal: 0;
+  --wide:  0.16em;
+}
+
+/* -------- BASE -------- */
+html, body {
+  background: var(--bg-app);
+  color: var(--fg-1);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* =============================================================
+   SEMANTIC TYPE â€” drop these classes on elements
+   ============================================================= */
+.t-eyebrow {
+  font-size: var(--t-eyebrow);
+  font-weight: var(--w-bold);
+  letter-spacing: var(--wide);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.t-h1 {
+  font-size: var(--t-6xl);
+  font-weight: var(--w-xbold);
+  letter-spacing: var(--tight);
+  line-height: 1.1;
+  color: var(--fg-1);
+}
+.t-h2 {
+  font-size: var(--t-4xl);
+  font-weight: var(--w-xbold);
+  letter-spacing: var(--tight);
+  line-height: 1.15;
+  color: var(--fg-1);
+}
+.t-h3 {
+  font-size: var(--t-2xl);
+  font-weight: var(--w-bold);
+  letter-spacing: var(--tight);
+  line-height: 1.25;
+  color: var(--fg-1);
+}
+.t-h4 {
+  font-size: var(--t-xl);
+  font-weight: var(--w-bold);
+  letter-spacing: var(--tight);
+  line-height: 1.3;
+  color: var(--fg-1);
+}
+.t-body {
+  font-size: var(--t-body);
+  font-weight: var(--w-regular);
+  line-height: 1.5;
+  color: var(--fg-2);
+}
+.t-body-lg {
+  font-size: var(--t-lg);
+  font-weight: var(--w-regular);
+  line-height: 1.55;
+  color: var(--fg-2);
+}
+.t-meta {
+  font-size: var(--t-meta);
+  font-weight: var(--w-semi);
+  color: var(--fg-3);
+}
+.t-caption {
+  font-size: var(--t-caption);
+  font-weight: var(--w-medium);
+  color: var(--fg-4);
+}
+.t-button {
+  font-size: var(--t-body);
+  font-weight: var(--w-medium);
+  letter-spacing: 0;
+}
+
+/* Apple-style easing utility â€” also usable as a Tailwind-compatible class */
+.ease-apple {
+  transition-timing-function: var(--ease-apple);
+}
