@@ -1275,7 +1275,7 @@ export default function App() {
   };
 
   if (loading) return (
-    <div className="flex h-screen items-center justify-center bg-[#F2F4F6]">
+    <div className="flex h-screen items-center justify-center bg-[#F1F5F9]">
       <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
     </div>
   );
@@ -1364,7 +1364,7 @@ export default function App() {
         body { font-family: 'Manrope', sans-serif; }
         .ease-apple { transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
       `}</style>
-      <div className="flex flex-col h-screen text-slate-900 overflow-hidden bg-[#F2F4F6]">
+      <div className="flex flex-col h-screen text-slate-900 overflow-hidden bg-[#F1F5F9]">
         {isDemo && <DemoBanner onSignIn={() => { setIsDemo(false); setProjects([]); setSelectedId(null); }} />}
         <div className="flex flex-1 overflow-hidden relative">
           {isSidebarOpen && (
@@ -1405,7 +1405,7 @@ export default function App() {
           </div>
 
           <div className="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
-            <div className={`absolute top-0 left-0 right-0 bg-[#F2F4F6]/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
+            <div className={`absolute top-0 left-0 right-0 bg-[#F1F5F9]/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
               <div className="max-w-6xl mx-auto px-6 md:px-12 py-3 flex items-center gap-3">
                 <button onClick={() => setSidebarOpen(true)}
                   className="md:hidden p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors shrink-0">
