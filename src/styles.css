@@ -126,22 +126,22 @@
   --w-bold:     700;
   --w-xbold:    800;
 
-  /* Fluid type scale — scales between 390px (mobile) and 1920px (desktop max).
-     Min size hits at 390px viewport, max size hits at 1920px viewport.
-     rem for accessibility. 1rem = 16px. */
+  /* Fluid type scale — calculator-generated.
+     Base 16px @ 400px viewport with 1.2 ratio · Base 17px @ 1920px viewport with 1.28 ratio.
+     Source: fluid-type-scale.com */
   --t-eyebrow:    0.6875rem;                                        /* 11 · fixed UI label */
-  --t-caption:    clamp(0.8rem,    0.792rem + 0.031vw, 0.83rem);    /* 12.8  → 13.28 */
-  --t-meta:       clamp(0.8rem,    0.792rem + 0.031vw, 0.83rem);    /* 12.8  → 13.28 */
-  --t-sm:         0.8125rem;                                        /* 13    · fixed */
-  --t-body:       clamp(1rem,      0.984rem + 0.065vw, 1.0625rem);  /* 16    → 17    */
-  --t-base:       clamp(1rem,      0.984rem + 0.065vw, 1.0625rem);  /* alias for body */
-  --t-lg:         clamp(1.25rem,   1.222rem + 0.115vw, 1.36rem);    /* 20    → 21.76 (H4) */
-  --t-xl:         clamp(1.25rem,   1.222rem + 0.115vw, 1.36rem);    /* H4 alias */
-  --t-2xl:        clamp(1.5625rem, 1.517rem + 0.186vw, 1.74rem);    /* 25    → 27.85 (H3) */
-  --t-3xl:        clamp(1.5625rem, 1.517rem + 0.186vw, 1.74rem);    /* H3 alias */
-  --t-4xl:        clamp(1.953rem,  1.883rem + 0.288vw, 2.228rem);   /* 31.25 → 35.65 (H2) */
-  --t-5xl:        clamp(2.44rem,   2.335rem + 0.431vw, 2.852rem);   /* 39.06 → 45.63 (H1) */
-  --t-6xl:        clamp(2.44rem,   2.335rem + 0.431vw, 2.852rem);   /* H1 alias */
+  --t-caption:    13.33px;                                          /* fixed — calculator min/max collide */
+  --t-meta:       13.33px;                                          /* fixed — same as caption */
+  --t-sm:         0.8125rem;                                        /* 13 · fixed */
+  --t-body:       clamp(16px, 15.74px + 0.07vw, 17px);              /* Base · 16    → 17    */
+  --t-base:       clamp(16px, 15.74px + 0.07vw, 17px);              /* alias for body */
+  --t-lg:         clamp(19.2px, 18.53px + 0.17vw, 21.76px);         /* H4 · 19.2  → 21.76 */
+  --t-xl:         clamp(19.2px, 18.53px + 0.17vw, 21.76px);         /* H4 alias */
+  --t-2xl:        clamp(23.04px, 21.77px + 0.32vw, 27.85px);        /* H3 · 23.04 → 27.85 */
+  --t-3xl:        clamp(23.04px, 21.77px + 0.32vw, 27.85px);        /* H3 alias */
+  --t-4xl:        clamp(27.65px, 25.54px + 0.53vw, 35.65px);        /* H2 · 27.65 → 35.65 */
+  --t-5xl:        clamp(33.18px, 29.9px + 0.82vw, 45.63px);         /* H1 · 33.18 → 45.63 */
+  --t-6xl:        clamp(33.18px, 29.9px + 0.82vw, 45.63px);         /* H1 alias */
 
   --tight: -0.02em;
   --normal: 0;
