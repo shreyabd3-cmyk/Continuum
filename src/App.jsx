@@ -524,7 +524,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
             {step === "main" ? (
               <>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
-                <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
+               <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
                 <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
                 {(error || localError) && (
                   <div className="bg-red-50 text-red-600 p-3 rounded-2xl text-xs flex items-center gap-2 mb-5">
@@ -1477,7 +1477,7 @@ export default function App() {
                     </div>
                     <div className="flex items-start gap-4 mb-8">
                       {selectedProject.icon && <ProjectIcon icon={selectedProject.icon} size="lg" className="mt-1 shrink-0" />}
-                      <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 break-words leading-[1.1]">
+                      <h1 className="text-5xl font-semibold tracking-tight text-slate-900 break-words leading-[1.1]">
                         {selectedProject.title}
                       </h1>
                     </div>
