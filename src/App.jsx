@@ -819,7 +819,7 @@ const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
 
   return (
     <div className="bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
-      <div className="flex items-center gap-2.5 mb-4">
+    <div className="flex items-center gap-2.5 mb-4 flex-wrap">
         <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
           <Clock className="w-3.5 h-3.5 text-indigo-500" />
         </div>
@@ -879,7 +879,7 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
 
   return (
     <div className="bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
-      <div className="flex items-center gap-2.5 mb-4">
+      <div className="flex items-center gap-2.5 mb-4 flex-wrap">
         <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
           <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
         </div>
@@ -960,7 +960,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <WhereIAmCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
         <DontForgetCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
       </div>
@@ -1481,11 +1481,11 @@ export default function App() {
                         {selectedProject.title}
                       </h1>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-5 border-t border-slate-200/60 pt-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 border-t border-slate-200/60 pt-8">
                       <div className="md:col-span-3 space-y-3">
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Start Date</p>
                         <div className="flex items-center gap-2 text-slate-700 font-medium text-base">
-                          <Calendar className="w-4 h-4 text-slate-400" />
+                         <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
                           {selectedProject.startDate ? new Date(selectedProject.startDate).toLocaleDateString() : "N/A"}
                         </div>
                       </div>
