@@ -691,19 +691,19 @@ const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
           <form onSubmit={handleSubmit}>
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">Title</label>
+                <label className="t-caption text-slate-500 block ml-1">Title</label>
                 <Input name="title" defaultValue={resource?.title || ""} autoFocus placeholder="e.g., Competitor Analysis" required />
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">URL</label>
+                <label className="t-caption text-slate-500 block ml-1">URL</label>
                 <Input name="url" defaultValue={resource?.url || ""} type="url" placeholder="https://..." required />
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">Description</label>
+                <label className="t-caption text-slate-500 block ml-1">Description</label>
                 <TextArea name="description" defaultValue={resource?.description || ""} rows="3" placeholder="Add a brief description..." />
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">Tags</label>
+                <label className="t-caption text-slate-500 block ml-1">Tags</label>
                 <div className="flex gap-2 mb-3">
                   <Input value={customTag} onChange={e => setCustomTag(e.target.value)} placeholder="Add custom tag..."
                     onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleAddCustomTag(e); } }} className="py-2" />
@@ -758,7 +758,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
           }}>
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">Project Icon <span className="text-slate-400 font-normal">(optional)</span></label>
+                <label className="t-caption text-slate-500 block ml-1">Project Icon <span className="text-slate-400 font-normal">(optional)</span></label>
                 <div className="flex items-center gap-4 mb-3">
                   {icon ? <ProjectIcon icon={icon} size="md" /> : (
                     <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
@@ -770,21 +770,21 @@ const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
                 <IconPicker value={icon} onChange={setIcon} />
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">Project Name</label>
+                <label className="t-caption text-slate-500 block ml-1">Project Name</label>
                 <Input name="title" defaultValue={project?.title || ""} autoFocus placeholder="e.g., Nebula Brand Identity" required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium text-slate-500 ml-1">Client Name</label>
+                  <label className="t-caption text-slate-500 block ml-1">Client Name</label>
                   <Input name="client" defaultValue={project?.client || ""} placeholder="e.g., Nebula Tech" required />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium text-slate-500 ml-1">Start Date</label>
+                  <label className="t-caption text-slate-500 block ml-1">Start Date</label>
                   <Input name="startDate" type="date" defaultValue={project?.startDate || ""} />
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 ml-1">Description</label>
+                <label className="t-caption text-slate-500 block ml-1">Description</label>
                 <TextArea name="description" defaultValue={project?.description || ""} rows="4" placeholder="Brief summary of the project goals..." />
               </div>
               <div className="flex justify-between items-center mt-8 pt-4">
@@ -1275,7 +1275,7 @@ export default function App() {
   };
 
   if (loading) return (
-    <div className="flex h-screen items-center justify-center bg-[#F1F5F9]">
+    <div className="flex h-screen items-center justify-center bg-[var(--app-bg)]">
       <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
     </div>
   );
@@ -1364,7 +1364,7 @@ export default function App() {
         body { font-family: 'Manrope', sans-serif; }
         .ease-apple { transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
       `}</style>
-      <div className="flex flex-col h-screen text-slate-900 overflow-hidden bg-[#F1F5F9]">
+      <div className="flex flex-col h-screen text-slate-900 overflow-hidden bg-[var(--app-bg)]">
         {isDemo && <DemoBanner onSignIn={() => { setIsDemo(false); setProjects([]); setSelectedId(null); }} />}
         <div className="flex flex-1 overflow-hidden relative">
           {isSidebarOpen && (
@@ -1405,7 +1405,7 @@ export default function App() {
           </div>
 
           <div className="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
-            <div className={`absolute top-0 left-0 right-0 bg-[#F1F5F9]/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
+            <div className={`absolute top-0 left-0 right-0 bg-[var(--app-bg)]/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
               <div className="max-w-6xl mx-auto px-6 md:px-12 py-3 flex items-center gap-3">
                 <button onClick={() => setSidebarOpen(true)}
                   className="md:hidden p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors shrink-0">
