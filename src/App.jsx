@@ -483,7 +483,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               <span className="text-white font-extrabold text-lg tracking-tight">Continuum</span>
             </div>
             <div style={{ height: 100 }} className="w-full overflow-hidden">
-              <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">{currentSlide.tag}</p>
+              <p className="t-eyebrow text-indigo-300 mb-1">{currentSlide.tag}</p>
               <h2 className="text-base font-extrabold text-white leading-tight tracking-tight mb-1">{currentSlide.title}</h2>
               <p className="text-xs text-indigo-200 leading-relaxed line-clamp-2">{currentSlide.desc}</p>
             </div>
@@ -496,7 +496,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 90%, rgba(99,102,241,0.5) 0%, transparent 50%)" }} />
             <div className="relative z-10 flex flex-col px-16 py-16" style={{ maxWidth: 600, margin: "0 auto", width: "100%" }}>
               <div style={{ minHeight: 180 }} className="w-full">
-                <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-3">{currentSlide.tag}</p>
+                <p className="t-eyebrow text-indigo-300 mb-3">{currentSlide.tag}</p>
                 <h2 className="text-3xl font-extrabold text-white leading-tight tracking-tight mb-3">{currentSlide.title}</h2>
                 <p className="text-sm text-indigo-200 leading-relaxed">{currentSlide.desc}</p>
               </div>
@@ -523,7 +523,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
             <div className="w-full pt-10 md:pt-0">
             {step === "main" ? (
               <>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Your creative second brain</p>
+                <p className="t-eyebrow text-slate-400 mb-2">Your creative second brain</p>
                <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Get started</h1>
                 <p className="text-sm text-slate-500 leading-relaxed mb-8">New here? We'll create your account automatically.</p>
                 {(error || localError) && (
@@ -579,7 +579,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
                 </Button>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="flex-1 h-px bg-slate-200" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">or</span>
+                  <span className="t-eyebrow text-slate-400">or</span>
                   <div className="flex-1 h-px bg-slate-200" />
                 </div>
                 <Button variant="google" className="w-full py-3.5 mb-3" onClick={onGoogleLogin} disabled={loading}>
@@ -823,7 +823,7 @@ const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
         <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
           <Clock className="w-3.5 h-3.5 text-indigo-500" />
         </div>
-        <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Where I am</span>
+        <span className="t-eyebrow text-indigo-600">Where I am</span>
       </div>
       <textarea ref={textareaRef}
         className="w-full bg-transparent focus:outline-none text-slate-700 leading-relaxed resize-none placeholder:text-slate-300 text-sm font-light min-h-[80px]"
@@ -883,7 +883,7 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
         <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
           <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
         </div>
-        <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">Don't forget</span>
+        <span className="t-eyebrow text-amber-600">Don't forget</span>
         {!isDemo && (
           <button onClick={switchMode}
             className="ml-auto flex items-center gap-1.5 text-[10px] font-bold text-slate-400 hover:text-indigo-600 bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 px-2.5 py-1 rounded-full transition-all ease-apple active:scale-95">
@@ -969,7 +969,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
           <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
             <MessageCircle className="w-4 h-4 text-amber-600" />
           </div>
-          <span className="text-xs font-bold text-amber-700 uppercase tracking-widest">Questions</span>
+          <span className="t-eyebrow text-amber-700">Questions</span>
         </div>
         {!isDemo && (
           <div className="flex gap-3 mb-6">
@@ -1042,7 +1042,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
         )}
         <div className="pt-10 mt-10 border-t border-slate-200/60">
           <button onClick={() => setShowHistory(!showHistory)}
-            className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-indigo-600 transition-colors mb-6">
+            className="t-eyebrow text-slate-400 flex items-center gap-2 hover:text-indigo-600 transition-colors mb-6">
             {showHistory ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             Resolved Questions History {resolvedQuestions.length > 0 && `(${resolvedQuestions.length})`}
           </button>
@@ -1333,16 +1333,16 @@ export default function App() {
       </div>
       <div className="flex-1 overflow-y-auto px-2">
         <div className="mb-8">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-4">Active</h3>
+          <h3 className="t-eyebrow text-slate-400 mb-3 px-4">Active</h3>
           {activeProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
         </div>
         <div className="mb-8">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-4">On Hold</h3>
+          <h3 className="t-eyebrow text-slate-400 mb-3 px-4">On Hold</h3>
           {pausedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
         </div>
         <div className="mb-8">
           <button onClick={() => setIsCompletedExpanded(!isCompletedExpanded)}
-            className="flex items-center justify-between w-full text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-4 hover:text-slate-600 transition-colors">
+            className="t-eyebrow text-slate-400 flex items-center justify-between w-full mb-3 px-4 hover:text-slate-600 transition-colors">
             Completed {isCompletedExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
           </button>
           {isCompletedExpanded && completedProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
@@ -1483,14 +1483,14 @@ export default function App() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 border-t border-slate-200/60 pt-8">
                       <div className="md:col-span-3 space-y-3">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Start Date</p>
+                        <p className="t-eyebrow text-slate-500">Start Date</p>
                         <div className="flex items-center gap-2 text-slate-700 font-medium text-base">
                          <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
                           {selectedProject.startDate ? new Date(selectedProject.startDate).toLocaleDateString() : "N/A"}
                         </div>
                       </div>
                       <div className="md:col-span-9 space-y-3">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</p>
+                        <p className="t-eyebrow text-slate-500">Description</p>
                         <p className="text-base text-slate-600 leading-relaxed">{selectedProject.description || "No description provided."}</p>
                       </div>
                     </div>
@@ -1575,7 +1575,7 @@ export default function App() {
                                               {resource.type === "document" ? <FileIcon className="w-8 h-8 text-indigo-400" /> : <LinkIcon className="w-8 h-8 text-blue-400" />}
                                             </div>
                                           </div>
-                                          <span className={`text-xs font-bold uppercase tracking-widest ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
+                                          <span className={`t-eyebrow ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
                                             {resource.preview.hostname?.replace("www.", "")}
                                           </span>
                                         </div>
@@ -1584,7 +1584,7 @@ export default function App() {
                                           <div className={`w-20 h-20 bg-slate-50 rounded-3xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 ease-apple ${resource.type === "document" ? "shadow-indigo-100" : "shadow-blue-100"}`}>
                                             {resource.type === "document" ? <FileIcon className="w-10 h-10 text-indigo-500" /> : <LinkIcon className="w-10 h-10 text-blue-500" />}
                                           </div>
-                                          <span className={`text-xs font-bold uppercase tracking-widest ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
+                                          <span className={``t-eyebrow ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
                                             {resource.type === "document" ? "Document" : "Web Link"}
                                           </span>
                                         </div>
