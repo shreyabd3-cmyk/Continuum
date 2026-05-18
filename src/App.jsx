@@ -1003,7 +1003,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-3">
                       <Badge color="amber">question</Badge>
-                      <span className="text-xs font-semibold text-slate-400">{note.timestamp}</span>
+                      <span className="t-meta text-slate-400">{note.timestamp}</span>
                     </div>
                     {editingId === note.id ? (
                       <div className="mt-2 bg-slate-100 p-4 rounded-2xl">
@@ -1359,11 +1359,6 @@ export default function App() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Manrope', sans-serif; }
-        .ease-apple { transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
-      `}</style>
       <div className="flex flex-col h-screen text-slate-900 overflow-hidden bg-[var(--app-bg)]">
         {isDemo && <DemoBanner onSignIn={() => { setIsDemo(false); setProjects([]); setSelectedId(null); }} />}
         <div className="flex flex-1 overflow-hidden relative">
