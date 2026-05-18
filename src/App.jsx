@@ -1584,7 +1584,7 @@ export default function App() {
                                           <div className={`w-20 h-20 bg-slate-50 rounded-3xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 ease-apple ${resource.type === "document" ? "shadow-indigo-100" : "shadow-blue-100"}`}>
                                             {resource.type === "document" ? <FileIcon className="w-10 h-10 text-indigo-500" /> : <LinkIcon className="w-10 h-10 text-blue-500" />}
                                           </div>
-                                          <span className={``t-eyebrow ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
+                                          <span className={`t-eyebrow ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
                                             {resource.type === "document" ? "Document" : "Web Link"}
                                           </span>
                                         </div>
