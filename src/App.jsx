@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Folder, PauseCircle, PlayCircle, Plus, MoreVertical,
+  Folder, PauseCircle, PlayCircle, Plus,
   Link as LinkIcon, Image as ImageIcon, ExternalLink, Trash2,
   X, CheckCircle2, Circle, ChevronDown, ChevronUp, Edit2,
   File as FileIcon, Calendar, Settings, PanelLeft, PanelRight,
@@ -826,7 +826,7 @@ const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
         <span className="t-eyebrow text-indigo-600">Where I am</span>
       </div>
       <textarea ref={textareaRef}
-        className="w-full bg-transparent focus:outline-none text-slate-700 leading-relaxed resize-none placeholder:text-slate-300 text-sm font-light min-h-[80px]"
+        className="w-full bg-transparent focus:outline-none text-slate-700 leading-relaxed resize-none placeholder:text-slate-400 text-sm font-light min-h-[80px]"
         placeholder="Current phase, what just happened, where things stand..."
         value={local} onChange={e => setLocal(e.target.value)} readOnly={isDemo} />
     </div>
@@ -893,7 +893,7 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
       </div>
       {mode === "text" ? (
         <textarea ref={textareaRef}
-          className="w-full bg-transparent focus:outline-none text-slate-700 leading-relaxed resize-none placeholder:text-slate-300 text-sm font-light min-h-[80px]"
+          className="w-full bg-transparent focus:outline-none text-slate-700 leading-relaxed resize-none placeholder:text-slate-400 text-sm font-light min-h-[80px]"
           placeholder="Key constraints, decisions, things you'd forget after switching clients for a few days..."
           value={localText} onChange={e => setLocalText(e.target.value)} readOnly={isDemo} />
       ) : (
@@ -907,7 +907,7 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
               <span className={`text-sm flex-1 leading-relaxed ${item.checked ? "line-through text-slate-300" : "text-slate-700"}`}>{item.text}</span>
               {!isDemo && (
                 <button onClick={() => deleteItem(item.id)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-red-400 transition-all ease-apple">
-                  <X className="w-3 h-3" />
+                  <Trash2 className="w-3 h-3" />
                 </button>
               )}
             </div>
@@ -915,10 +915,10 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
           {!isDemo && (
             <div className="flex items-center gap-3 mt-3 pt-2 border-t border-slate-200">
               <div className="w-5 h-5 rounded-md border-2 border-dashed border-slate-300 shrink-0" />
-              <input className="text-sm text-slate-500 bg-transparent focus:outline-none placeholder:text-slate-300 flex-1"
+              <input className="text-sm text-slate-500 bg-transparent focus:outline-none placeholder:text-slate-400 flex-1"
                 placeholder="Add item..." value={newItem} onChange={e => setNewItem(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter") addItem(); }} />
-              {newItem && <button onClick={addItem} className="text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors px-2 py-1">Add</button>}
+              {newItem && <button onClick={addItem} className="flex items-center gap-1 text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors px-2 py-1 ease-apple"><Plus className="w-3 h-3" />Add</button>}
             </div>
           )}
         </div>
@@ -929,15 +929,9 @@ const DontForgetCard = ({ project, onUpdate, isDemo }) => {
 
 const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
   const [showHistory, setShowHistory] = useState(false);
-  const [activeMenuId, setActiveMenuId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
 
-  useEffect(() => {
-    const handleClick = () => setActiveMenuId(null);
-    window.addEventListener("click", handleClick);
-    return () => window.removeEventListener("click", handleClick);
-  }, []);
 
   const addQuestion = (content) => {
     if (!content.trim() || isDemo) return;
@@ -948,7 +942,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
   const toggleNoteRes = (id) => { if (!isDemo) onUpdateCtx("notes", (project.notes || []).map(n => n.id === id ? { ...n, isResolved: !n.isResolved } : n)); };
   const startEditing = (note, e) => {
     if (isDemo) return;
-    e.stopPropagation(); setEditingId(note.id); setEditContent(note.content); setActiveMenuId(null);
+    e.stopPropagation(); setEditingId(note.id); setEditContent(note.content);
   };
   const saveEdit = () => {
     if (editContent.trim()) onUpdateCtx("notes", (project.notes || []).map(n => n.id === editingId ? { ...n, content: editContent } : n));
@@ -966,8 +960,8 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
       </div>
       <div className="bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
-            <MessageCircle className="w-4 h-4 text-amber-600" />
+          <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+            <MessageCircle className="w-3.5 h-3.5 text-amber-600" />
           </div>
           <span className="t-eyebrow text-amber-700">Questions</span>
         </div>
@@ -1017,24 +1011,16 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
                       <p className="text-slate-800 text-base leading-relaxed whitespace-pre-wrap font-normal break-words">{note.content}</p>
                     )}
                   </div>
-                  {!isDemo && (
-                    <div className="relative shrink-0">
-                      <Button variant="icon" className="opacity-0 group-hover:opacity-100"
-                        onClick={e => { e.stopPropagation(); setActiveMenuId(activeMenuId === note.id ? null : note.id); }}>
-                        <MoreVertical className="w-5 h-5" />
-                      </Button>
-                      {activeMenuId === note.id && (
-                        <div className="absolute right-0 top-10 w-48 bg-slate-50 rounded-2xl shadow-xl border border-slate-200 py-2 z-10 animate-in fade-in zoom-in-95 duration-200">
-                          <button onClick={e => startEditing(note, e)} className="w-full text-left px-5 py-3 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-3 font-medium transition-colors">
-                            <Edit2 className="w-4 h-4" /> Edit
-                          </button>
-                          <button onClick={e => { e.stopPropagation(); deleteNote(note.id); }} className="w-full text-left px-5 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 font-medium transition-colors">
-                            <Trash2 className="w-4 h-4" /> Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                 {!isDemo && (
+  <div className="flex gap-1 -mr-2 shrink-0">
+    <Button variant="icon" onClick={e => startEditing(note, e)} className="opacity-0 group-hover:opacity-100 hover:bg-slate-100 hover:text-indigo-600">
+      <Edit2 className="w-4 h-4" />
+    </Button>
+    <Button variant="icon" onClick={e => { e.stopPropagation(); deleteNote(note.id); }} className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500">
+      <Trash2 className="w-4 h-4" />
+    </Button>
+  </div>
+)}
                 </div>
               </div>
             ))}
@@ -1054,7 +1040,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
                 <div key={note.id} className="opacity-60 hover:opacity-100 transition-opacity flex items-center gap-3 bg-slate-100 p-5 rounded-2xl">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                   <p className="text-sm text-slate-600 line-through decoration-slate-300 flex-1">{note.content}</p>
-                  {!isDemo && <Button variant="tertiary" onClick={() => toggleNoteRes(note.id)} className="text-xs px-2 py-1 shrink-0">Undo</Button>}
+                  {!isDemo && <Button variant="tertiary" onClick={() => toggleNoteRes(note.id)} className="text-xs px-2 py-1 shrink-0 flex items-center gap-1.5"><RotateCcw className="w-3 h-3" />Undo</Button>}
                 </div>
               ))}
             </div>
