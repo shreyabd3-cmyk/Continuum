@@ -5,6 +5,9 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        slate: { 50: '#fffdf9', 100: '#f5f1e9', 200: '#e8e1d5', 300: '#d3cabc', 400: '#a59b8c', 500: '#83796c', 600: '#62594f', 700: '#494139', 800: '#362f29', 900: '#29241f' },
+      },
       // Wire the fluid type scale from styles.css into Tailwind's text-* utilities.
       // First value: font-size (references the CSS variables defined in :root).
       // Second value: line-height (pulled from the semantic .t-* classes in styles.css).
