@@ -96,3 +96,32 @@ the same timer; one completed focus session produces exactly one record and 25 m
 access from a second UID is denied. Live authenticated persistence and security rules
 cannot be confirmed without an authenticated account or the deployed rules/emulator.
 The current machine has no Java runtime for the Firestore emulator.
+
+## Focus garden and floating timer (local preview)
+
+The focus panel can collapse to a floating pill; its position, view and alert preferences
+are local appearance settings. The mobile Focus button expands the full panel again.
+Break modes hide project/task controls but retain the selection for the next focus session.
+Sessions never start automatically, and tasks never complete automatically.
+
+Garden growth is derived from deduplicated completed focus sessions, at 25/75/150/250
+minutes per plant. Breaks and unfinished sessions do not count. Bloomed plants remain
+in the collection. `gardenStartedAt` and `gardenPlantIndex` are saved on the existing
+per-user workspace timer document; no new collection or bulk data migration is needed.
+Historical completed focus time also contributes to the garden. The demo includes a
+clearly labeled illustration preview that does not write sessions or change statistics.
+
+Completion alerts include an in-app message, tab title, optional soft chime and opt-in
+desktop notifications when the tab is hidden. Notification permission is requested only
+from the Enable notifications button. Clicking a notification requests window focus;
+the browser/OS decides whether it can bring the window forward. Unsupported/blocked
+notifications retain sound and in-app feedback. These are open-page notifications, not
+scheduled push notifications: suspended/closed tabs and sleeping devices may delay or
+prevent an alert. Notifications never include project/task names. No service worker,
+push service or notification backend was added.
+
+Garden tests cover milestones, duplicate records, exclusion of breaks/abandoned sessions,
+repeat planting and historical session totals. Browser checks cover project-free breaks,
+floating pause/corner switching, mobile positioning and seed planting with zero awarded
+minutes. Desktop permission delivery, live completion logging and authenticated recovery
+still require a supported browser and a signed-in account for end-to-end verification.

@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { collection, doc, onSnapshot, runTransaction, setDoc, deleteDoc } from 'firebase/firestore';
 import { newTimer, remaining, canFinish } from './model';
+import { useFocusAlerts } from './useFocusAlerts';
 
 export function useWorkspace(db, uid, demo) {
   const [tasks, setTasks] = useState([]), [sessions, setSessions] = useState([]), [timer, setTimer] = useState(null);
   const [loading, setLoading] = useState(true), [error, setError] = useState(''), [busy, setBusy] = useState(false), [now, setNow] = useState(Date.now());
   const mutation = useRef(false), completionRetryAt = useRef(0);
-  const finishing = useRef(false), sound = useRef(null), identity = useRef('');
+  const finishing = useRef(false), identity = useRef('');
+  const alerts = useFocusAlerts();
   const root = ['artifacts', 'continuum-v1', 'users', uid || 'preview'];
   useEffect(() => {
     identity.current = uid || (demo ? 'demo' : '');
@@ -41,7 +43,7 @@ export function useWorkspace(db, uid, demo) {
   const removeTask = task => perform(async () => { const owner = identity.current; if (!demo) await deleteDoc(doc(db, ...root, 'tasks', task.id)); if (owner === identity.current) setTasks(prev => prev.filter(t => t.id !== task.id)); return true; });
   const timerChange = (next, expected = timer) => perform(async () => {
     const owner = identity.current;
-    const value = { ...next, revision: crypto.randomUUID() };
+    const value = { ...next, gardenStartedAt: next.gardenStartedAt || timer?.gardenStartedAt || null, gardenPlantIndex: next.gardenPlantIndex ?? timer?.gardenPlantIndex ?? 0, revision: crypto.randomUUID() };
     if (!demo) await runTransaction(db, async tx => {
       const ref = doc(db, ...root, 'workspace', 'timer'), snap = await tx.get(ref);
       if ((snap.data()?.revision || '') !== (expected?.revision || '')) throw new Error('Timer changed in another tab. Please try again.');
@@ -49,7 +51,6 @@ export function useWorkspace(db, uid, demo) {
     });
     if (owner === identity.current) setTimer(value); return true;
   });
-  const unlockSound = () => { try { const Audio = window.AudioContext || window.webkitAudioContext; if (Audio) { sound.current ||= new Audio(); sound.current.resume(); } } catch {} };
   useEffect(() => {
     if (!timer || timer.status !== 'running' || remaining(timer, now) > 0 || now < completionRetryAt.current || finishing.current || (!uid && !demo)) return;
     finishing.current = true;
@@ -70,11 +71,11 @@ export function useWorkspace(db, uid, demo) {
           if (timer.mode === 'focus' && !session.exists()) tx.set(sessionRef, record);
           tx.set(ref, finished); recorded = true;
         });
-        if (recorded && owner === identity.current) { completionRetryAt.current = 0; setError(''); setTimer(finished); try { const ctx = sound.current; if (ctx?.state === 'running') { const osc = ctx.createOscillator(), gain = ctx.createGain(); osc.frequency.value = 660; gain.gain.setValueAtTime(.07, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .5); osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + .5); } } catch {} }
+        if (recorded && owner === identity.current) { completionRetryAt.current = 0; setError(''); setTimer(finished); alerts.notifyCompletion(timer); }
       } catch { completionRetryAt.current = Date.now() + 5000; if (owner === identity.current) setError('Session could not be saved. Keep this workspace open; it will retry when connected.'); }
       finally { finishing.current = false; }
     };
     finish();
   }, [timer, now, uid, demo, db]);
-  return { tasks, sessions, timer, loading, error, busy, now, saveTask, removeTask, timerChange, unlockSound };
+  return { tasks, sessions, timer, loading, error, busy, now, saveTask, removeTask, timerChange, unlockSound: alerts.unlockSound, alerts };
 }

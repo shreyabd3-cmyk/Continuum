@@ -13,6 +13,8 @@ import { Dashboard, NextSteps, FocusPanel, TaskEditor } from "./workspace/Worksp
 import FormDialog, { Field, useDialogForm } from "./components/FormDialog";
 import { resourceURL } from "./workspace/resources";
 import ResourceLibrary from "./workspace/ResourceLibrary";
+import ProjectIcon from "./components/ProjectIcon";
+import { ICON_COLORS, parseIcon } from "./workspace/projectAppearance";
 import Select from "./components/Select";
 import { useWorkspace } from "./workspace/useWorkspace";
 import { newTimer } from "./workspace/model";
@@ -118,7 +120,7 @@ const DEMO_PROJECTS = [
   },
   {
     id: "demo-2", title: "Meridian Health Platform", client: "Meridian Health",
-    startDate: "2026-02-10", icon: "🏥",
+    startDate: "2026-02-10", icon: "🏥|#586F96",
     description: "Patient-facing portal redesign. Heavy focus on information architecture.",
     status: "active", lastUpdated: new Date().toISOString(),
     whereIAm: "Discovery phase complete. Just finished stakeholder interviews and card sorting sessions with 12 patients.",
@@ -129,7 +131,7 @@ const DEMO_PROJECTS = [
   },
   {
     id: "demo-3", title: "Volta E-commerce IA", client: "Volta",
-    startDate: "2026-01-15", icon: "⚡",
+    startDate: "2026-01-15", icon: "⚡|#84623C",
     description: "IA overhaul for a fast-growing electric vehicle accessories brand.",
     status: "paused", lastUpdated: new Date().toISOString(),
     whereIAm: "Paused — client is going through internal restructure. Resume expected late April.",
@@ -176,41 +178,6 @@ const Badge = ({ children, color = "slate", className = "" }) => {
     indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
   };
   return <span className={`ds-badge ds-badge--${color} px-3 py-1 rounded-lg text-xs font-medium border ${colors[color]} ${className}`}>{children}</span>;
-};
-
-const ICON_COLORS = [
-  { hex: "#6366f1", label: "Indigo" },
-  { hex: "#10b981", label: "Emerald" },
-  { hex: "#f59e0b", label: "Amber" },
-  { hex: "#3b82f6", label: "Blue" },
-  { hex: "#ec4899", label: "Pink" },
-  { hex: "#ef4444", label: "Red" },
-  { hex: "#8b5cf6", label: "Violet" },
-  { hex: "#14b8a6", label: "Teal" },
-  { hex: "#f97316", label: "Orange" },
-  { hex: "#64748b", label: "Slate" },
-];
-
-const parseIcon = (icon) => {
-  if (!icon) return { text: "", color: ICON_COLORS[0].hex, isImage: false };
-  if (icon.startsWith("data:")) return { text: "", color: "", isImage: true };
-  const parts = icon.split("|");
-  return { text: parts[0] || "", color: parts[1] || ICON_COLORS[0].hex, isImage: false };
-};
-
-const ProjectIcon = ({ icon, size = "sm", className = "" }) => {
-  const sizes = { sm: "w-7 h-7", md: "w-10 h-10", lg: "w-14 h-14" };
-  const fontSizes = { sm: 11, md: 14, lg: 20 };
-  if (!icon) return null;
-  const { text, color, isImage } = parseIcon(icon);
-  return (
-    <div className={`${sizes[size]} rounded-xl flex items-center justify-center shrink-0 ${className}`}
-      style={{ backgroundColor: isImage ? "#f1f5f9" : color }}>
-      {isImage
-        ? <img src={icon} alt="project icon" className="w-full h-full object-cover rounded-xl" />
-        : <span style={{ fontSize: fontSizes[size], fontWeight: 800, color: "white", letterSpacing: "0.03em", lineHeight: 1 }}>{text.toUpperCase()}</span>}
-    </div>
-  );
 };
 
 const IconPicker = ({ value, onChange }) => {
@@ -279,7 +246,7 @@ const IconPicker = ({ value, onChange }) => {
           </div>
           <div className="flex flex-wrap gap-2 pt-1">
             {ICON_COLORS.map(({ hex, label }) => (
-              <button key={hex} type="button" title={label} onClick={() => handleColorSelect(hex)}
+              <button key={hex} type="button" title={label} aria-label={label} aria-pressed={selectedColor === hex} onClick={() => handleColorSelect(hex)}
                 className="w-7 h-7 rounded-lg transition-all duration-150 ease-apple active:scale-95 flex items-center justify-center"
                 style={{ backgroundColor: hex, boxShadow: selectedColor === hex ? `0 0 0 2px white, 0 0 0 4px ${hex}` : "none" }}>
                 {selectedColor === hex && <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
@@ -533,7 +500,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
               <>
                 <p className="t-eyebrow text-slate-400 mb-2">Your creative second brain</p>
                <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">A little less catching up.</h1>
-                <p className="text-sm text-slate-500 leading-relaxed mb-8">Your projects, context, and next steps. All in one place.</p>
+                <p className="text-sm text-slate-500 leading-relaxed mb-8">Your projects, context, and tasks. All in one place.</p>
                 {(error || localError) && (
                   <div className="bg-red-50 text-red-600 p-3 rounded-2xl text-xs flex items-center gap-2 mb-5">
                     <AlertCircle className="w-4 h-4 shrink-0" /><p>{error || localError}</p>
@@ -748,10 +715,10 @@ const NotesCard = ({ project, onUpdate, isDemo }) => {
     <div className="context-card notes-card bg-slate-50 border border-slate-200 p-8">
       <div className="flex items-center gap-2.5 mb-4">
         <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center"><CheckSquare className="w-3.5 h-3.5 text-indigo-600" /></div>
-        <span className="t-eyebrow">Don’t forget · Notes</span>
+        <span className="t-eyebrow">Notes & reminders</span>
         <span className="notes-progress">{items.filter(item => item.checked).length} of {items.length} checked</span>
       </div>
-      <p className="text-xs text-slate-500 mb-5">Details to remember. Check them off as you go.</p>
+      <p className="text-xs text-slate-500 mb-5">Don’t forget the small details. Check them off as you go.</p>
       {noteError && <p className="ds-form-error" role="alert">{noteError}</p>}
       {items.some(item => item.checked) && <button disabled={notesSaving} className="ds-text-button" onClick={() => saveItems(items.filter(item => !item.checked))}>Clear checked</button>}
       <div className="space-y-2">
@@ -883,7 +850,7 @@ const OverviewTab = ({ project, onUpdate, onDirty, onUpdateCtx, isDemo }) => {
           <button onClick={() => setShowHistory(!showHistory)}
             className="t-eyebrow text-slate-400 flex items-center gap-2 hover:text-indigo-600 transition-colors mb-6">
             {showHistory ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            Resolved Questions History {resolvedQuestions.length > 0 && `(${resolvedQuestions.length})`}
+            Resolved questions {resolvedQuestions.length > 0 && `(${resolvedQuestions.length})`}
           </button>
           {showHistory && (
             <div className="space-y-4 pl-6 border-l-2 border-slate-200">
@@ -908,6 +875,7 @@ export default function App() {
   const [successMessage, setSuccessMessage] = useState(null);
   const notifySuccess = text => setSuccessMessage({ text, id: Date.now() });
   useEffect(() => { if (!successMessage) return; const timeout = setTimeout(() => setSuccessMessage(null), 6000); return () => clearTimeout(timeout); }, [successMessage]);
+  const [focusOpenRequest, setFocusOpenRequest] = useState(0);
   const [user, setUser] = useState(null);
   const [isDemo, setIsDemo] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -1136,7 +1104,7 @@ export default function App() {
 
   const focusTask = async (projectId, taskId = "") => {
     if (["running", "paused"].includes(workspace.timer?.status) && !window.confirm("End your current focus session and focus on this task? The unfinished session will not be counted.")) return;
-    if (await workspace.timerChange(newTimer("focus", projectId, taskId))) document.querySelector(".focus-panel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (await workspace.timerChange(newTimer("focus", projectId, taskId))) setFocusOpenRequest(value => value + 1);
   };
   const addTask = projectId => setTaskEditor({ projectId });
   const openDashboard = () => { setIsScrolled(false); setView("dashboard"); if (window.innerWidth < 768) setSidebarOpen(false); };
@@ -1204,7 +1172,7 @@ export default function App() {
       <div className="flex-1 overflow-y-auto px-2">
         {projectSearch && !projects.some(matchesSearch) && <p className="px-4 pb-5 text-xs text-slate-500">No projects match “{projectSearch}”.</p>}
         <div className="mb-8">
-          <h3 className="t-eyebrow text-slate-400 mb-3 px-4">In progress <span>{activeProjects.length}</span></h3>
+          <h3 className="t-eyebrow text-slate-400 mb-3 px-4">Active <span>{activeProjects.length}</span></h3>
           {activeProjects.map(p => <SidebarItemFull key={p.id} project={p} />)}
         </div>
         <div className="mb-8">
@@ -1310,10 +1278,10 @@ export default function App() {
             <nav className="workspace-mobile-nav" aria-label="Main navigation">
               <button aria-current={view === "dashboard" ? "page" : undefined} onClick={openDashboard}><LayoutDashboard size={22} /><span>Overview</span></button>
               <button aria-current={view === "project" ? "page" : undefined} aria-expanded={isSidebarOpen} onClick={() => setSidebarOpen(true)}><Folder size={22} /><span>Projects</span></button>
-              <button onClick={() => document.querySelector(".focus-panel")?.scrollIntoView({ behavior: "smooth", block: "start" })}><Target size={22} /><span>Focus</span></button>
+              <button onClick={() => setFocusOpenRequest(value => value + 1)}><Target size={22} /><span>Focus</span></button>
             </nav>
             {(workspace.error || projectError) && <div role="alert" className="workspace-error">{workspace.error || projectError}</div>}
-            {view === "dashboard" ? (<div key="dashboard" className="workspace-scroll">{workspace.loading || projectLoading ? <div className="ws-empty">Loading your workspace…</div> : <Dashboard onStatusChange={(id, status) => updateProject(id, { status })} projects={projects} workspace={workspace} onOpen={selectProject} onAdd={addTask} onNewProject={() => { setEditingProject(null); setIsProjectModalOpen(true); }} onEdit={task => setTaskEditor({ task })} onFocus={focusTask} />}</div>) : selectedProject ? (
+            {view === "dashboard" ? (<div key="dashboard" className="workspace-scroll">{workspace.loading || projectLoading ? <div className="ws-empty">Loading your workspace…</div> : <Dashboard projects={projects} workspace={workspace} onOpen={selectProject} onAdd={addTask} onNewProject={() => { setEditingProject(null); setIsProjectModalOpen(true); }} onEdit={task => setTaskEditor({ task })} onFocus={focusTask} />}</div>) : selectedProject ? (
               <div key={selectedProject.id} className={`project-scroll flex-1 overflow-y-auto pb-12 scroll-smooth ${activeTab === "resources" ? "resources-mode" : ""}`} onScroll={handleScroll}>
                 <div className="mobile-project-banner flex items-center gap-3 px-4 pt-5 pb-2 md:hidden">
                   <button onClick={() => setSidebarOpen(true)}
@@ -1335,7 +1303,7 @@ export default function App() {
                     </div>
                     <div className="project-metadata grid grid-cols-1 lg:grid-cols-12 gap-5 border-t border-slate-200/60 pt-8">
                       <div className="md:col-span-3 space-y-3">
-                        <p className="t-eyebrow text-slate-500">Start Date</p>
+                        <p className="t-eyebrow text-slate-500">Start date</p>
                         <div className="flex items-center gap-2 text-slate-700 font-medium text-base">
                          <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
                           {selectedProject.startDate ? new Date(`${selectedProject.startDate}T00:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "N/A"}
@@ -1356,7 +1324,7 @@ export default function App() {
                       const ids = ["overview", "tasks", "resources"], index = ids.indexOf(activeTab);
                       if (["ArrowRight", "ArrowLeft", "Home", "End"].includes(e.key)) { e.preventDefault(); const next = e.key === "Home" ? 0 : e.key === "End" ? 2 : (index + (e.key === "ArrowRight" ? 1 : 2)) % 3; setActiveTab(ids[next]); e.currentTarget.querySelectorAll("button")[next]?.focus(); }
                     }}>
-                      {[["overview", "Context"], ["tasks", "Next steps"], ["resources", "Resources"]].map(([id, label]) => <button role="tab" tabIndex={activeTab === id ? 0 : -1} aria-selected={activeTab === id} className={activeTab === id ? "text-indigo-900" : "text-slate-500"} key={id} onClick={() => setActiveTab(id)}>{label}<span className="tab-count">{id === "tasks" ? workspace.tasks.filter(t => t.projectId === selectedProject.id && !t.completed).length : id === "resources" ? selectedProject.resources.length : ""}</span></button>)}
+                      {[["overview", "Overview"], ["tasks", "Tasks"], ["resources", "Resources"]].map(([id, label]) => <button role="tab" tabIndex={activeTab === id ? 0 : -1} aria-selected={activeTab === id} className={activeTab === id ? "text-indigo-900" : "text-slate-500"} key={id} onClick={() => setActiveTab(id)}>{label}<span className="tab-count">{id === "tasks" ? workspace.tasks.filter(t => t.projectId === selectedProject.id && !t.completed).length : id === "resources" ? selectedProject.resources.length : ""}</span></button>)}
                     </div>
                     <div className="min-h-[400px]">
                       <div key={activeTab} className="animate-in fade-in duration-500 ease-apple">
@@ -1400,7 +1368,7 @@ export default function App() {
                 onDelete={deleteProject} />
             )}
           </div>
-          <FocusPanel projects={projects} workspace={workspace} />
+          <FocusPanel projects={projects} workspace={workspace} isDemo={isDemo} openRequest={focusOpenRequest} />
         </div>
         {successMessage && <div className="success-snackbar" role="status" key={successMessage.id}><CheckCircle2 size={20} /><span>{successMessage.text}</span><button className="ds-icon-button" aria-label="Dismiss success message" onClick={() => setSuccessMessage(null)}><X size={18} /></button></div>}
         {taskEditor && <TaskEditor projects={projects} {...taskEditor} busy={workspace.busy} error={workspace.error} onSave={workspace.saveTask} onClose={() => setTaskEditor(null)} />}

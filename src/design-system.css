@@ -223,3 +223,37 @@ textarea.ds-field-control { min-height: 104px; resize: vertical; }
 .material-workspace .success-snackbar { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; align-items: center; gap: 12px; padding: 8px 12px 8px 20px; border-radius: 16px; background: #342f39; color: #fffaf7; box-shadow: 0 6px 24px #30283b26; max-width: calc(100vw - 32px); font-size: 14px; }
 .material-workspace .success-snackbar .ds-icon-button { color: inherit; }
 @media (max-width: 767px) { .material-workspace .success-snackbar { bottom: 88px; width: max-content; } }
+
+/* Project identity stays consistent across icons, cards, and progress. */
+.material-workspace .project-card { background: var(--project-surface); border: 1px solid var(--project-border); }
+.material-workspace .project-card:hover { background: var(--project-hover); }
+.material-workspace .project-card .ws-progress { background: var(--project-tint); }
+.material-workspace .project-card .ws-progress > span { background: var(--project-accent); }
+.material-workspace .project-card footer button { color: var(--project-accent); }
+.material-workspace .project-card footer button:last-child { color: var(--project-accent); background: var(--project-tint); }
+.material-workspace .project-card footer button:hover { background: var(--project-border); }
+.material-workspace .focus-panel--compact { width: 208px; padding: 16px; }
+.material-workspace .focus-panel--compact .focus-panel-heading { margin-bottom: 16px; gap: 4px; }
+.material-workspace .focus-panel--compact .focus-panel-heading > span:first-child { font-size: 18px; gap: 6px; }
+.material-workspace .focus-panel--compact .timer-status { order: 3; width: 100%; }
+.material-workspace .focus-panel--compact .ds-select-trigger { min-height: 44px; font-size: 13px; padding: 8px 12px; }
+.material-workspace .focus-panel--compact .timer-controls { flex-wrap: wrap; }
+.material-workspace .focus-panel--compact .timer-controls .ws-primary { flex: 1; }
+.material-workspace .compact-focus-context { border-top: 1px solid var(--md-outline-variant); padding-top: 16px; margin-top: 20px; display: flex; flex-direction: column; gap: 6px; }
+.material-workspace .compact-focus-label { font: var(--ds-type-label-medium); color: var(--md-on-surface-variant); }
+.material-workspace .compact-focus-context strong { font: var(--ds-type-label-large); overflow-wrap: anywhere; }
+.material-workspace .compact-focus-context p { font: var(--ds-type-body-medium); color: var(--md-on-surface-variant); margin: 0; overflow-wrap: anywhere; }
+.material-workspace .compact-focus-context .ds-text-button { align-self: flex-start; padding: 8px 0; min-height: 44px; }
+@media (max-width: 959px) { .material-workspace .focus-panel--compact { width: auto; } }
+
+/* Status is semantic and independent of a project's chosen accent. */
+.material-workspace { --status-active-bg: #e4eee5; --status-active-text: #355b40; --status-hold-bg: #f3e9d6; --status-hold-text: #745522; --status-completed-bg: #eae3f3; --status-completed-text: #604584; }
+.material-workspace .project-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font: var(--ds-type-label-medium); white-space: nowrap; }
+.material-workspace .project-status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.material-workspace .project-status-pill.active,
+.material-workspace .project-status-select.active .ds-select-trigger { background: var(--status-active-bg); color: var(--status-active-text); }
+.material-workspace .project-status-pill.paused,
+.material-workspace .project-status-select.paused .ds-select-trigger { background: var(--status-hold-bg); color: var(--status-hold-text); }
+.material-workspace .project-status-pill.completed,
+.material-workspace .project-status-select.completed .ds-select-trigger { background: var(--status-completed-bg); color: var(--status-completed-text); }
+.material-workspace .focus-panel--compact .focus-panel-heading > span:first-child { font-size: 16px; }

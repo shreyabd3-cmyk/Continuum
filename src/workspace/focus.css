@@ -1,0 +1,67 @@
+.material-workspace .focus-panel--garden { width: 296px; overflow-y: auto; padding: 20px; flex-shrink: 0; }
+.material-workspace .focus-panel--garden .focus-panel-heading { margin-bottom: 18px; flex-wrap: nowrap; }
+.material-workspace .focus-panel--garden .focus-panel-heading > span:first-child { font-size: 18px; }
+.material-workspace .focus-panel--garden > .ds-select { width: 100%; }
+.material-workspace .focus-panel--garden .timer-circle { width: 204px; margin: 22px auto; }
+.material-workspace .focus-panel--garden .timer-circle strong { font-size: 42px; }
+.material-workspace .focus-panel--garden .timer-circle span { font-size: 11px; }
+.material-workspace .focus-panel--garden .timer-controls { margin-bottom: 22px; gap: 8px; }
+.material-workspace .focus-panel--garden .timer-controls .ws-primary { padding: 10px 14px; font-size: 13px; }
+.material-workspace .focus-panel--garden .focus-selection { margin-top: 18px; padding-top: 18px; gap: 14px; }
+.material-workspace .focus-panel--garden .focus-selection .ds-select-trigger { font-size: 13px; min-height: 48px; padding: 10px 12px; }
+.material-workspace .focus-helper { font-size: 12px; color: var(--md-on-surface-variant); }
+.material-workspace .break-invitation { margin: 20px 0; padding: 20px 14px; background: #faf4e7; border: 1px solid #e9dcc2; border-radius: 20px; text-align: center; color: #745522; }
+.break-invitation svg { margin: 0 auto 10px; }
+.break-invitation strong { display: block; font-size: 14px; }
+.break-invitation p { margin: 8px 0; font-size: 13px; line-height: 1.6; }
+.break-invitation small { font-size: 12px; line-height: 1.5; display: block; }
+.material-workspace .focus-garden { background: #fbf8f3; border: 1px solid #e7dfd4; border-radius: 20px; padding: 16px; margin-top: 24px; text-align: center; }
+.garden-title { display: flex; gap: 6px; align-items: center; color: #6750a4; }
+.material-workspace .garden-title h3 { margin: 0; font-size: 14px; font-weight: 500; }
+.garden-title > span { margin-left: auto; font-size: 11px; }
+.garden-plant { display: block; width: 160px; height: 134px; margin: 4px auto; }
+.garden-growth { transform-origin: 90px 96px; animation: garden-unfurl .8s ease-out; }
+@keyframes garden-unfurl { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
+.material-workspace .focus-garden > strong { display: block; font-size: 14px; font-weight: 500; line-height: 1.5; }
+.material-workspace .focus-garden p { font-size: 12px; line-height: 1.6; margin: 8px 0 12px; color: var(--md-on-surface-variant); }
+.material-workspace .focus-garden small { font-size: 11px; line-height: 1.6; color: var(--md-on-surface-variant); display: block; margin-top: 8px; }
+.garden-progress { height: 5px; background: #e8dfef; border-radius: 8px; overflow: hidden; }
+.garden-progress > span { display: block; background: #8b70ae; height: 100%; transition: width .6s; }
+.garden-collection { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 10px; }
+.garden-plant--small { width: 42px; height: 40px; margin: 0; }
+.material-workspace .focus-garden .ws-secondary { font-size: 12px; padding: 8px 12px; margin-top: 10px; }
+.material-workspace .focus-alert-settings, .material-workspace .garden-preview { border-top: 1px solid var(--md-outline-variant); margin-top: 20px; padding-top: 14px; font-size: 12px; }
+.focus-alert-settings summary, .garden-preview summary { cursor: pointer; min-height: 44px; align-content: center; color: var(--md-on-surface-variant); }
+.focus-alert-settings summary svg { display: inline; vertical-align: middle; margin-right: 5px; }
+.focus-alert-settings p, .garden-preview p { font-size: 12px; line-height: 1.6; color: var(--md-on-surface-variant); }
+.material-workspace .focus-setting { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 13px; }
+.focus-setting input { accent-color: #6750a4; width: 18px; height: 18px; }
+.material-workspace .focus-alert-settings .ds-text-button { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; }
+.material-workspace .focus-alert-settings .ws-secondary { font-size: 12px; padding: 8px 12px; }
+.garden-preview > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.material-workspace .focus-completion { padding: 18px 14px; background: #eee7f5; border: 1px solid #d5c7e6; border-radius: 18px; margin: 12px 0 20px; }
+.material-workspace .focus-completion strong { font-size: 15px; font-weight: 500; line-height: 1.5; display: block; }
+.material-workspace .focus-completion p { font-size: 12px; line-height: 1.6; color: #5d5367; margin: 8px 0 14px; }
+.completion-actions { display: flex; flex-direction: column; gap: 8px; }
+.material-workspace .completion-actions button { font-size: 12px; padding: 10px 12px; min-height: 44px; }
+.material-workspace .focus-panel.floating-focus { position: fixed; width: auto; height: auto; max-height: none; margin: 0; padding: 0; bottom: 24px; z-index: 40; background: transparent; border: 0; border-radius: 0; overflow: visible; display: block; }
+.floating-focus--right { right: 24px; }
+.floating-focus--left { left: 24px; }
+.focus-pill { display: flex; align-items: center; gap: 8px; background: #fffdf8; border: 1px solid #d9cfe4; border-radius: 999px; box-shadow: 0 5px 24px #3e2b5726; padding: 8px 12px; }
+.pill-progress { width: 40px; height: 40px; border-radius: 50%; background: conic-gradient(#8b70ae var(--timer-progress), #e9e0f0 0); display: grid; place-items: center; color: #6750a4; position: relative; }
+.pill-progress::before { content: ''; position: absolute; inset: 3px; background: #fffdf8; border-radius: 50%; }
+.pill-progress svg { position: relative; }
+.material-workspace .pill-time { display: flex; flex-direction: column; padding: 2px 6px; min-width: 74px; min-height: 44px; text-align: left; color: #342d3e; justify-content: center; }
+.pill-time small { font-size: 10px; color: #6e6377; }
+.pill-time strong { font-size: 22px; line-height: 1.2; font-weight: 500; font-variant-numeric: tabular-nums; }
+.material-workspace .focus-pill .ds-icon-button { min-width: 44px; min-height: 44px; }
+.floating-completion { width: 292px; max-width: calc(100vw - 32px); margin-bottom: 14px; position: relative; }
+.material-workspace .floating-completion .focus-completion { box-shadow: 0 5px 24px #3e2b5726; padding: 24px 18px 18px; margin: 0; }
+.material-workspace .floating-dismiss { position: absolute; right: 2px; top: 0; }
+.material-workspace .floating-completion .focus-completion > strong { padding-right: 16px; }
+.material-workspace .is-break .timer-circle .timer-ring { stroke: #967541; }
+.is-break .pill-progress { background: conic-gradient(#a88750 var(--timer-progress), #eee4ce 0); color: #80612d; }
+.is-finished .focus-pill { border-color: #a48ac3; }
+@media (min-width: 768px) and (max-width: 959px) { .material-workspace .focus-panel--garden { display: block; width: auto; } }
+@media (max-width: 767px) { .material-workspace .focus-panel--garden { width: auto; margin: 16px 16px 90px; } .material-workspace .focus-panel.floating-focus { bottom: 86px; } .floating-focus--right { right: 16px; } .floating-focus--left { left: 16px; } .focus-pill { gap: 4px; padding: 6px 8px; } }
+@media (prefers-reduced-motion: reduce) { .garden-growth { animation: none; } .garden-progress > span { transition: none; } }
