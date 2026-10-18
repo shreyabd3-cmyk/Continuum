@@ -6,8 +6,16 @@ import {
   File as FileIcon, Calendar, Settings, PanelLeft, PanelRight,
   LogOut, Loader2, AlertCircle,
   CheckSquare, RotateCcw, List, MessageCircle, Mail, ArrowLeft,
-  Send, Menu, Smile, Upload, Clock, AlertTriangle, Search, ArrowUpRight, Layers,
+  Send, Menu, Smile, Upload, Clock, AlertTriangle, Search, ArrowUpRight, Layers, LayoutDashboard, Target,
 } from "lucide-react";
+
+import { Dashboard, NextSteps, FocusPanel, TaskEditor } from "./workspace/Workspace";
+import FormDialog, { Field, useDialogForm } from "./components/FormDialog";
+import { resourceURL } from "./workspace/resources";
+import ResourceLibrary from "./workspace/ResourceLibrary";
+import Select from "./components/Select";
+import { useWorkspace } from "./workspace/useWorkspace";
+import { newTimer } from "./workspace/model";
 
 import { initializeApp } from "firebase/app";
 import {
@@ -18,7 +26,7 @@ import {
 } from "firebase/auth";
 import {
   getFirestore, collection, addDoc, updateDoc, deleteDoc,
-  doc, onSnapshot, query,
+  doc, onSnapshot, query, runTransaction,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -145,18 +153,18 @@ const Button = ({ variant = "primary", className = "", children, ...props }) => 
     ? styles.icon
     : "inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ease-apple active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100";
   return (
-    <button className={`${base} ${variant !== "icon" ? styles[variant] : ""} ${className}`} {...props}>
+    <button className={`ds-button ds-button--${variant} ${base} ${variant !== "icon" ? styles[variant] : ""} ${className}`} {...props}>
       {children}
     </button>
   );
 };
 
 const Input = ({ className = "", ...props }) => (
-  <input className={`w-full bg-slate-100 hover:bg-slate-200/60 focus:bg-slate-50 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 border border-slate-200 transition-all duration-200 ease-apple placeholder:text-slate-400 ${className}`} {...props} />
+  <input className={`ds-input w-full bg-slate-100 hover:bg-slate-200/60 focus:bg-slate-50 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 border border-slate-200 transition-all duration-200 ease-apple placeholder:text-slate-400 ${className}`} {...props} />
 );
 
 const TextArea = ({ className = "", ...props }) => (
-  <textarea className={`w-full bg-slate-100 hover:bg-slate-200/60 focus:bg-slate-50 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 border border-slate-200 transition-all duration-200 ease-apple placeholder:text-slate-400 resize-none ${className}`} {...props} />
+  <textarea className={`ds-textarea w-full bg-slate-100 hover:bg-slate-200/60 focus:bg-slate-50 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 border border-slate-200 transition-all duration-200 ease-apple placeholder:text-slate-400 resize-none ${className}`} {...props} />
 );
 
 const Badge = ({ children, color = "slate", className = "" }) => {
@@ -167,7 +175,7 @@ const Badge = ({ children, color = "slate", className = "" }) => {
     blue: "bg-blue-50 text-blue-700 border-blue-200",
     indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
   };
-  return <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${colors[color]} ${className}`}>{children}</span>;
+  return <span className={`ds-badge ds-badge--${color} px-3 py-1 rounded-lg text-xs font-medium border ${colors[color]} ${className}`}>{children}</span>;
 };
 
 const ICON_COLORS = [
@@ -645,7 +653,7 @@ const LoginScreen = ({ onGoogleLogin, onEmailAuth, onMagicLink, onDemo, loading,
 };
 
 const DemoBanner = ({ onSignIn }) => (
-  <div className="bg-indigo-600 text-slate-50 px-6 py-2.5 flex items-center justify-between shrink-0 z-30 gap-3">
+  <div className="ds-demo-banner bg-indigo-600 text-slate-50 px-6 py-2.5 flex items-center justify-between shrink-0 z-30 gap-3">
     <p className="text-xs font-semibold">Exploring demo data — nothing is saved.</p>
     <button onClick={onSignIn} className="text-xs font-bold bg-slate-50 text-indigo-700 px-4 py-1.5 rounded-full hover:bg-indigo-50 transition-colors active:scale-95 ease-apple shrink-0">
       Sign in to save your work
@@ -653,184 +661,63 @@ const DemoBanner = ({ onSignIn }) => (
   </div>
 );
 
-// FIX 2: Resource Type selector removed. Existing resources keep their type.
-// New resources default to "link". No data is lost.
 const ResourceModal = ({ isOpen, onClose, onSubmit, resource = null }) => {
-  const [selectedTags, setSelectedTags] = useState(resource?.tags || []);
-  const [customTag, setCustomTag] = useState("");
-
-  useEffect(() => {
-    setSelectedTags(resource?.tags || []);
-    setCustomTag("");
-  }, [resource, isOpen]);
-
+  const [tagDraft, setTagDraft] = useState("");
+  const form = useDialogForm({ title: resource?.title || "", url: resource?.url || "", description: resource?.description || "", tags: resource?.tags || [] }, values => {
+    const errors = {};
+    if (!values.title.trim()) errors.title = "Enter a resource title.";
+    else if (values.title.trim().length > 300) errors.title = "Keep the title to 300 characters or fewer.";
+    if (!values.url.trim()) errors.url = "Enter a web address.";
+    else if (!resourceURL(values.url.trim())) errors.url = "Use a complete http:// or https:// address.";
+    return errors;
+  }, values => onSubmit({ ...values, title: values.title.trim(), url: values.url.trim(), id: resource?.id || null, type: resource?.type || "link" }), onClose);
   if (!isOpen) return null;
-
-  const toggleTag = (tag) => setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
-  const handleAddCustomTag = (e) => {
-    e.preventDefault();
-    if (customTag.trim() && !selectedTags.includes(customTag.trim())) { setSelectedTags(prev => [...prev, customTag.trim()]); setCustomTag(""); }
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    // Preserve existing type when editing, default to "link" for new
-    const type = resource?.type || "link";
-    onSubmit({ id: resource?.id || null, type, title: fd.get("title"), url: fd.get("url"), description: fd.get("description"), tags: selectedTags });
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in" onClick={onClose}>
-      <div className="bg-slate-50 w-full sm:max-w-lg sm:rounded-[28px] rounded-t-[28px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300 ease-apple flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-        <div className="p-6 border-b border-slate-200 flex justify-between items-center shrink-0">
-          <h3 className="font-bold text-xl text-slate-900">{resource ? "Edit Resource" : "Add New Resource"}</h3>
-          <Button variant="icon" onClick={onClose}><X className="w-5 h-5" /></Button>
-        </div>
-        <div className="p-8 overflow-y-auto">
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="t-caption text-slate-500 block ml-1">Title</label>
-                <Input name="title" defaultValue={resource?.title || ""} autoFocus placeholder="e.g., Competitor Analysis" required />
-              </div>
-              <div className="space-y-2">
-                <label className="t-caption text-slate-500 block ml-1">URL</label>
-                <Input name="url" defaultValue={resource?.url || ""} type="url" placeholder="https://..." required />
-              </div>
-              <div className="space-y-2">
-                <label className="t-caption text-slate-500 block ml-1">Description</label>
-                <TextArea name="description" defaultValue={resource?.description || ""} rows="3" placeholder="Add a brief description..." />
-              </div>
-              <div className="space-y-2">
-                <label className="t-caption text-slate-500 block ml-1">Tags</label>
-                <div className="flex gap-2 mb-3">
-                  <Input value={customTag} onChange={e => setCustomTag(e.target.value)} placeholder="Add custom tag..."
-                    onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleAddCustomTag(e); } }} className="py-2" />
-                  <Button type="button" variant="secondary" onClick={handleAddCustomTag} className="px-4 shrink-0">Add</Button>
-                </div>
-                <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1">
-                  {selectedTags.map(tag => (
-                    <button key={tag} type="button" onClick={() => toggleTag(tag)}
-                      className="px-4 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-indigo-50 border-indigo-200 text-indigo-700 active:scale-95">
-                      {tag} <X className="w-3 h-3 inline ml-1" />
-                    </button>
-                  ))}
-                  {DEFAULT_TAGS.filter(t => !selectedTags.includes(t)).map(tag => (
-                    <button key={tag} type="button" onClick={() => toggleTag(tag)}
-                      className="px-4 py-1.5 rounded-lg text-xs font-medium border transition-all ease-apple bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200 active:scale-95">
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 mt-8 pt-4">
-                <Button type="button" variant="tertiary" onClick={onClose}>Cancel</Button>
-                <Button type="submit" variant="primary" className="px-8">{resource ? "Save Changes" : "Add Resource"}</Button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+  const tags = [...new Set([...DEFAULT_TAGS, ...form.values.tags])];
+  const toggleTag = tag => form.setValue("tags", form.values.tags.includes(tag) ? form.values.tags.filter(value => value !== tag) : [...form.values.tags, tag]);
+  const addTag = () => { const tag = tagDraft.trim(); if (tag && !form.values.tags.includes(tag)) form.setValue("tags", [...form.values.tags, tag]); setTagDraft(""); };
+  return <FormDialog title={resource ? "Edit resource" : "Add resource"} description="Keep useful links and context together. Fields marked * are required." onClose={onClose} onSubmit={form.submit} busy={form.busy} error={form.formError} submitLabel={resource ? "Save changes" : "Add resource"}>
+    <Field label="Title" required autoFocus value={form.values.title} onChange={e => form.setValue("title", e.target.value)} onBlur={() => form.blur("title")} error={form.error("title")} maxLength={300} placeholder="e.g. Content audit template" />
+    <Field label="Web address" required value={form.values.url} onChange={e => form.setValue("url", e.target.value)} onBlur={() => form.blur("url")} error={form.error("url")} hint="Include https:// so the link opens correctly." type="url" placeholder="https://…" />
+    <Field label="Description" multiline rows={3} value={form.values.description} onChange={e => form.setValue("description", e.target.value)} hint="A short reminder of why this resource is useful." />
+    <div className="ds-field"><span className="ds-field-label" id="resource-tags-label">Tags<span className="ds-field-optional">Optional</span></span><div className="ds-tag-options" role="group" aria-labelledby="resource-tags-label">{tags.map(tag => <button key={tag} type="button" className="ds-chip" aria-pressed={form.values.tags.includes(tag)} onClick={() => toggleTag(tag)}>{form.values.tags.includes(tag) && <CheckCircle2 size={16} />}{tag}</button>)}</div><div className="ds-add-tag"><label className="sr-only" htmlFor="resource-custom-tag">New tag</label><input id="resource-custom-tag" className="ds-field-control" value={tagDraft} maxLength={40} placeholder="Create a tag" onChange={e => setTagDraft(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addTag(); } }} /><button type="button" className="ds-text-button" disabled={!tagDraft.trim()} onClick={addTag}>Add tag</button></div><p className="ds-field-support">Choose tags to make this resource easier to find.</p></div>
+  </FormDialog>;
 };
 
 const ProjectModal = ({ isOpen, onClose, project, onSubmit, onDelete }) => {
-  const [icon, setIcon] = useState(project?.icon || "");
-  useEffect(() => { setIcon(project?.icon || ""); }, [project?.id, isOpen]);
+  const [deleting, setDeleting] = useState(false);
+  const form = useDialogForm({ title: project?.title || "", client: project?.client || "", startDate: project?.startDate || "", description: project?.description || "", icon: project?.icon || "" }, values => {
+    const errors = {};
+    if (!values.title.trim()) errors.title = "Enter a project name.";
+    if (!values.client.trim()) errors.client = "Enter a client or workspace name.";
+    if (values.startDate && !/^\d{4}-\d{2}-\d{2}$/.test(values.startDate)) errors.startDate = "Choose a valid start date.";
+    return errors;
+  }, values => onSubmit({ ...values, title: values.title.trim(), client: values.client.trim() }), onClose);
   if (!isOpen) return null;
-  const isEditing = !!project;
-
-  return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in" onClick={onClose}>
-      <div className="bg-slate-50 w-full sm:max-w-lg sm:rounded-[28px] rounded-t-[28px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300 ease-apple max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-        <div className="p-6 border-b border-slate-200 flex justify-between items-center">
-          <h3 className="font-bold text-xl text-slate-900">{isEditing ? "Edit Project" : "Create New Project"}</h3>
-          <Button variant="icon" onClick={onClose}><X className="w-5 h-5" /></Button>
-        </div>
-        <div className="p-8">
-          <form onSubmit={e => {
-            e.preventDefault();
-            const fd = new FormData(e.target);
-            onSubmit({ title: fd.get("title"), client: fd.get("client"), startDate: fd.get("startDate"), description: fd.get("description"), icon });
-            onClose();
-          }}>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="t-caption text-slate-500 block ml-1">Project Icon <span className="text-slate-400 font-normal">(optional)</span></label>
-                <div className="flex items-center gap-4 mb-3">
-                  {icon ? <ProjectIcon icon={icon} size="md" /> : (
-                    <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-                      <span style={{ fontSize: 11, fontWeight: 700, color: "#6366f1" }}>AB</span>
-                    </div>
-                  )}
-                  <span className="text-xs text-slate-400">Add a short name or upload an image to identify this project in the sidebar</span>
-                </div>
-                <IconPicker value={icon} onChange={setIcon} />
-              </div>
-              <div className="space-y-2">
-                <label className="t-caption text-slate-500 block ml-1">Project Name</label>
-                <Input name="title" defaultValue={project?.title || ""} autoFocus placeholder="e.g., Nebula Brand Identity" required />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="t-caption text-slate-500 block ml-1">Client Name</label>
-                  <Input name="client" defaultValue={project?.client || ""} placeholder="e.g., Nebula Tech" required />
-                </div>
-                <div className="space-y-2">
-                  <label className="t-caption text-slate-500 block ml-1">Start Date</label>
-                  <Input name="startDate" type="date" defaultValue={project?.startDate || ""} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="t-caption text-slate-500 block ml-1">Description</label>
-                <TextArea name="description" defaultValue={project?.description || ""} rows="4" placeholder="Brief summary of the project goals..." />
-              </div>
-              <div className="flex justify-between items-center mt-8 pt-4">
-                {isEditing ? (
-                  <Button type="button" variant="destructive" onClick={() => { if (confirm("Delete this project?")) { onDelete(project.id); onClose(); } }}>Delete Project</Button>
-                ) : <div />}
-                <div className="flex gap-3">
-                  <Button type="button" variant="tertiary" onClick={onClose}>Cancel</Button>
-                  <Button type="submit" variant="primary" className="px-8">{isEditing ? "Save Changes" : "Create Project"}</Button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+  const remove = async () => { if (!window.confirm("Delete this project?")) return; setDeleting(true); try { if (await onDelete(project.id)) onClose(); else form.setFormError("The project could not be deleted. Please try again."); } catch { form.setFormError("The project could not be deleted. Please try again."); } finally { setDeleting(false); } };
+  return <FormDialog title={project ? "Edit project" : "New project"} description="Give your project a clear home. Fields marked * are required." onClose={onClose} onSubmit={form.submit} busy={form.busy || deleting} busyLabel={deleting ? "Deleting…" : "Saving…"} error={form.formError} submitLabel={project ? "Save changes" : "Create project"} secondaryAction={project && <button type="button" className="ds-text-button ds-danger" disabled={form.busy || deleting} onClick={remove}>Delete project</button>}>
+    <Field label="Project name" required autoFocus value={form.values.title} maxLength={300} placeholder="e.g. Harlow website redesign" onChange={e => form.setValue("title", e.target.value)} onBlur={() => form.blur("title")} error={form.error("title")} />
+    <Field label="Client or workspace" required value={form.values.client} maxLength={160} placeholder="e.g. Harlow & Co." onChange={e => form.setValue("client", e.target.value)} onBlur={() => form.blur("client")} error={form.error("client")} />
+    <Field label="Start date" type="date" value={form.values.startDate} onChange={e => form.setValue("startDate", e.target.value)} onBlur={() => form.blur("startDate")} error={form.error("startDate")} />
+    <Field label="Description" multiline rows={3} value={form.values.description} onChange={e => form.setValue("description", e.target.value)} hint="What is this project working toward?" />
+    <div className="ds-field"><span className="ds-field-label">Project icon<span className="ds-field-optional">Optional</span></span><IconPicker value={form.values.icon} onChange={value => form.setValue("icon", value)} /></div>
+  </FormDialog>;
 };
 
-const WhereIAmCard = ({ project, onUpdate, isDemo }) => {
+const WhereIAmCard = ({ project, onUpdate, onDirty, isDemo }) => {
   const [local, setLocal] = useState(project?.whereIAm || "");
-  const textareaRef = useRef(null);
-  useEffect(() => { setLocal(project?.whereIAm || ""); }, [project?.id]);
+  const pending = useRef(null), timer = useRef(null), save = useRef(onUpdate);
+  save.current = onUpdate;
+  const flush = () => { clearTimeout(timer.current); if (pending.current !== null) { const value = pending.current; pending.current = null; save.current({ whereIAm: value }); } };
   useEffect(() => {
-    if (textareaRef.current) { textareaRef.current.style.height = "auto"; textareaRef.current.style.height = textareaRef.current.scrollHeight + "px"; }
-  }, [local]);
-  useEffect(() => {
-    if (!project || isDemo) return;
-    const t = setTimeout(() => { if (local !== (project.whereIAm || "")) onUpdate({ whereIAm: local }); }, 1000);
-    return () => clearTimeout(t);
-  }, [local]);
-
-  return (
-    <div className="context-card current-context bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
-    <div className="flex items-center gap-2.5 mb-4 flex-wrap">
-        <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
-          <Clock className="w-3.5 h-3.5 text-indigo-500" />
-        </div>
-        <span className="t-eyebrow text-indigo-600">Where you left off</span>
-      </div>
-      <textarea ref={textareaRef}
-        className="w-full bg-transparent focus:outline-none text-slate-700 leading-relaxed resize-none placeholder:text-slate-400 text-sm font-light min-h-[80px]"
-        placeholder="Current phase, what just happened, where things stand..."
-        value={local} onChange={e => setLocal(e.target.value)} aria-label="Project context" readOnly={isDemo} />
-    </div>
-  );
+    const hidden = () => { if (document.hidden) flush(); };
+    document.addEventListener("visibilitychange", hidden);
+    window.addEventListener("pagehide", flush);
+    return () => { document.removeEventListener("visibilitychange", hidden); window.removeEventListener("pagehide", flush); flush(); };
+  }, []);
+  return <div className="context-card current-context bg-slate-50 border border-slate-200 p-8">
+    <div className="flex items-center gap-2.5 mb-4"><div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center"><Clock className="w-3.5 h-3.5 text-indigo-500" /></div><span className="t-eyebrow">Where you left off</span><span className="text-xs text-slate-400 ml-auto">Autosaves</span></div>
+    <textarea aria-label="Where you left off" className="w-full bg-transparent text-sm text-slate-700 leading-relaxed resize-y min-h-[120px] rounded-md p-2 focus:outline-indigo-300" placeholder="Where things stand, what just happened, what to pick up next…" value={local} onBlur={flush} onChange={e => { setLocal(e.target.value); onDirty?.(); pending.current = e.target.value; clearTimeout(timer.current); timer.current = setTimeout(flush, 700); }} />
+  </div>;
 };
 
 const NotesCard = ({ project, onUpdate, isDemo }) => {
@@ -842,60 +729,71 @@ const NotesCard = ({ project, onUpdate, isDemo }) => {
     return [...saved, ...legacy];
   };
   const [items, setItems] = useState(readItems);
+  const [noteError, setNoteError] = useState("");
+  const [notesSaving, setNotesSaving] = useState(false);
   const [newItem, setNewItem] = useState("");
   useEffect(() => { setItems(readItems()); setNewItem(""); }, [project?.id]);
-  const saveItems = updated => {
-    setItems(updated);
-    onUpdate({ dontForgetItems: updated, dontForgetMode: "checklist", dontForget: "" });
+  const saveItems = async updated => {
+    if (notesSaving) return;
+    const previous = items; setItems(updated); setNotesSaving(true); setNoteError("");
+    try { if (await onUpdate({ dontForgetItems: updated, dontForgetMode: "checklist", dontForget: "" }) === false) { setItems(previous); setNoteError("Could not save your notes. Please try again."); return false; } return true; }
+    catch { setItems(previous); setNoteError("Could not save your notes. Please try again."); return false; }
+    finally { setNotesSaving(false); }
   };
-  const addItem = () => {
-    if (!newItem.trim() || isDemo) return;
-    saveItems([...items, { id: generateId(), text: newItem.trim(), checked: false }]);
-    setNewItem("");
+  const addItem = async () => {
+    if (!newItem.trim() || notesSaving) return;
+    if (await saveItems([...items, { id: generateId(), text: newItem.trim(), checked: false }])) setNewItem("");
   };
   return (
     <div className="context-card notes-card bg-slate-50 border border-slate-200 p-8">
       <div className="flex items-center gap-2.5 mb-4">
         <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center"><CheckSquare className="w-3.5 h-3.5 text-indigo-600" /></div>
-        <span className="t-eyebrow">Notes</span>
+        <span className="t-eyebrow">Don’t forget · Notes</span>
         <span className="notes-progress">{items.filter(item => item.checked).length} of {items.length} checked</span>
       </div>
       <p className="text-xs text-slate-500 mb-5">Details to remember. Check them off as you go.</p>
+      {noteError && <p className="ds-form-error" role="alert">{noteError}</p>}
+      {items.some(item => item.checked) && <button disabled={notesSaving} className="ds-text-button" onClick={() => saveItems(items.filter(item => !item.checked))}>Clear checked</button>}
       <div className="space-y-2">
-        {items.map(item => (
+        {[...items].sort((a, b) => Number(a.checked) - Number(b.checked)).map(item => (
           <div key={item.id} className="note-row flex items-center gap-3 group">
-            <input type="checkbox" aria-label={item.text} checked={item.checked} disabled={isDemo}
+            <input type="checkbox" aria-label={item.text} checked={item.checked} disabled={notesSaving}
               onChange={() => saveItems(items.map(row => row.id === item.id ? { ...row, checked: !row.checked } : row))} />
             <span className={`text-sm flex-1 leading-relaxed ${item.checked ? "line-through text-slate-400" : "text-slate-700"}`}>{item.text}</span>
-            {!isDemo && <button aria-label={`Delete note: ${item.text}`} onClick={() => saveItems(items.filter(row => row.id !== item.id))} className="p-2 text-slate-400 hover:text-red-500"><Trash2 size={14} /></button>}
+            {<button disabled={notesSaving} aria-label={`Delete note: ${item.text}`} onClick={() => saveItems(items.filter(row => row.id !== item.id))} className="p-2 text-slate-400 hover:text-red-500"><Trash2 size={14} /></button>}
           </div>
         ))}
         {!items.length && <p className="text-sm text-slate-400 py-3">A clear space for your project notes.</p>}
-        {!isDemo && <form className="flex items-center gap-3 pt-4 mt-4 border-t border-slate-200" onSubmit={e => { e.preventDefault(); addItem(); }}>
+        {<form className="flex items-center gap-3 pt-4 mt-4 border-t border-slate-200" onSubmit={e => { e.preventDefault(); addItem(); }}>
           <Plus size={17} className="text-slate-400" />
           <input aria-label="New note" className="min-w-0 flex-1 bg-transparent text-sm outline-none py-2" placeholder="Add a note…" value={newItem} onChange={e => setNewItem(e.target.value)} />
-          <Button type="submit" disabled={!newItem.trim()} className="px-4 py-2 text-xs">Add note</Button>
+          <Button type="submit" disabled={notesSaving || !newItem.trim()} className="px-4 py-2 text-xs">Add note</Button>
         </form>}
       </div>
     </div>
   );
 };
 
-const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
+const ResolutionDialog = ({ question, onSave, onClose }) => {
+  const form = useDialogForm({ resolution: question.resolution || "" }, values => values.resolution.trim() ? {} : { resolution: "Add the answer or decision that resolved this question." }, values => onSave(values.resolution.trim()), onClose);
+  return <FormDialog title="Resolve question" description={question.content} onClose={onClose} onSubmit={form.submit} busy={form.busy} error={form.formError} submitLabel="Save resolution"><Field label="What was the resolution?" required multiline autoFocus rows={4} value={form.values.resolution} onChange={e => form.setValue('resolution', e.target.value)} onBlur={() => form.blur('resolution')} error={form.error('resolution')} hint="This answer will be saved in resolved questions." /></FormDialog>;
+};
+
+const OverviewTab = ({ project, onUpdate, onDirty, onUpdateCtx, isDemo }) => {
+  const [resolving, setResolving] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
 
 
   const addQuestion = (content) => {
-    if (!content.trim() || isDemo) return;
+    if (!content.trim()) return;
     const newNote = { id: generateId(), type: "question", content, timestamp: new Date().toLocaleDateString(), isResolved: false };
     onUpdateCtx("notes", [newNote, ...(project.notes || [])]);
   };
-  const deleteNote = (id) => { if (!isDemo) onUpdateCtx("notes", (project.notes || []).filter(n => n.id !== id)); };
-  const toggleNoteRes = (id) => { if (!isDemo) onUpdateCtx("notes", (project.notes || []).map(n => n.id === id ? { ...n, isResolved: !n.isResolved } : n)); };
+  const deleteNote = (id) => { onUpdateCtx("notes", (project.notes || []).filter(n => n.id !== id)); };
+  const toggleNoteRes = (id) => { const note = (project.notes || []).find(n => n.id === id); if (!note) return; if (!note.isResolved) setResolving(note); else onUpdateCtx("notes", (project.notes || []).map(n => n.id === id ? { ...n, isResolved: false } : n)); };
   const startEditing = (note, e) => {
-    if (isDemo) return;
     e.stopPropagation(); setEditingId(note.id); setEditContent(note.content);
   };
   const saveEdit = () => {
@@ -908,8 +806,11 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
 
   return (
     <div className="overview-content space-y-6">
+      {resolving && <ResolutionDialog question={resolving} onClose={() => setResolving(null)} onSave={resolution => onUpdateCtx("notes", (project.notes || []).map(note => note.id === resolving.id ? { ...note, isResolved: true, resolution, resolvedAt: new Date().toISOString() } : note))} />}
       <div className="context-grid grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <WhereIAmCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
+        <WhereIAmCard project={project} onUpdate={onUpdate} onDirty={onDirty} isDemo={isDemo} />
+        <NotesCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
+      </div>
       <div id="project-questions" className="context-card questions-card bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
@@ -917,7 +818,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
           </div>
           <span className="t-eyebrow text-amber-700">Open questions <span className="question-count">{activeQuestions.length}</span></span>
         </div>
-        {!isDemo && (
+        {(
           <div className="flex gap-3 mb-6">
             <Input id="new-question" placeholder="What do you need to ask?"
               className="focus:ring-amber-200 focus:border-amber-300"
@@ -941,7 +842,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
               <div key={note.id} className="group bg-slate-50 rounded-[24px] border border-slate-200 p-6 hover:shadow-md transition-all duration-300 ease-apple">
                 <div className="flex items-start gap-5">
                   <div className="mt-1 shrink-0">
-                    <button aria-label="Mark question as resolved" disabled={isDemo} onClick={() => toggleNoteRes(note.id)}
+                    <button aria-label="Mark question as resolved" onClick={() => toggleNoteRes(note.id)}
                       className="w-10 h-10 rounded-full border-2 border-amber-100 text-amber-600 bg-amber-50 flex items-center justify-center hover:bg-amber-100 hover:scale-110 transition-all ease-apple">
                       <Circle className="w-5 h-5" />
                     </button>
@@ -963,7 +864,7 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
                       <p className="text-slate-800 text-base leading-relaxed whitespace-pre-wrap font-normal break-words">{note.content}</p>
                     )}
                   </div>
-                 {!isDemo && (
+                 {(
   <div className="flex gap-1 -mr-2 shrink-0">
     <Button variant="icon" onClick={e => startEditing(note, e)} className="opacity-0 group-hover:opacity-100 hover:bg-slate-100 hover:text-indigo-600">
       <Edit2 className="w-4 h-4" />
@@ -991,37 +892,63 @@ const OverviewTab = ({ project, onUpdate, onUpdateCtx, isDemo }) => {
               ) : resolvedQuestions.map(note => (
                 <div key={note.id} className="opacity-60 hover:opacity-100 transition-opacity flex items-center gap-3 bg-slate-100 p-5 rounded-2xl">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                  <p className="text-sm text-slate-600 line-through decoration-slate-300 flex-1">{note.content}</p>
-                  {!isDemo && <Button variant="tertiary" onClick={() => toggleNoteRes(note.id)} className="text-xs px-2 py-1 shrink-0 flex items-center gap-1.5"><RotateCcw className="w-3 h-3" />Undo</Button>}
+                  <div className="resolved-question-copy"><p className="text-sm text-slate-600">{note.content}</p><p className="question-resolution"><strong>Resolution</strong><span>{note.resolution || "No resolution was recorded for this question."}</span></p></div>
+                  {<Button variant="tertiary" onClick={() => toggleNoteRes(note.id)} className="text-xs px-2 py-1 shrink-0 flex items-center gap-1.5"><RotateCcw className="w-3 h-3" />Undo</Button>}
                 </div>
               ))}
             </div>
           )}
         </div>
       </div>
-      </div>
-      <NotesCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
     </div>
   );
 };
 
 export default function App() {
+  const [successMessage, setSuccessMessage] = useState(null);
+  const notifySuccess = text => setSuccessMessage({ text, id: Date.now() });
+  useEffect(() => { if (!successMessage) return; const timeout = setTimeout(() => setSuccessMessage(null), 6000); return () => clearTimeout(timeout); }, [successMessage]);
   const [user, setUser] = useState(null);
   const [isDemo, setIsDemo] = useState(false);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [projects, setProjects] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [view, setView] = useState("dashboard");
+  const [taskEditor, setTaskEditor] = useState(null);
+  const [projectLoading, setProjectLoading] = useState(false);
+  const [projectError, setProjectError] = useState("");
+  const [saveStates, setSaveStates] = useState({});
+  const saveSequence = useRef({});
+  const workspace = useWorkspace(db, user?.uid, isDemo);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const [isSidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768);
+  const [isSidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1440);
+  const drawerRef = useRef(null);
   const [isCompletedExpanded, setIsCompletedExpanded] = useState(false);
-  const [resourceFilter, setResourceFilter] = useState(null);
   const [projectSearch, setProjectSearch] = useState("");
   const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [editingResource, setEditingResource] = useState(null);
+
+  useEffect(() => {
+    if (!isSidebarOpen || window.innerWidth >= 768 || (!user && !isDemo)) return;
+    const previous = document.activeElement;
+    const drawer = drawerRef.current;
+    const controls = () => [...(drawer?.querySelectorAll('button, input, a[href], select') || [])].filter(el => !el.disabled && el.offsetParent !== null);
+    controls()[0]?.focus();
+    const handleKey = e => {
+      if (e.key === "Escape") { e.preventDefault(); setSidebarOpen(false); }
+      if (e.key === "Tab") {
+        const items = controls(), first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }
+    };
+    drawer?.addEventListener("keydown", handleKey);
+    return () => { drawer?.removeEventListener("keydown", handleKey); if (previous?.isConnected) previous.focus(); };
+  }, [isSidebarOpen, user, isDemo]);
 
   useEffect(() => {
     if (isSignInWithEmailLink(auth, window.location.href)) {
@@ -1061,12 +988,14 @@ export default function App() {
 
   useEffect(() => {
     if (!user || isDemo) return;
+    setProjectLoading(true); setProjectError("");
     const ref = collection(db, "artifacts", appId, "users", user.uid, "projects");
     const unsub = onSnapshot(query(ref), snapshot => {
-      const loaded = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      const loaded = snapshot.docs.map(d => ({ notes: [], resources: [], ...d.data(), id: d.id }));
+      setProjectLoading(false);
       setProjects(loaded);
       if (loaded.length > 0) setSelectedId(prev => loaded.find(p => p.id === prev) ? prev : loaded[0].id);
-    }, err => console.error(err));
+    }, err => { setProjectLoading(false); setProjectError("Could not load projects. Check your connection and Firebase permissions."); });
     return () => unsub();
   }, [user, isDemo]);
 
@@ -1112,31 +1041,43 @@ export default function App() {
     window.localStorage.setItem("emailForSignIn", email);
   };
 
-  const handleDemo = () => { setIsDemo(true); setProjects(DEMO_PROJECTS); setSelectedId(DEMO_PROJECTS[0].id); };
+  const handleDemo = () => { setIsDemo(true); setProjects(DEMO_PROJECTS); setSelectedId(DEMO_PROJECTS[0].id); setView("dashboard"); };
   const handleLogout = () => { signOut(auth); setIsDemo(false); setProjects([]); setSelectedId(null); };
 
   const updateProject = async (projectId, data) => {
-    if (!user || isDemo) return;
-    try { await updateDoc(doc(db, "artifacts", appId, "users", user.uid, "projects", projectId), { ...data, lastUpdated: new Date().toISOString() }); }
-    catch (e) { console.error(e); }
+    const sequence = (saveSequence.current[projectId] || 0) + 1;
+    saveSequence.current[projectId] = sequence;
+    const lastUpdated = new Date().toISOString();
+    setSaveStates(prev => ({ ...prev, [projectId]: { status: "saving" } }));
+    try {
+      if (!isDemo && !user) return false;
+      if (!isDemo) await updateDoc(doc(db, "artifacts", appId, "users", user.uid, "projects", projectId), { ...data, lastUpdated });
+      setProjects(prev => prev.map(p => p.id === projectId ? { ...p, ...data, lastUpdated } : p));
+      if (saveSequence.current[projectId] === sequence) setSaveStates(prev => ({ ...prev, [projectId]: { status: "saved" } }));
+      return true;
+    } catch (e) {
+      if (saveSequence.current[projectId] === sequence) setSaveStates(prev => ({ ...prev, [projectId]: { status: "error", retry: () => updateProject(projectId, data) } }));
+      return false;
+    }
   };
 
   const createProject = async (data) => {
-    if (!user || isDemo) return;
+    if (isDemo) { const project = { id: generateId(), status: "active", lastUpdated: new Date().toISOString(), whereIAm: "", dontForget: "", dontForgetMode: "checklist", dontForgetItems: [], icon: "", notes: [], resources: [], ...data }; setProjects(prev => [...prev, project]); setSelectedId(project.id); setView("project"); notifySuccess("Project added successfully."); return true; }
+    if (!user) return false;
     try {
       const ref = await addDoc(collection(db, "artifacts", appId, "users", user.uid, "projects"), {
         status: "active", lastUpdated: new Date().toISOString(),
         whereIAm: "", dontForget: "", dontForgetMode: "text", dontForgetItems: [],
         icon: "", notes: [], resources: [], ...data,
       });
-      setSelectedId(ref.id);
-    } catch (e) { console.error(e); }
+      setSelectedId(ref.id); setView("project"); notifySuccess("Project added successfully."); return true;
+    } catch (e) { setProjectError("Could not create project. Please try again."); return false; }
   };
 
   const deleteProject = async (id) => {
-    if (!user || isDemo) return;
-    try { await deleteDoc(doc(db, "artifacts", appId, "users", user.uid, "projects", id)); if (selectedId === id) setSelectedId(null); }
-    catch (e) { console.error(e); }
+    if (!user || isDemo) return false;
+    try { await deleteDoc(doc(db, "artifacts", appId, "users", user.uid, "projects", id)); if (selectedId === id) setSelectedId(null); return true; }
+    catch (e) { return false; }
   };
 
   const selectedProject = projects.find(p => p.id === selectedId);
@@ -1146,75 +1087,59 @@ export default function App() {
   const completedProjects = projects.filter(p => p.status === "completed" && matchesSearch(p));
   const allProjects = [...activeProjects, ...pausedProjects, ...completedProjects];
 
-  const updateCtx = (field, value) => { if (selectedId && !isDemo) updateProject(selectedId, { [field]: value }); };
-  const handleBriefingUpdate = (fields) => { if (selectedId && !isDemo) updateProject(selectedId, fields); };
+  const updateCtx = (field, value) => selectedId ? updateProject(selectedId, { [field]: value }) : Promise.resolve(false);
+  const handleBriefingUpdate = (fields) => selectedId ? updateProject(selectedId, fields) : Promise.resolve(false);
   const toggleStatus = (id) => { const p = projects.find(x => x.id === id); if (p && !isDemo) updateProject(id, { status: p.status === "active" ? "paused" : "active" }); };
   const markCompleted = (id) => { if (!isDemo) updateProject(id, { status: "completed" }); };
   const reopenProject = (id) => { if (!isDemo) updateProject(id, { status: "active" }); };
 
-  // FIX 4: Optimistic resource add — card appears immediately, OG preview loads in background
-  const handleSaveResource = (data) => {
-    if (!selectedProject || isDemo) return;
-    if (data.id) {
-      // Editing existing
-      const existing = selectedProject.resources.find(r => r.id === data.id);
-      const urlChanged = existing?.url !== data.url;
-      const updated = selectedProject.resources.map(r =>
-        r.id === data.id ? { ...r, ...data, preview: urlChanged ? null : (existing?.preview || null) } : r
-      );
-      // Update UI immediately
-      setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, resources: updated } : p));
-      updateCtx("resources", updated);
-      // Fetch preview in background if URL changed
-      if (urlChanged && (data.type === "link" || data.type === "document")) {
-        fetchOGPreview(data.url).then(preview => {
-          if (!preview) return;
-          setProjects(prev => prev.map(p => {
-            if (p.id !== selectedProject.id) return p;
-            const withPreview = p.resources.map(r => r.id === data.id ? { ...r, preview } : r);
-            updateCtx("resources", withPreview);
-            return { ...p, resources: withPreview };
-          }));
-        });
-      }
-    } else {
-      // Adding new — show immediately with no preview
-      const { id: _, ...rest } = data;
-      const newResource = { id: generateId(), ...rest, preview: null };
-      const newList = [newResource, ...(selectedProject.resources || [])];
-      // Update UI immediately
-      setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, resources: newList } : p));
-      updateCtx("resources", newList);
-      // Fetch OG preview in background
-      if (rest.type === "link" || rest.type === "document") {
-        fetchOGPreview(rest.url).then(preview => {
-          if (!preview) return;
-          setProjects(prev => prev.map(p => {
-            if (p.id !== selectedProject.id) return p;
-            const withPreview = p.resources.map(r => r.id === newResource.id ? { ...r, preview } : r);
-            updateCtx("resources", withPreview);
-            return { ...p, resources: withPreview };
-          }));
-        });
-      }
+  const handleSaveResource = async (data) => {
+    if (!selectedProject || (!isDemo && !user)) return false;
+    const projectId = selectedProject.id;
+    const existing = (selectedProject.resources || []).find(resource => resource.id === data.id);
+    const { id: ignored, ...fields } = data;
+    const resource = { ...existing, ...fields, id: data.id || generateId(), preview: existing?.url === data.url ? existing.preview || null : null };
+    const resources = data.id ? selectedProject.resources.map(item => item.id === data.id ? resource : item) : [resource, ...(selectedProject.resources || [])];
+    const saved = await updateProject(projectId, { resources });
+    if (!saved) return false;
+    if (!data.id) notifySuccess("Resource added successfully.");
+    if (!isDemo && user && !resource.preview && ["link", "document"].includes(resource.type)) {
+      fetchOGPreview(resource.url).then(async preview => {
+        if (!preview) return;
+        try {
+          await runTransaction(db, async transaction => {
+            const ref = doc(db, "artifacts", appId, "users", user.uid, "projects", projectId);
+            const snapshot = await transaction.get(ref);
+            if (!snapshot.exists()) return;
+            const current = snapshot.data().resources || [];
+            if (!current.some(item => item.id === resource.id && item.url === resource.url)) return;
+            transaction.update(ref, { resources: current.map(item => item.id === resource.id && item.url === resource.url ? { ...item, preview } : item) });
+          });
+        } catch { /* Preview enrichment is optional; the resource itself is saved. */ }
+      });
     }
+    return true;
   };
 
   const deleteRes = (id) => {
-    if (!selectedProject || isDemo) return;
-    const updated = selectedProject.resources.filter(r => r.id !== id);
-    setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, resources: updated } : p));
-    updateCtx("resources", updated);
+    if (!selectedProject) return;
+    const updated = (selectedProject.resources || []).filter(r => r.id !== id);
+    return updateProject(selectedProject.id, { resources: updated });
   };
 
-  const uniqueTags = selectedProject ? [...new Set(selectedProject.resources.flatMap(r => r.tags || []))] : [];
-  const filteredResources = selectedProject ? selectedProject.resources.filter(r => !resourceFilter || (r.tags && r.tags.includes(resourceFilter))) : [];
   const handleScroll = e => setIsScrolled(e.target.scrollTop > 60);
 
   const selectProject = (id) => {
-    setSelectedId(id);
+    setSelectedId(id); setIsScrolled(false); setView("project"); setActiveTab("overview");
     if (window.innerWidth < 768) setSidebarOpen(false);
   };
+
+  const focusTask = async (projectId, taskId = "") => {
+    if (["running", "paused"].includes(workspace.timer?.status) && !window.confirm("End your current focus session and focus on this task? The unfinished session will not be counted.")) return;
+    if (await workspace.timerChange(newTimer("focus", projectId, taskId))) document.querySelector(".focus-panel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  };
+  const addTask = projectId => setTaskEditor({ projectId });
+  const openDashboard = () => { setIsScrolled(false); setView("dashboard"); if (window.innerWidth < 768) setSidebarOpen(false); };
 
   if (loading) return (
     <div className="flex h-screen items-center justify-center bg-[var(--app-bg)]">
@@ -1227,28 +1152,28 @@ export default function App() {
   );
 
   const SidebarItemFull = ({ project }) => (
-    <button type="button" onClick={() => selectProject(project.id)} aria-current={selectedId === project.id ? "page" : undefined}
-      className={`project-nav-item group flex items-center gap-3 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ease-apple mb-1 mr-4 min-h-[44px] ${selectedId === project.id ? "bg-indigo-50 text-indigo-900 font-semibold" : "hover:bg-slate-100 text-slate-600 hover:text-slate-900"}`}>
+    <button type="button" onClick={() => selectProject(project.id)} aria-current={view === "project" && (view === "project" && selectedId === project.id) ? "page" : undefined}
+      className={`project-nav-item group flex items-center gap-3 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ease-apple mb-1 mr-4 min-h-[44px] ${(view === "project" && selectedId === project.id) ? "bg-indigo-50 text-indigo-900 font-semibold" : "hover:bg-slate-100 text-slate-600 hover:text-slate-900"}`}>
       {project.icon ? (
         <ProjectIcon icon={project.icon} size="sm" className="shrink-0" />
       ) : (
-        <div className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform duration-300 ease-apple group-hover:scale-110 ${selectedId === project.id ? "bg-indigo-500" : project.status === "active" ? "bg-slate-300" : project.status === "completed" ? "bg-emerald-300" : "bg-amber-200"}`} />
+        <div className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform duration-300 ease-apple group-hover:scale-110 ${(view === "project" && selectedId === project.id) ? "bg-indigo-500" : project.status === "active" ? "bg-slate-300" : project.status === "completed" ? "bg-emerald-300" : "bg-amber-200"}`} />
       )}
       <span className="text-sm font-medium truncate">{project.title}</span>
-      {selectedId === project.id && <span className="nav-selected-dot" />}
+      {view === "project" && selectedId === project.id && <span className="nav-selected-dot" />}
     </button>
   );
 
   // FIX 3: Removed className="!bg-transparent" which was overriding the icon's background colour
   const SidebarItemIcon = ({ project }) => (
-    <div onClick={() => selectProject(project.id)} title={project.title}
-      className={`flex items-center justify-center w-10 h-10 rounded-xl cursor-pointer transition-all duration-200 ease-apple mb-1 mx-auto ${selectedId === project.id ? "bg-indigo-50 ring-2 ring-indigo-200" : "hover:bg-slate-100"}`}>
+    <button type="button" aria-label={project.title} onClick={() => selectProject(project.id)} title={project.title}
+      className={`rail-project flex items-center justify-center w-10 h-10 rounded-xl cursor-pointer transition-all duration-200 ease-apple mb-1 mx-auto ${(view === "project" && selectedId === project.id) ? "bg-indigo-50 ring-2 ring-indigo-200" : "hover:bg-slate-100"}`}>
       {project.icon ? (
         <ProjectIcon icon={project.icon} size="sm" />
       ) : (
-        <div className={`w-3 h-3 rounded-full transition-transform duration-300 ease-apple hover:scale-125 ${selectedId === project.id ? "bg-indigo-500" : project.status === "active" ? "bg-slate-400" : project.status === "completed" ? "bg-emerald-400" : "bg-amber-300"}`} />
+        <div className={`w-3 h-3 rounded-full transition-transform duration-300 ease-apple hover:scale-125 ${(view === "project" && selectedId === project.id) ? "bg-indigo-500" : project.status === "active" ? "bg-slate-400" : project.status === "completed" ? "bg-emerald-400" : "bg-amber-300"}`} />
       )}
-    </div>
+    </button>
   );
 
   // FIX 1: Section labels changed to grey (text-slate-400)
@@ -1262,7 +1187,7 @@ export default function App() {
             </div>
             <span>Continuum</span>
           </div>
-          <button onClick={onClose}
+          <button aria-label="Close projects sidebar" onClick={onClose}
             className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors ease-apple active:scale-95">
             <PanelLeft className="w-5 h-5" />
           </button>
@@ -1274,8 +1199,8 @@ export default function App() {
           </button>
         )}
       </div>
+      <button aria-current={view === "dashboard" ? "page" : undefined} className={`workspace-home ${view === "dashboard" ? "selected" : ""}`} onClick={openDashboard}><LayoutDashboard size={20} /> Workspace overview</button>
       <div className="sidebar-search"><Search size={16} /><input aria-label="Search projects" placeholder="Find a project…" value={projectSearch} onChange={e => setProjectSearch(e.target.value)} />{projectSearch && <button aria-label="Clear search" onClick={() => setProjectSearch("")}><X size={14} /></button>}</div>
-      <div className="sidebar-workspace"><Layers size={14} /><span>Your workspace</span><span>{projects.length}</span></div>
       <div className="flex-1 overflow-y-auto px-2">
         {projectSearch && !projects.some(matchesSearch) && <p className="px-4 pb-5 text-xs text-slate-500">No projects match “{projectSearch}”.</p>}
         <div className="mb-8">
@@ -1306,11 +1231,11 @@ export default function App() {
 
   return (
     <>
-      <div className="workspace-shell flex flex-col h-screen text-slate-900 overflow-hidden bg-[var(--app-bg)]">
+      <div className="workspace-shell material-workspace flex flex-col h-screen text-slate-900 overflow-hidden bg-[var(--app-bg)]">
         {isDemo && <DemoBanner onSignIn={() => { setIsDemo(false); setProjects([]); setSelectedId(null); }} />}
         <div className="flex flex-1 overflow-hidden relative">
           {isSidebarOpen && (
-            <div className="fixed inset-0 bg-slate-900/40 z-10 md:hidden" onClick={() => setSidebarOpen(false)} />
+            <div className="fixed inset-0 bg-slate-900/40 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
           )}
           <div className={`workspace-sidebar hidden md:flex flex-col flex-shrink-0 bg-slate-50 border-r border-slate-200/80 shadow-sm transition-all duration-500 ease-apple overflow-hidden ${isSidebarOpen ? "w-72" : "w-16"}`}>
             {isSidebarOpen ? (
@@ -1321,15 +1246,17 @@ export default function App() {
                   className="p-2.5 mb-5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors ease-apple active:scale-95" title="Expand sidebar">
                   <PanelRight className="w-5 h-5" />
                 </button>
-                <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center mb-5 shrink-0">
-                  <ContinuumLogo className="w-5 h-5 text-white" />
-                </div>
+                <button aria-current={view === "dashboard" ? "page" : undefined} onClick={openDashboard} aria-label="Workspace overview" className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center mb-5 shrink-0">
+                  <LayoutDashboard size={23} />
+                </button>
+                <span className="rail-label">Overview</span>
                 {!isDemo && (
                   <button onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
                     className="w-10 h-10 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-5 transition-all ease-apple active:scale-95" title="New Project">
                     <Plus className="w-5 h-5" />
                   </button>
                 )}
+                <span className="rail-section-label">Projects</span>
                 <div className="flex-1 overflow-y-auto w-full px-1">
                   {allProjects.map(p => <SidebarItemIcon key={p.id} project={p} />)}
                 </div>
@@ -1342,12 +1269,12 @@ export default function App() {
               </div>
             )}
           </div>
-          <div className={`fixed md:hidden top-0 left-0 h-full z-20 w-80 bg-slate-50 flex flex-col shadow-2xl transition-transform duration-500 ease-apple ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <div ref={drawerRef} role="dialog" aria-label="Projects navigation" aria-modal={isSidebarOpen ? true : undefined} aria-hidden={!isSidebarOpen} inert={isSidebarOpen ? undefined : ""} className={`fixed md:hidden top-0 left-0 h-full z-50 w-80 bg-slate-50 flex flex-col shadow-2xl transition-transform duration-500 ease-apple ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
             {SidebarContent({ onClose: () => setSidebarOpen(false) })}
           </div>
 
-          <div className="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
-            <div className={`absolute top-0 left-0 right-0 bg-[var(--app-bg)]/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
+          <div className="workspace-center flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
+            {view === "project" && <div className={`absolute top-0 left-0 right-0 bg-[var(--app-bg)]/90 backdrop-blur-xl z-30 border-b border-slate-200/50 transition-all duration-500 ease-apple transform ${isScrolled ? "translate-y-0 opacity-100 shadow-sm" : "-translate-y-full opacity-0 pointer-events-none"}`}>
               <div className="max-w-6xl mx-auto px-6 md:px-12 py-3 flex items-center gap-3">
                 <button onClick={() => setSidebarOpen(true)}
                   className="md:hidden p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors shrink-0">
@@ -1378,9 +1305,17 @@ export default function App() {
               </div>
             </div>
 
-            {selectedProject ? (
-              <div className="flex-1 overflow-y-auto pb-12 scroll-smooth" onScroll={handleScroll}>
-                <div className="flex items-center gap-3 px-4 pt-5 pb-2 md:hidden">
+            }
+            <div className="workspace-mobile-topbar"><span>Continuum</span><span>{view === "dashboard" ? "Workspace" : "Project"}</span></div>
+            <nav className="workspace-mobile-nav" aria-label="Main navigation">
+              <button aria-current={view === "dashboard" ? "page" : undefined} onClick={openDashboard}><LayoutDashboard size={22} /><span>Overview</span></button>
+              <button aria-current={view === "project" ? "page" : undefined} aria-expanded={isSidebarOpen} onClick={() => setSidebarOpen(true)}><Folder size={22} /><span>Projects</span></button>
+              <button onClick={() => document.querySelector(".focus-panel")?.scrollIntoView({ behavior: "smooth", block: "start" })}><Target size={22} /><span>Focus</span></button>
+            </nav>
+            {(workspace.error || projectError) && <div role="alert" className="workspace-error">{workspace.error || projectError}</div>}
+            {view === "dashboard" ? (<div key="dashboard" className="workspace-scroll">{workspace.loading || projectLoading ? <div className="ws-empty">Loading your workspace…</div> : <Dashboard onStatusChange={(id, status) => updateProject(id, { status })} projects={projects} workspace={workspace} onOpen={selectProject} onAdd={addTask} onNewProject={() => { setEditingProject(null); setIsProjectModalOpen(true); }} onEdit={task => setTaskEditor({ task })} onFocus={focusTask} />}</div>) : selectedProject ? (
+              <div key={selectedProject.id} className={`project-scroll flex-1 overflow-y-auto pb-12 scroll-smooth ${activeTab === "resources" ? "resources-mode" : ""}`} onScroll={handleScroll}>
+                <div className="mobile-project-banner flex items-center gap-3 px-4 pt-5 pb-2 md:hidden">
                   <button onClick={() => setSidebarOpen(true)}
                     className="p-2.5 bg-slate-50 text-slate-500 hover:text-indigo-600 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center shadow-sm border border-slate-200">
                     <Menu className="w-5 h-5" />
@@ -1389,42 +1324,16 @@ export default function App() {
                 </div>
                 <div className="project-content w-full max-w-6xl mx-auto px-6 md:px-12 pt-10 md:pt-16 pb-12">
                   <div className="project-heading mb-6">
+                    <div className="context-save-status" role="status"><span>{saveStates[selectedProject.id]?.status === "editing" ? "Unsaved changes…" : saveStates[selectedProject.id]?.status === "saving" ? "Saving…" : saveStates[selectedProject.id]?.status === "error" ? "Could not save your changes." : "Saved"}</span>{saveStates[selectedProject.id]?.status === "error" && <button onClick={saveStates[selectedProject.id].retry}>Retry save</button>}<span>Updated {selectedProject.lastUpdated ? new Date(selectedProject.lastUpdated).toLocaleString() : "not yet"}</span></div>
                     <div className="project-breadcrumb"><span>Workspace</span><span>/</span><span>{selectedProject.client || "Projects"}</span></div>
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                      <div className="flex items-center gap-4">
-                        <Badge color={selectedProject.status === "active" ? "green" : selectedProject.status === "completed" ? "blue" : "amber"}>
-                          {selectedProject.status === "active" ? "Active" : selectedProject.status === "completed" ? "Completed" : "Paused"}
-                        </Badge>
-                      </div>
-                      {!isDemo && (
-                        <div className="flex items-center gap-2">
-                          {selectedProject.status !== "completed" ? (
-                            <>
-                              <Button onClick={() => toggleStatus(selectedProject.id)} variant={selectedProject.status === "active" ? "secondary" : "primary"} className="h-10 px-5 text-sm">
-                                {selectedProject.status === "active" ? <><PauseCircle className="w-4 h-4" /> Pause</> : <><PlayCircle className="w-4 h-4" /> Resume</>}
-                              </Button>
-                              <Button variant="secondary" onClick={() => markCompleted(selectedProject.id)} className="h-10 px-5 text-sm">
-                                <CheckSquare className="w-4 h-4" /> Done
-                              </Button>
-                            </>
-                          ) : (
-                            <Button variant="primary" onClick={() => reopenProject(selectedProject.id)} className="h-10 px-5 text-sm">
-                              <RotateCcw className="w-4 h-4" /> Reopen
-                            </Button>
-                          )}
-                          <Button variant="icon" onClick={() => { setEditingProject(selectedProject); setIsProjectModalOpen(true); }} className="h-10 w-10">
-                            <Settings className="w-5 h-5" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex items-start gap-4 mb-8">
+                    <div className="project-title-row flex items-start gap-4 mb-8">
                       {selectedProject.icon && <ProjectIcon icon={selectedProject.icon} size="lg" className="mt-1 shrink-0" />}
                       <h1 className="project-title text-5xl font-semibold tracking-tight text-slate-900 break-words leading-[1.1]">
                         {selectedProject.title}
                       </h1>
+                      <span className="project-header-controls"><Select className={`project-status-select ${selectedProject.status}`} aria-label="Project status" value={selectedProject.status || 'active'} disabled={saveStates[selectedProject.id]?.status === 'saving'} onChange={e => updateProject(selectedProject.id, { status: e.target.value })}><option value="active">Active</option><option value="paused">On hold</option><option value="completed">Completed</option></Select><button className="ds-icon-button" aria-label="Edit project" onClick={() => { setEditingProject(selectedProject); setIsProjectModalOpen(true); }}><Settings size={20} /></button></span>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 border-t border-slate-200/60 pt-8">
+                    <div className="project-metadata grid grid-cols-1 lg:grid-cols-12 gap-5 border-t border-slate-200/60 pt-8">
                       <div className="md:col-span-3 space-y-3">
                         <p className="t-eyebrow text-slate-500">Start Date</p>
                         <div className="flex items-center gap-2 text-slate-700 font-medium text-base">
@@ -1441,150 +1350,25 @@ export default function App() {
                   <div className="project-snapshot">
                     <div><span className="snapshot-icon"><Clock size={18} /></span><div><strong>Pick up where you left off</strong><p>Your project context, always within reach.</p></div></div>
                     <button onClick={() => { setActiveTab("overview"); requestAnimationFrame(() => document.getElementById("project-questions")?.scrollIntoView({ behavior: "smooth", block: "center" })); }}><strong>{(selectedProject.notes || []).filter(n => !n.isResolved).length}</strong><span>open questions</span><ArrowUpRight size={16} /></button>
-                    <button onClick={() => setActiveTab("resources")}><strong>{(selectedProject.resources || []).length}</strong><span>saved resources</span><ArrowUpRight size={16} /></button>
                   </div>
                   <div className="mt-3">
-                    <div className="project-tabs relative flex items-center bg-slate-50 p-1 rounded-full w-full max-w-md mx-auto md:mx-0 shadow-sm border border-slate-200 mb-10 z-0">
-                      <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-indigo-100 rounded-full transition-all duration-300 ease-apple ${activeTab === "overview" ? "left-1 translate-x-0" : "translate-x-full left-0"}`} />
-                      <button onClick={() => setActiveTab("overview")}
-                        className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "overview" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
-                        <Layers size={15} /> Overview
-                      </button>
-                      <button onClick={() => setActiveTab("resources")}
-                        className={`relative z-10 flex-1 h-9 px-6 text-sm font-bold rounded-full text-center transition-colors duration-300 ease-apple ${activeTab === "resources" ? "text-indigo-900" : "text-slate-500 hover:text-slate-700"}`}>
-                        <LinkIcon size={15} /> Resources <span className="tab-count">{selectedProject.resources?.length || 0}</span>
-                      </button>
+                    <div className="project-tabs" role="tablist" aria-label="Project sections" onKeyDown={e => {
+                      const ids = ["overview", "tasks", "resources"], index = ids.indexOf(activeTab);
+                      if (["ArrowRight", "ArrowLeft", "Home", "End"].includes(e.key)) { e.preventDefault(); const next = e.key === "Home" ? 0 : e.key === "End" ? 2 : (index + (e.key === "ArrowRight" ? 1 : 2)) % 3; setActiveTab(ids[next]); e.currentTarget.querySelectorAll("button")[next]?.focus(); }
+                    }}>
+                      {[["overview", "Context"], ["tasks", "Next steps"], ["resources", "Resources"]].map(([id, label]) => <button role="tab" tabIndex={activeTab === id ? 0 : -1} aria-selected={activeTab === id} className={activeTab === id ? "text-indigo-900" : "text-slate-500"} key={id} onClick={() => setActiveTab(id)}>{label}<span className="tab-count">{id === "tasks" ? workspace.tasks.filter(t => t.projectId === selectedProject.id && !t.completed).length : id === "resources" ? selectedProject.resources.length : ""}</span></button>)}
                     </div>
                     <div className="min-h-[400px]">
                       <div key={activeTab} className="animate-in fade-in duration-500 ease-apple">
                         {activeTab === "overview" ? (
-                          <OverviewTab key={selectedProject.id} project={selectedProject} onUpdate={handleBriefingUpdate} onUpdateCtx={updateCtx} isDemo={isDemo} />
+                          <OverviewTab key={selectedProject.id} project={selectedProject} onUpdate={fields => updateProject(selectedProject.id, fields)} onDirty={() => setSaveStates(prev => ({ ...prev, [selectedProject.id]: { status: "editing" } }))} onUpdateCtx={updateCtx} isDemo={isDemo} />
+                        ) : activeTab === "tasks" ? (
+                          <NextSteps key={selectedProject.id} project={selectedProject} projects={projects} workspace={workspace} onEdit={task => setTaskEditor({ task })} onAdd={addTask} onFocus={focusTask} />
                         ) : (
-                          <div>
-                            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
-                              <div className="flex flex-wrap items-center gap-2">
-                                <p className="text-slate-500 text-sm font-semibold mr-2">Filter by:</p>
-                                <button onClick={() => setResourceFilter(null)}
-                                  className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === null ? "bg-indigo-600 text-slate-50 border-indigo-600 shadow-md shadow-indigo-200" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
-                                  All
-                                </button>
-                                {uniqueTags.map(tag => (
-                                  <button key={tag} onClick={() => setResourceFilter(tag === resourceFilter ? null : tag)}
-                                    className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ease-apple active:scale-95 ${resourceFilter === tag ? "bg-indigo-600 text-slate-50 border-indigo-600 shadow-md shadow-indigo-200" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
-                                    {tag}
-                                  </button>
-                                ))}
-                              </div>
-                              {!isDemo && (
-                                <Button variant="primary" onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }} className="pl-6 pr-8 w-full md:w-auto">
-                                  <Plus className="w-5 h-5" /> Add Resource
-                                </Button>
-                              )}
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                              {filteredResources.map(resource => (
-                                <div key={resource.id} className="group bg-slate-50 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-apple flex flex-col h-full border border-slate-200">
-                                  {resource.type === "image" ? (
-                                    <div className="h-40 bg-slate-100 w-full relative cursor-pointer overflow-hidden" onClick={() => window.open(resource.url, "_blank")}>
-                                      <img src={resource.url} alt={resource.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                        onError={e => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/f1f5f9/94a3b8?text=No+Preview"; }} />
-                                      <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
-                                        <div className="bg-slate-50/90 p-3 rounded-full backdrop-blur-md shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                          <ExternalLink className="w-6 h-6 text-slate-900" />
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ) : resource.preview?.image ? (
-                                    <div className="h-40 w-full relative cursor-pointer overflow-hidden bg-slate-100" onClick={() => window.open(resource.url, "_blank")}>
-                                      <img src={resource.preview.image} alt={resource.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                        onError={e => { e.target.onerror = null; e.target.style.display = "none"; }} />
-                                      <div className="absolute bottom-0 left-0 right-0 px-4 py-2.5 flex items-center gap-2"
-                                        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55), transparent)" }}>
-                                        <img src={resource.preview.favicon} alt="" className="w-4 h-4 rounded-sm shrink-0"
-                                          onError={e => { e.target.style.display = "none"; }} />
-                                        <span className="text-white text-[11px] font-semibold truncate opacity-90">{resource.preview.hostname}</span>
-                                      </div>
-                                      <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
-                                        <div className="bg-slate-50/90 p-3 rounded-full backdrop-blur-md shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                          <ExternalLink className="w-6 h-6 text-slate-900" />
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div className={`h-40 w-full cursor-pointer flex flex-col items-center justify-center border-b overflow-hidden transition-all duration-300 ${resource.type === "document" ? "bg-indigo-50 border-indigo-100" : "bg-blue-50 border-blue-100"}`}
-                                      onClick={() => window.open(resource.url, "_blank")}>
-                                      {resource.preview?.favicon ? (
-                                        <div className="flex flex-col items-center gap-3">
-                                          <div className={`w-16 h-16 bg-slate-50 rounded-2xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 ease-apple ${resource.type === "document" ? "shadow-indigo-100" : "shadow-blue-100"}`}>
-                                            <img src={resource.preview.favicon} alt="" className="w-9 h-9 rounded-md"
-                                              onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
-                                            <div style={{ display: "none" }} className="w-9 h-9 items-center justify-center">
-                                              {resource.type === "document" ? <FileIcon className="w-8 h-8 text-indigo-400" /> : <LinkIcon className="w-8 h-8 text-blue-400" />}
-                                            </div>
-                                          </div>
-                                          <span className={`t-eyebrow ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
-                                            {resource.preview.hostname?.replace("www.", "")}
-                                          </span>
-                                        </div>
-                                      ) : (
-                                        <div className="flex flex-col items-center gap-3">
-                                          <div className={`w-20 h-20 bg-slate-50 rounded-3xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 ease-apple ${resource.type === "document" ? "shadow-indigo-100" : "shadow-blue-100"}`}>
-                                            {resource.type === "document" ? <FileIcon className="w-10 h-10 text-indigo-500" /> : <LinkIcon className="w-10 h-10 text-blue-500" />}
-                                          </div>
-                                          <span className={`t-eyebrow ${resource.type === "document" ? "text-indigo-400" : "text-blue-400"}`}>
-                                            {resource.type === "document" ? "Document" : "Web Link"}
-                                          </span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                  <div className="p-8 flex-1 flex flex-col">
-                                    <div className="flex items-start justify-between mb-4">
-                                      <div className={`p-2.5 rounded-xl ${resource.type === "link" ? "bg-blue-50 text-blue-600" : resource.type === "image" ? "bg-purple-50 text-purple-600" : "bg-indigo-50 text-indigo-600"}`}>
-                                        {resource.type === "link" && <LinkIcon className="w-5 h-5" />}
-                                        {resource.type === "image" && <ImageIcon className="w-5 h-5" />}
-                                        {resource.type === "document" && <FileIcon className="w-5 h-5" />}
-                                      </div>
-                                      {!isDemo && (
-                                        <div className="flex gap-1 -mr-2">
-                                          <Button variant="icon" onClick={() => { setEditingResource(resource); setIsResourceModalOpen(true); }} className="opacity-0 group-hover:opacity-100 hover:bg-slate-100 hover:text-indigo-600">
-                                            <Edit2 className="w-4 h-4" />
-                                          </Button>
-                                          <Button variant="icon" onClick={() => deleteRes(resource.id)} className="opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500">
-                                            <Trash2 className="w-4 h-4" />
-                                          </Button>
-                                        </div>
-                                      )}
-                                    </div>
-                                    <h3 className="font-bold text-xl text-slate-900 truncate mb-3 tracking-tight">{resource.title}</h3>
-                                    {resource.description && <p className="text-sm text-slate-500 mb-8 line-clamp-2 leading-relaxed flex-1 font-medium">{resource.description}</p>}
-                                    <div className="mt-auto pt-6 border-t border-slate-200 flex items-center justify-between">
-                                      <div className="flex flex-wrap gap-2">
-                                        {resource.tags?.slice(0, 2).map((tag, i) => (
-                                          <span key={i} className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 border border-slate-200">{tag}</span>
-                                        ))}
-                                        {resource.tags?.length > 2 && <span className="text-[10px] text-slate-400 self-center pl-1 font-bold">+{resource.tags.length - 2}</span>}
-                                      </div>
-                                      <a href={resource.url} target="_blank" rel="noopener noreferrer"
-                                        className="p-2.5 rounded-full hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors">
-                                        <ExternalLink className="w-5 h-5" />
-                                      </a>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                              {!isDemo && (
-                                <button onClick={() => { setEditingResource(null); setIsResourceModalOpen(true); }}
-                                  className="rounded-[28px] border-2 border-dashed border-slate-300/80 flex flex-col items-center justify-center h-full min-h-[260px] text-slate-400 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all duration-300 p-8 group ease-apple">
-                                  <div className="w-20 h-20 rounded-[2rem] bg-slate-100 group-hover:bg-indigo-100 transition-colors mb-6 flex items-center justify-center duration-300">
-                                    <Plus className="w-10 h-10 text-slate-300 group-hover:text-indigo-500 transition-colors" />
-                                  </div>
-                                  <span className="font-bold text-xl tracking-tight">Add Resource</span>
-                                </button>
-                              )}
-                            </div>
-                          </div>
+                          <ResourceLibrary key={selectedProject.id} resources={selectedProject.resources || []} isDemo={isDemo}
+                            onAdd={() => { setEditingResource(null); setIsResourceModalOpen(true); }}
+                            onEdit={resource => { setEditingResource(resource); setIsResourceModalOpen(true); }}
+                            onDelete={deleteRes} />
                         )}
                       </div>
                     </div>
@@ -1609,14 +1393,17 @@ export default function App() {
               </div>
             )}
 
-            {!isDemo && isResourceModalOpen && <ResourceModal isOpen={isResourceModalOpen} onClose={() => setIsResourceModalOpen(false)} onSubmit={handleSaveResource} resource={editingResource} />}
-            {!isDemo && isProjectModalOpen && (
+            {isResourceModalOpen && <ResourceModal isOpen={isResourceModalOpen} onClose={() => setIsResourceModalOpen(false)} onSubmit={handleSaveResource} resource={editingResource} />}
+            {isProjectModalOpen && (
               <ProjectModal isOpen={isProjectModalOpen} onClose={() => setIsProjectModalOpen(false)} project={editingProject}
-                onSubmit={data => { editingProject ? updateProject(editingProject.id, data) : createProject(data); setIsProjectModalOpen(false); }}
-                onDelete={id => { deleteProject(id); setIsProjectModalOpen(false); }} />
+                onSubmit={data => editingProject ? updateProject(editingProject.id, data) : createProject(data)}
+                onDelete={deleteProject} />
             )}
           </div>
+          <FocusPanel projects={projects} workspace={workspace} />
         </div>
+        {successMessage && <div className="success-snackbar" role="status" key={successMessage.id}><CheckCircle2 size={20} /><span>{successMessage.text}</span><button className="ds-icon-button" aria-label="Dismiss success message" onClick={() => setSuccessMessage(null)}><X size={18} /></button></div>}
+        {taskEditor && <TaskEditor projects={projects} {...taskEditor} busy={workspace.busy} error={workspace.error} onSave={workspace.saveTask} onClose={() => setTaskEditor(null)} />}
       </div>
     </>
   );
