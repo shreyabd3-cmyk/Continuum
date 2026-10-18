@@ -40,7 +40,7 @@ export function Field({ label, hint, error, required, children, multiline = fals
   </div>;
 }
 
-export default function FormDialog({ title, description, children, onClose, onSubmit, submitLabel = 'Save changes', busyLabel = 'Saving…', busy = false, error, secondaryAction }) {
+export default function FormDialog({ title, description, children, onClose, onSubmit, submitLabel = 'Save changes', busyLabel = 'Saving…', busy = false, error, secondaryAction, showCancel = true }) {
   const titleId = useId(), descriptionId = useId(), dialog = useRef(null), body = useRef(null), close = useRef(onClose), pending = useRef(busy);
   close.current = onClose; pending.current = busy;
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function FormDialog({ title, description, children, onClose, onSu
       <header className="ds-modal-header"><div><h2 id={titleId}>{title}</h2>{description && <p id={descriptionId}>{description}</p>}</div><button className="ds-icon-button" type="button" aria-label="Close dialog" disabled={busy} onClick={onClose}><X size={22} /></button></header>
       <form noValidate onSubmit={onSubmit}>
         <div className="ds-modal-body" ref={body}>{error && <div className="ds-form-error" role="alert"><AlertCircle size={18} /><span>{error}</span></div>}<fieldset className="ds-form-fields" disabled={busy}>{children}</fieldset></div>
-        <footer className="ds-modal-footer">{secondaryAction && <div className="ds-modal-secondary">{secondaryAction}</div>}<button type="button" className="ds-text-button" disabled={busy} onClick={onClose}>Cancel</button><button className="ws-primary" type="submit" disabled={busy}>{busy && <Loader2 size={18} className="animate-spin" />}<span>{busy ? busyLabel : submitLabel}</span></button></footer>
+        <footer className="ds-modal-footer">{secondaryAction && <div className="ds-modal-secondary">{secondaryAction}</div>}{showCancel && <button type="button" className="ds-text-button" disabled={busy} onClick={onClose}>Cancel</button>}<button className="ws-primary" type="submit" disabled={busy}>{busy && <Loader2 size={18} className="animate-spin" />}<span>{busy ? busyLabel : submitLabel}</span></button></footer>
         <span className="sr-only" role="status">{busy ? 'Saving changes. Please wait.' : ''}</span>
       </form>
     </section>

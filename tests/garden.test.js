@@ -28,3 +28,13 @@ test('historical focus grows several plants and a future plant index cannot awar
   const garden = gardenProgress([session(575)], true, 100);
   assert.equal(garden.blooms, 2); assert.equal(garden.minutes, 75); assert.equal(garden.stage, 2);
 });
+
+test('first-bloom keepsake uses the real threshold completion date, independent of listener order', async () => {
+  const { firstBloomDate } = await import('../src/workspace/garden.js');
+  const early = { ...session(125, 'early'), completedAt: 1000 };
+  const late = { ...session(125, 'late'), completedAt: 2000 };
+  assert.equal(firstBloomDate([late, early]), 2000);
+  assert.equal(firstBloomDate([early, early]), null);
+  assert.equal(firstBloomDate([{ ...session(250, 'break', 'long'), completedAt: 1 }, early]), null);
+  assert.equal(firstBloomDate([{ ...session(250, 'invalid'), completedAt: NaN }]), null);
+});

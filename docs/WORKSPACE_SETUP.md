@@ -125,3 +125,22 @@ repeat planting and historical session totals. Browser checks cover project-free
 floating pause/corner switching, mobile positioning and seed planting with zero awarded
 minutes. Desktop permission delivery, live completion logging and authenticated recovery
 still require a supported browser and a signed-in account for end-to-end verification.
+
+## Motion and garden discoveries (local preview)
+
+Shared motion uses short press feedback and 300–420ms settling transitions. Native
+checkbox inputs retain keyboard operation and visible focus. List reordering uses
+layout offsets (not scroll positions); task completion briefly shows the checkmark
+before an open-only list removes the row. Progress bars interpolate completed data.
+New resources include a creation timestamp for a brief arrival highlight. Resolved
+questions offer a View answer shortcut. Timer panel/pill morphing uses progressive
+View Transitions support, with direct state changes as the fallback.
+
+Tapping plants reveals short messages. A butterfly occasionally visits awake blooms,
+with a per-browser-session cooldown; clicking sends it away. Long-break mode rests the
+plant and shows a moon without changing focus progress. The first-bloom keepsake and
+date are derived from the earliest real cumulative 250 focus minutes, excluding breaks,
+invalid records and duplicates. No new collection or reward-write permission is needed.
+Demo bloom previews expose the butterfly and a clearly labeled keepsake illustration;
+these previews never unlock rewards or write focus history. Motion has a reduced-motion
+alternative and garden controls support keyboard interaction.

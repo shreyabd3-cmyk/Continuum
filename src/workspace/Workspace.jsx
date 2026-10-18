@@ -1,6 +1,8 @@
 import FormDialog, { Field, useDialogForm } from "../components/FormDialog";
 import Select from "../components/Select";
 import ProjectIcon from "../components/ProjectIcon";
+import AnimatedCheckbox from "../components/AnimatedCheckbox";
+import useListMotion from "../hooks/useListMotion";
 import { projectAppearance } from "./projectAppearance";
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Search, Play, Pause, RotateCcw, Target, ArrowUpRight, Pencil, Trash2, Check, X, Clock, Minimize2, Maximize2 } from 'lucide-react';
@@ -23,13 +25,25 @@ export function TaskEditor({ projects, task, projectId, onSave, onClose, busy, e
     <div className="ds-date-shortcuts" aria-label="Quick due dates">{[[0, 'Today'], [1, 'Tomorrow'], [7, 'In a week']].map(([offset, label]) => <button key={label} className="ds-chip" type="button" onClick={() => { const date = new Date(); date.setDate(date.getDate() + offset); form.setValue('dueDate', localDate(date)); }}>{label}</button>)}<button className="ds-chip" type="button" onClick={() => form.setValue('dueDate', '')}>No date</button></div>
   </FormDialog>;
 }
-export function TaskRows({ tasks, projects, workspace, onEdit, onFocus, showProject = false }) {
-  const today = localDate(Date.now());
-  return <div className="task-list">{tasks.map(task => <div className={`task-row ${task.completed ? 'is-complete' : ''}`} key={task.id}>
-    <input aria-label={`Complete ${task.title}`} type="checkbox" checked={task.completed} disabled={workspace.busy} onChange={() => workspace.saveTask({ ...task, completed: !task.completed, completedAt: task.completed ? null : Date.now() })} />
+function TaskRow({ task, projects, workspace, onEdit, onFocus, showProject }) {
+  const [pending, setPending] = useState(null);
+  const checked = pending ?? task.completed, today = localDate(Date.now());
+  const toggle = async () => {
+    if (pending !== null || workspace.busy) return;
+    const completed = !task.completed; setPending(completed);
+    // Give the checkmark a moment to settle before an open-only list removes the row.
+    if (completed && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) await new Promise(resolve => setTimeout(resolve, 160));
+    try { await workspace.saveTask({ ...task, completed, completedAt: completed ? Date.now() : null }); } finally { setPending(null); }
+  };
+  return <div data-motion-id={task.id} className={`task-row ${checked ? 'is-complete' : ''}`} key={task.id}>
+    <AnimatedCheckbox aria-label={`Complete ${task.title}`} checked={checked} disabled={workspace.busy || pending !== null} onChange={toggle} />
     <div className="task-copy"><strong>{task.title}</strong><div>{showProject && <span>{projects.find(p => p.id === task.projectId)?.title || 'Deleted project'}</span>}{task.dueDate && <span className={!task.completed && task.dueDate < today ? 'overdue' : ''}>{task.dueDate < today && !task.completed ? 'Overdue · ' : ''}{new Date(`${task.dueDate}T00:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>}</div></div>
     <div className="task-actions">{!task.completed && <button title="Focus on this task" aria-label={`Focus on ${task.title}`} onClick={() => onFocus(task.projectId, task.id)}><Target size={16} /></button>}<button aria-label={`Edit ${task.title}`} title="Edit task" onClick={() => onEdit(task)}><Pencil size={18} /></button><button disabled={workspace.busy} title="Delete task" aria-label={`Delete ${task.title}`} onClick={() => { if (window.confirm(`Delete “${task.title}”?`)) workspace.removeTask(task); }}><Trash2 size={18} /></button></div>
-  </div>)}</div>;
+  </div>;
+}
+export function TaskRows({ tasks, projects, workspace, onEdit, onFocus, showProject = false }) {
+  const listMotion = useListMotion();
+  return <div className="task-list" ref={listMotion}>{tasks.map(task => <TaskRow key={task.id} task={task} projects={projects} workspace={workspace} onEdit={onEdit} onFocus={onFocus} showProject={showProject} />)}</div>;
 }
 export function NextSteps({ project, projects, workspace, onEdit, onAdd, onFocus }) {
   const [filter, setFilter] = useState('open');

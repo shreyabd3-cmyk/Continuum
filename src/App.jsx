@@ -14,6 +14,8 @@ import FormDialog, { Field, useDialogForm } from "./components/FormDialog";
 import { resourceURL } from "./workspace/resources";
 import ResourceLibrary from "./workspace/ResourceLibrary";
 import ProjectIcon from "./components/ProjectIcon";
+import AnimatedCheckbox from "./components/AnimatedCheckbox";
+import useListMotion from "./hooks/useListMotion";
 import { ICON_COLORS, parseIcon } from "./workspace/projectAppearance";
 import Select from "./components/Select";
 import { useWorkspace } from "./workspace/useWorkspace";
@@ -695,11 +697,20 @@ const NotesCard = ({ project, onUpdate, isDemo }) => {
     const legacy = (project?.dontForget || "").split("\n").filter(line => line.trim()).map((text, index) => ({ id: `legacy-note-${index}`, text, checked: false }));
     return [...saved, ...legacy];
   };
+  const listMotion = useListMotion();
   const [items, setItems] = useState(readItems);
   const [noteError, setNoteError] = useState("");
   const [notesSaving, setNotesSaving] = useState(false);
   const [newItem, setNewItem] = useState("");
-  useEffect(() => { setItems(readItems()); setNewItem(""); }, [project?.id]);
+  const [editingNoteId, setEditingNoteId] = useState(null), [noteDraft, setNoteDraft] = useState(""), [editError, setEditError] = useState("");
+  const closeNoteEditor = () => { const id = editingNoteId; setEditingNoteId(null); setEditError(""); requestAnimationFrame(() => document.getElementById(`edit-note-${id}`)?.focus()); };
+  const saveNoteEdit = async event => {
+    event.preventDefault();
+    if (notesSaving) return;
+    if (!noteDraft.trim()) { setEditError("Enter a note before saving."); return; }
+    if (await saveItems(items.map(item => item.id === editingNoteId ? { ...item, text: noteDraft.trim() } : item))) closeNoteEditor();
+  };
+  useEffect(() => { setItems(readItems()); setNewItem(""); setEditingNoteId(null); setEditError(""); }, [project?.id]);
   const saveItems = async updated => {
     if (notesSaving) return;
     const previous = items; setItems(updated); setNotesSaving(true); setNoteError("");
@@ -718,19 +729,23 @@ const NotesCard = ({ project, onUpdate, isDemo }) => {
         <span className="t-eyebrow">Notes & reminders</span>
         <span className="notes-progress">{items.filter(item => item.checked).length} of {items.length} checked</span>
       </div>
-      <p className="text-xs text-slate-500 mb-5">Don’t forget the small details. Check them off as you go.</p>
       {noteError && <p className="ds-form-error" role="alert">{noteError}</p>}
-      {items.some(item => item.checked) && <button disabled={notesSaving} className="ds-text-button" onClick={() => saveItems(items.filter(item => !item.checked))}>Clear checked</button>}
-      <div className="space-y-2">
+      <div className="space-y-2" ref={listMotion}>
         {[...items].sort((a, b) => Number(a.checked) - Number(b.checked)).map(item => (
-          <div key={item.id} className="note-row flex items-center gap-3 group">
-            <input type="checkbox" aria-label={item.text} checked={item.checked} disabled={notesSaving}
+          <div key={item.id} data-motion-id={item.id} className="note-row flex items-center gap-3 group">
+            <AnimatedCheckbox aria-label={item.text} checked={item.checked} disabled={notesSaving || editingNoteId !== null}
               onChange={() => saveItems(items.map(row => row.id === item.id ? { ...row, checked: !row.checked } : row))} />
-            <span className={`text-sm flex-1 leading-relaxed ${item.checked ? "line-through text-slate-400" : "text-slate-700"}`}>{item.text}</span>
-            {<button disabled={notesSaving} aria-label={`Delete note: ${item.text}`} onClick={() => saveItems(items.filter(row => row.id !== item.id))} className="p-2 text-slate-400 hover:text-red-500"><Trash2 size={14} /></button>}
+            {editingNoteId === item.id ? <form className="note-inline-editor" onSubmit={saveNoteEdit}>
+              <label className="sr-only" htmlFor={`note-draft-${item.id}`}>Edit note text</label>
+              <textarea id={`note-draft-${item.id}`} className="ds-field-control" rows={2} autoFocus value={noteDraft} disabled={notesSaving} aria-invalid={!!editError} aria-describedby={editError ? `note-error-${item.id}` : undefined} onChange={event => { setNoteDraft(event.target.value); setEditError(""); }} onKeyDown={event => { if (event.key === "Escape" && !notesSaving) { event.preventDefault(); closeNoteEditor(); } if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) { event.preventDefault(); event.currentTarget.form.requestSubmit(); } }} />
+              {editError && <p className="ds-field-support" id={`note-error-${item.id}`} role="alert">{editError}</p>}
+              <div className="note-edit-actions"><button type="button" className="ds-text-button" disabled={notesSaving} onClick={closeNoteEditor}>Cancel</button><button type="submit" className="ws-primary" disabled={notesSaving}>{notesSaving ? "Saving…" : "Save note"}</button></div>
+            </form> : <><span className={`text-sm flex-1 leading-relaxed ${item.checked ? "line-through text-slate-400" : "text-slate-700"}`}>{item.text}</span><button id={`edit-note-${item.id}`} type="button" className="ds-icon-button" disabled={notesSaving || editingNoteId !== null} aria-label={`Edit note: ${item.text}`} title="Edit note" onClick={() => { setEditingNoteId(item.id); setNoteDraft(item.text); setEditError(""); setNoteError(""); }}><Edit2 size={16} /></button><button type="button" disabled={notesSaving || editingNoteId !== null} aria-label={`Delete note: ${item.text}`} onClick={() => saveItems(items.filter(row => row.id !== item.id))} className="ds-icon-button note-delete"><Trash2 size={16} /></button></>}
+
           </div>
         ))}
         {!items.length && <p className="text-sm text-slate-400 py-3">A clear space for your project notes.</p>}
+        {items.some(item => item.checked) && <div className="notes-list-actions"><button type="button" disabled={notesSaving || editingNoteId !== null} className="ds-text-button" onClick={() => saveItems(items.filter(item => !item.checked))}>Clear checked</button></div>}
         {<form className="flex items-center gap-3 pt-4 mt-4 border-t border-slate-200" onSubmit={e => { e.preventDefault(); addItem(); }}>
           <Plus size={17} className="text-slate-400" />
           <input aria-label="New note" className="min-w-0 flex-1 bg-transparent text-sm outline-none py-2" placeholder="Add a note…" value={newItem} onChange={e => setNewItem(e.target.value)} />
@@ -748,6 +763,7 @@ const ResolutionDialog = ({ question, onSave, onClose }) => {
 
 const OverviewTab = ({ project, onUpdate, onDirty, onUpdateCtx, isDemo }) => {
   const [resolving, setResolving] = useState(null);
+  const [resolvedNotice, setResolvedNotice] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
@@ -773,11 +789,12 @@ const OverviewTab = ({ project, onUpdate, onDirty, onUpdateCtx, isDemo }) => {
 
   return (
     <div className="overview-content space-y-6">
-      {resolving && <ResolutionDialog question={resolving} onClose={() => setResolving(null)} onSave={resolution => onUpdateCtx("notes", (project.notes || []).map(note => note.id === resolving.id ? { ...note, isResolved: true, resolution, resolvedAt: new Date().toISOString() } : note))} />}
+      {resolving && <ResolutionDialog question={resolving} onClose={() => setResolving(null)} onSave={async resolution => { const id = resolving.id; const saved = await onUpdateCtx("notes", (project.notes || []).map(note => note.id === id ? { ...note, isResolved: true, resolution, resolvedAt: new Date().toISOString() } : note)); if (saved !== false) setResolvedNotice(id); return saved; }} />}
       <div className="context-grid grid grid-cols-1 lg:grid-cols-2 gap-6">
         <WhereIAmCard project={project} onUpdate={onUpdate} onDirty={onDirty} isDemo={isDemo} />
         <NotesCard project={project} onUpdate={onUpdate} isDemo={isDemo} />
       </div>
+      {resolvedNotice && <div className="resolution-feedback" role="status"><CheckCircle2 size={18} /><span>Question resolved. Answer saved.</span><button className="ds-text-button" onClick={() => { setShowHistory(true); requestAnimationFrame(() => document.getElementById(`answer-${resolvedNotice}`)?.focus()); }}>View answer</button><button className="ds-icon-button" aria-label="Dismiss resolution message" onClick={() => setResolvedNotice(null)}><X size={16} /></button></div>}
       <div id="project-questions" className="context-card questions-card bg-slate-50 rounded-[24px] shadow-sm border border-slate-200 p-8 shadow-md shadow-slate-200/50">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
@@ -857,7 +874,7 @@ const OverviewTab = ({ project, onUpdate, onDirty, onUpdateCtx, isDemo }) => {
               {resolvedQuestions.length === 0 ? (
                 <p className="text-sm text-slate-400 italic">No resolved questions yet.</p>
               ) : resolvedQuestions.map(note => (
-                <div key={note.id} className="opacity-60 hover:opacity-100 transition-opacity flex items-center gap-3 bg-slate-100 p-5 rounded-2xl">
+                <div id={`answer-${note.id}`} tabIndex={-1} key={note.id} className="opacity-60 hover:opacity-100 transition-opacity flex items-center gap-3 bg-slate-100 p-5 rounded-2xl">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                   <div className="resolved-question-copy"><p className="text-sm text-slate-600">{note.content}</p><p className="question-resolution"><strong>Resolution</strong><span>{note.resolution || "No resolution was recorded for this question."}</span></p></div>
                   {<Button variant="tertiary" onClick={() => toggleNoteRes(note.id)} className="text-xs px-2 py-1 shrink-0 flex items-center gap-1.5"><RotateCcw className="w-3 h-3" />Undo</Button>}
@@ -1066,7 +1083,7 @@ export default function App() {
     const projectId = selectedProject.id;
     const existing = (selectedProject.resources || []).find(resource => resource.id === data.id);
     const { id: ignored, ...fields } = data;
-    const resource = { ...existing, ...fields, id: data.id || generateId(), preview: existing?.url === data.url ? existing.preview || null : null };
+    const resource = { ...existing, ...fields, ...(!data.id ? { createdAt: Date.now() } : {}), id: data.id || generateId(), preview: existing?.url === data.url ? existing.preview || null : null };
     const resources = data.id ? selectedProject.resources.map(item => item.id === data.id ? resource : item) : [resource, ...(selectedProject.resources || [])];
     const saved = await updateProject(projectId, { resources });
     if (!saved) return false;

@@ -1,0 +1,65 @@
+:root { --motion-quick: 160ms; --motion-standard: 300ms; --motion-gentle: 420ms; --motion-ease: cubic-bezier(.22,1,.36,1); --motion-settle: cubic-bezier(.2,.8,.2,1); }
+.material-workspace :is(.ws-primary,.ws-secondary,.ds-text-button,.ds-icon-button,.ds-chip,.project-card,.resource-item,.rail-project) { transition: background-color var(--motion-quick) ease, color var(--motion-quick) ease, border-color var(--motion-quick) ease, box-shadow var(--motion-standard) ease, transform var(--motion-standard) var(--motion-ease); }
+.material-workspace :is(.ws-primary,.ws-secondary,.ds-icon-button,.ds-chip):active:not(:disabled) { transform: scale(.97); }
+.material-workspace :is(.ws-primary,.ws-secondary,.ds-icon-button,.ds-chip):focus-visible { outline: 2px solid var(--md-primary); outline-offset: 4px; }
+.material-workspace .animated-checkbox { position: relative; width: 32px; height: 40px; flex: 0 0 32px; display: inline-grid; place-items: center; vertical-align: middle; }
+.material-workspace .animated-checkbox > input[type="checkbox"] { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; z-index: 1; cursor: pointer; }
+.material-workspace .animated-checkbox > input:disabled { cursor: wait; }
+.checkbox-surface { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid #8a7c96; background: transparent; display: grid; place-items: center; transition: background-color 160ms, border-color 160ms, transform 300ms var(--motion-ease), box-shadow 160ms; }
+.checkbox-surface svg { width: 18px; height: 18px; }
+.checkbox-surface path { stroke: white; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-dasharray: 16; stroke-dashoffset: 16; transition: stroke-dashoffset 180ms var(--motion-ease); }
+.animated-checkbox input:checked + .checkbox-surface { background: #6750a4; border-color: #6750a4; }
+.animated-checkbox input:checked + .checkbox-surface path { stroke-dashoffset: 0; }
+.animated-checkbox input:active + .checkbox-surface { transform: scale(.88); }
+.animated-checkbox input:focus-visible + .checkbox-surface { outline: 2px solid #6750a4; outline-offset: 4px; }
+@media (hover:hover) { .animated-checkbox input:hover + .checkbox-surface { box-shadow: 0 0 0 5px #6750a412; } }
+.material-workspace .note-row > span:not(.animated-checkbox), .material-workspace .task-copy strong { transition: color 240ms ease, opacity 240ms ease; }
+.material-workspace .ws-progress > span { transition: width 520ms var(--motion-ease); }
+.material-workspace .resource-just-added { animation: resource-arrival 1400ms var(--motion-ease) both; }
+@keyframes resource-arrival { 0% { background-color: #e7ddf4; box-shadow: 0 0 0 2px #b5a0d1; transform: translateY(6px); } 45% { background-color: #f2ecf8; transform: translateY(0); } 100% { background-color: var(--md-surface); box-shadow: 0 0 0 0 transparent; } }
+.material-workspace .resolution-feedback { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border: 1px solid #d9cfe6; border-radius: 16px; background: #f1ebf7; font-size: 13px; animation: feedback-enter 300ms var(--motion-ease); }
+.resolution-feedback > span { flex: 1; }
+@keyframes feedback-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.material-workspace .focus-panel { view-transition-name: focus-timer; }
+::view-transition-group(focus-timer) { animation-duration: 420ms; animation-timing-function: cubic-bezier(.22,1,.36,1); }
+::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+::view-transition-old(focus-timer) { animation-duration: 180ms; }
+::view-transition-new(focus-timer) { animation-duration: 280ms; }
+.material-workspace .garden-scene { position: relative; isolation: isolate; }
+.material-workspace .plant-personality { display: block; margin: 0 auto; padding: 0; border-radius: 24px; transition: transform 450ms var(--motion-ease); }
+.material-workspace .plant-personality:hover { transform: translateY(-2px); }
+.material-workspace .plant-personality:active { transform: scale(.96); }
+.material-workspace .plant-personality:focus-visible { outline: 2px solid var(--md-primary); outline-offset: 0; }
+.material-workspace .plant-message { min-height: 30px; display: grid; align-items: center; }
+.plant-message > span { font-size: 12px; line-height: 1.5; padding: 6px 8px; border-radius: 10px; background: #eee6f5; color: #604584; animation: feedback-enter 300ms var(--motion-ease); }
+.material-workspace .garden-is-sleepy { background: #eeeaf3; border-color: #dcd4e5; }
+.garden-is-sleepy .garden-growth { transform: rotate(-7deg); transform-origin: 90px 96px; animation: none; transition: transform 900ms var(--motion-ease); }
+.garden-is-sleepy .plant-personality { filter: saturate(.65); }
+.garden-moon { position: absolute; top: 15px; right: 25px; color: #8b79a6; animation: moon-arrival 700ms var(--motion-ease); }
+.garden-moon i { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #a995c4; top: 27px; right: -8px; }
+.garden-moon i:last-child { top: -5px; right: 30px; width: 2px; height: 2px; }
+@keyframes moon-arrival { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.material-workspace .garden-resting { display: flex; align-items: center; justify-content: center; gap: 5px; color: #746185; }
+.material-workspace .garden-butterfly { position: absolute; top: 14px; right: 21px; width: 44px; height: 44px; padding: 0; border-radius: 50%; z-index: 2; animation: butterfly-land 1400ms var(--motion-ease) both; }
+.garden-butterfly:focus-visible { outline: 2px solid #6750a4; outline-offset: 2px; }
+.garden-butterfly svg { width: 44px; height: 44px; overflow: visible; }
+.butterfly-wings { transform-origin: 24px 24px; animation: butterfly-wings 1800ms ease-in-out 3; }
+@keyframes butterfly-wings { 0%,100% { transform: scaleX(1); } 50% { transform: scaleX(.6); } }
+@keyframes butterfly-land { 0% { opacity: 0; transform: translate(40px,-25px) rotate(-12deg); } 70% { opacity: 1; transform: translate(-3px,2px) rotate(3deg); } 100% { opacity: 1; transform: none; } }
+.material-workspace .garden-butterfly.butterfly-departing { animation: butterfly-leave 950ms ease-in forwards; pointer-events: none; }
+.butterfly-departing .butterfly-wings { animation: butterfly-wings 180ms ease-in-out infinite; }
+@keyframes butterfly-leave { to { opacity: 0; transform: translate(80px,-60px) rotate(-15deg) scale(.65); } }
+.material-workspace .garden-keepsake-link { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; margin-top: 12px; }
+.material-workspace .bloom-keepsake { text-align: center; background: #f7f0e7; border: 1px solid #e5d9ca; border-radius: 20px; padding: 28px 24px; color: #604584; }
+.bloom-keepsake > svg:first-child { margin: 0 auto; color: #a88b52; }
+.bloom-keepsake .garden-plant { width: 210px; height: 180px; margin: 12px auto; }
+.material-workspace .bloom-keepsake h3 { font-size: 20px; line-height: 1.4; font-weight: 500; }
+.material-workspace .bloom-keepsake p { font-size: 14px; margin: 10px 0 20px; color: #776a7d; }
+.bloom-keepsake time { display: block; font-size: 13px; }
+.bloom-keepsake small { display: block; margin: 20px auto 0; max-width: 260px; font-size: 12px; line-height: 1.6; color: #776a7d; }
+.keepsake-preview-label { font-size: 12px; display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .material-workspace *, .material-workspace *::before, .material-workspace *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .material-workspace .plant-personality:hover, .material-workspace .plant-personality:active, .animated-checkbox input:active + .checkbox-surface { transform: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}

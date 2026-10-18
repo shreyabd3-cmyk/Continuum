@@ -1,5 +1,6 @@
 import Select from "../components/Select";
 import React, { useState } from 'react';
+import useListMotion from '../hooks/useListMotion';
 import { Search, Plus, X, List, LayoutGrid, Link, FileText, Image, ExternalLink, MoreHorizontal, Pencil, Trash2, ChevronDown, FolderSearch } from 'lucide-react';
 import { findResources, resourceType, resourceSource, resourceURL } from './resources';
 import './resources.css';
@@ -9,7 +10,7 @@ function ResourceItem({ resource, gallery, onEdit, onDelete, isDemo }) {
   const [expanded, setExpanded] = useState(false);
   const kind = resourceType(resource), Icon = kind === 'image' ? Image : kind === 'document' ? FileText : Link;
   const url = resourceURL(resource.url), preview = resourceURL(kind === 'image' ? resource.url : resource.preview?.image);
-  return <li className={`resource-item ${expanded ? 'expanded' : ''}`}>
+  return <li data-motion-id={resource.id} className={`resource-item ${expanded ? 'expanded' : ''} ${resource.createdAt && Date.now() - resource.createdAt < 6000 ? 'resource-just-added' : ''}`}>
     {gallery && <div className="resource-thumbnail"><Icon size={28} aria-hidden="true" />{preview && <img src={preview} alt="" loading="lazy" onError={e => { e.currentTarget.hidden = true; }} />}</div>}
     <div className="resource-item-main">
       {!gallery && <span className={`resource-kind ${kind}`}><Icon size={20} aria-hidden="true" /></span>}
@@ -30,6 +31,7 @@ function ResourceItem({ resource, gallery, onEdit, onDelete, isDemo }) {
   </li>;
 }
 export default function ResourceLibrary({ resources = [], onAdd, onEdit, onDelete, isDemo }) {
+  const listMotion = useListMotion();
   const [search, setSearch] = useState(''), [type, setType] = useState('all'), [tag, setTag] = useState(''), [sort, setSort] = useState('az'), [view, setView] = useState('list');
   const tags = [...new Set(resources.flatMap(resource => resource.tags || []))].sort((a, b) => a.localeCompare(b));
   const filtered = findResources(resources, { search, type, tag, sort });
@@ -42,6 +44,6 @@ export default function ResourceLibrary({ resources = [], onAdd, onEdit, onDelet
       <div className="resource-display-fields"><label><span>Sort</span><Select aria-label="Sort resources" value={sort} onChange={e => setSort(e.target.value)}><option value="az">Title A–Z</option><option value="za">Title Z–A</option></Select></label><div className="resource-view-toggle" role="group" aria-label="Resource layout"><button aria-label="List view" title="List view" aria-pressed={view === 'list'} onClick={() => setView('list')}><List size={20} /></button><button aria-label="Gallery view" title="Gallery view" aria-pressed={view === 'gallery'} onClick={() => setView('gallery')}><LayoutGrid size={20} /></button></div></div>
     </div>
     <div className="resource-results"><span role="status" aria-live="polite">{hasFilters ? `${filtered.length} of ${resources.length}` : resources.length} {resources.length === 1 ? 'resource' : 'resources'}{hasFilters ? ' match' : ''}</span>{hasFilters && <button onClick={reset}><X size={14} />Clear filters</button>}</div>
-    {filtered.length ? <ul className={`resource-collection resource-${view}`} aria-label="Saved resources">{filtered.map(resource => <ResourceItem key={resource.id} resource={resource} gallery={view === 'gallery'} onEdit={onEdit} onDelete={onDelete} isDemo={isDemo} />)}</ul> : <div className="resource-empty"><FolderSearch size={32} /><h3>{resources.length ? 'No matching resources.' : 'No resources yet.'}</h3><p>{resources.length ? 'Try a different search, type, or tag—or clear the filters.' : 'Save a link, document, or image so it’s ready when you need it.'}</p>{hasFilters && <button className="ws-secondary" onClick={reset}>Clear filters</button>}</div>}
+    {filtered.length ? <ul ref={listMotion} className={`resource-collection resource-${view}`} aria-label="Saved resources">{filtered.map(resource => <ResourceItem key={resource.id} resource={resource} gallery={view === 'gallery'} onEdit={onEdit} onDelete={onDelete} isDemo={isDemo} />)}</ul> : <div className="resource-empty"><FolderSearch size={32} /><h3>{resources.length ? 'No matching resources.' : 'No resources yet.'}</h3><p>{resources.length ? 'Try a different search, type, or tag—or clear the filters.' : 'Save a link, document, or image so it’s ready when you need it.'}</p>{hasFilters && <button className="ws-secondary" onClick={reset}>Clear filters</button>}</div>}
   </section>;
 }

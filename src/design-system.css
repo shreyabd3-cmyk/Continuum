@@ -257,3 +257,18 @@ textarea.ds-field-control { min-height: 104px; resize: vertical; }
 .material-workspace .project-status-pill.completed,
 .material-workspace .project-status-select.completed .ds-select-trigger { background: var(--status-completed-bg); color: var(--status-completed-text); }
 .material-workspace .focus-panel--compact .focus-panel-heading > span:first-child { font-size: 16px; }
+
+.material-workspace .note-inline-editor { flex: 1; min-width: 0; padding: 8px 0; }
+.material-workspace .note-inline-editor textarea { width: 100%; min-height: 72px; resize: vertical; font: var(--ds-type-body-medium); }
+.material-workspace .note-edit-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+.material-workspace .note-edit-actions button { min-height: 44px; padding: 8px 16px; font-size: 13px; }
+.material-workspace .note-row > span:not(.animated-checkbox) { white-space: pre-wrap; overflow-wrap: anywhere; min-width: 0; }
+.material-workspace .note-inline-editor .ds-field-support { color: var(--md-error, #a33b3b); }
+
+.material-workspace .ds-icon-button { display: inline-grid; place-items: center; width: 44px; height: 44px; min-width: 44px; min-height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--md-on-surface-variant); }
+.material-workspace .ds-icon-button > svg { display: block; margin: 0; flex-shrink: 0; }
+.material-workspace .ds-icon-button:hover:not(:disabled) { background: var(--ds-state-hover); }
+.material-workspace .note-row > .ds-icon-button { width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 50%; padding: 0; }
+.material-workspace .note-row > .note-delete:hover:not(:disabled) { color: var(--md-error, #a33b3b); background: #a33b3b0d; }
+.material-workspace .notes-list-actions { display: flex; justify-content: flex-end; padding-top: 8px; }
+.material-workspace .notes-list-actions > button { min-height: 44px; padding: 8px 12px; font-size: 13px; }
